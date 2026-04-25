@@ -18,7 +18,6 @@
 
         /* 2. Full-Screen Wallpaper Background */
         body {
-            /* Make sure wallpaper.png is in the same folder as this file */
             background-image: url("wallpaper.png");
             background-color: #000000; /* Fallback */
             background-size: cover;
@@ -109,12 +108,14 @@
             letter-spacing: 1px;
         }
 
-        /* 5. Custom File Uploader UI */
+        /* 5. Custom File Uploader UI - FIX APPLIED HERE */
         .file-upload-wrapper {
+            display: block; /* Forces it to take up the full width */
+            width: 100%;
             border: 2px dashed rgba(255, 255, 255, 0.4);
             border-radius: 12px;
             padding: 40px;
-            text-align: center;
+            text-align: center; /* Centers the text perfectly now */
             background-color: rgba(255, 255, 255, 0.05);
             transition: 0.3s;
             cursor: pointer;
@@ -212,7 +213,7 @@
             const fileName = file.name.toLowerCase();
             
             document.getElementById('status').innerText = "Processing Data...";
-            document.getElementById('status').style.color = "#FFC107"; // Loading yellow
+            document.getElementById('status').style.color = "#FFC107"; 
 
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -222,7 +223,6 @@
                     const firstSheetName = workbook.SheetNames[0];
                     const worksheet = workbook.Sheets[firstSheetName];
                     
-                    // Convert sheet to array of arrays
                     const rawData = XLSX.utils.sheet_to_json(worksheet, {header: 1, defval: ""});
                     
                     processData(rawData, fileName);
@@ -241,13 +241,11 @@
                 return;
             }
 
-            // 1. Get Date in Indian Format (DD/MM/YYYY)
             const today = new Date();
             const today_ist = String(today.getDate()).padStart(2, '0') + '/' + 
                               String(today.getMonth() + 1).padStart(2, '0') + '/' + 
                               today.getFullYear();
 
-            // 2. Combine Headers (Row 0 and 1)
             const header1 = data[0];
             const header2 = data[1];
             let combinedHeaders = [];
@@ -262,7 +260,6 @@
                 }
             }
 
-            // 3. Find Key Columns (Case insensitive search)
             let productColIdx = -1, billingColIdx = -1, gstColIdx = -1;
             
             for(let i=0; i < combinedHeaders.length; i++) {
@@ -274,12 +271,10 @@
                 if (gstColIdx === -1 && col.includes("gst")) gstColIdx = i;
             }
 
-            // Fallbacks if headers differ slightly
             if(productColIdx === -1) productColIdx = 1;
             if(gstColIdx === -1) gstColIdx = 2;
             if(billingColIdx === -1) billingColIdx = 3;
 
-            // 4. Identify Store Columns (Everything after Billing, ignoring "total")
             let storeColumns = [];
             for(let i = billingColIdx + 1; i < combinedHeaders.length; i++) {
                 if(combinedHeaders[i] && !combinedHeaders[i].toLowerCase().includes("total")) {
@@ -287,17 +282,14 @@
                 }
             }
 
-            // Map store names to strict voucher numbers (1, 2, 3...)
             let voucherMap = {};
             storeColumns.forEach((col, index) => {
                 voucherMap[col.name] = index + 1;
             });
 
-            // 5. Melt Data (Convert columns to rows)
             let meltedData = [];
             for (let r = 2; r < data.length; r++) {
                 let row = data[r];
-                // Skip empty rows
                 if(!row || row.length === 0) continue;
 
                 let product = row[productColIdx];
@@ -306,12 +298,10 @@
 
                 if(!product) continue;
 
-                // Loop through each store column
                 storeColumns.forEach(store => {
                     let rawQty = String(row[store.index] || "").replace(/[^\d.]/g, '');
                     let qty = parseFloat(rawQty);
                     
-                    // Only keep rows where Qty is a valid number > 0
                     if (!isNaN(qty) && qty > 0) {
                         meltedData.push({
                             product: product,
@@ -325,10 +315,8 @@
                 });
             }
 
-            // 6. Sort ascending strictly by Voucher Number
             meltedData.sort((a, b) => a.voucherNo - b.voucherNo);
 
-            // 7. Global Karnataka Check
             const karnataka_cities = [
                 "bengaluru", "mysuru", "mangaluru", "hubballi", "dharwad", "belagavi",
                 "kalaburagi", "ballari", "vijayapura", "shivamogga", "tumakuru", "raichur",
@@ -341,26 +329,21 @@
             ];
             const isKarnataka = karnataka_cities.some(city => fileName.includes(city));
 
-            // 8. Build Final Output Array
             finalWorkbookData = [];
             
-            // Push Headers
             finalWorkbookData.push([
                 "SL", "voucher no", "voucher date", "Party name", "Product", "Qty", 
                 "GST %", "Rate per Qty excl.GST", "Cgst", "SGST", "IGST", "Total"
             ]);
 
             meltedData.forEach((item, index) => {
-                // Parse GST %
                 let gstStr = String(item.gst || "").replace(/[^\d.]/g, '');
                 let gstNum = parseFloat(gstStr) || 0;
                 let gstPercent = (gstNum < 1 && gstNum > 0) ? Math.round(gstNum * 100) : Math.round(gstNum);
 
-                // Parse Billing Price
                 let billingStr = String(item.billing || "").replace(/[^\d.]/g, '');
                 let billingPrice = parseFloat(billingStr) || 0;
 
-                // Calculate Rate Excl GST
                 let rateExcl = 0;
                 if (gstPercent === 5) rateExcl = billingPrice / 1.05;
                 else if (gstPercent === 12) rateExcl = billingPrice / 1.12;
@@ -371,7 +354,6 @@
                 
                 rateExcl = parseFloat(rateExcl.toFixed(2));
 
-                // Calculate Taxes
                 let totalTax = rateExcl * (gstPercent / 100) * item.qty;
                 let cgst = 0, sgst = 0, igst = 0;
 
@@ -382,26 +364,24 @@
                     igst = parseFloat(totalTax.toFixed(2));
                 }
 
-                // Calculate Final Total
                 let totalRow = (rateExcl * item.qty) + cgst + sgst + igst;
 
                 finalWorkbookData.push([
-                    index + 1,              // SL
-                    item.voucherNo,         // voucher no
-                    today_ist,              // voucher date
-                    item.party,             // Party name
-                    item.product,           // Product
-                    item.qty,               // Qty
-                    gstPercent,             // GST %
-                    rateExcl,               // Rate per Qty excl.GST
-                    cgst,                   // Cgst
-                    sgst,                   // SGST
-                    igst,                   // IGST
-                    parseFloat(totalRow.toFixed(2)) // Total
+                    index + 1,              
+                    item.voucherNo,         
+                    today_ist,              
+                    item.party,             
+                    item.product,           
+                    item.qty,               
+                    gstPercent,             
+                    rateExcl,               
+                    cgst,                   
+                    sgst,                   
+                    igst,                   
+                    parseFloat(totalRow.toFixed(2)) 
                 ]);
             });
 
-            // Update UI
             let taxType = isKarnataka ? 'CGST & SGST (Karnataka Detected)' : 'IGST';
             document.getElementById('status').innerText = `Success! Generated ${meltedData.length} Rows. Tax Applied: ${taxType}`;
             document.getElementById('status').style.color = "#4CAF50";
@@ -411,12 +391,10 @@
         function downloadExcel() {
             if(finalWorkbookData.length === 0) return;
             
-            // Create a new workbook using SheetJS
             const ws = XLSX.utils.aoa_to_sheet(finalWorkbookData);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Formatted Data");
             
-            // Trigger download
             XLSX.writeFile(wb, "Bridges_Output.xlsx");
         }
     </script>
