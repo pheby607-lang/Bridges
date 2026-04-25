@@ -4,12 +4,14 @@ from io import BytesIO
 from datetime import datetime, timezone, timedelta
 from PIL import Image
 import os
+import base64
 
 # =========================
 # ABSOLUTE FILE PATHS
 # =========================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LOGO_FILE = os.path.join(BASE_DIR, "logo.png")
+WALLPAPER_FILE = os.path.join(BASE_DIR, "wallpaper.png")
 
 # =========================
 # PAGE CONFIGURATION
@@ -17,8 +19,14 @@ LOGO_FILE = os.path.join(BASE_DIR, "logo.png")
 st.set_page_config(page_title="Bridges", page_icon=LOGO_FILE if os.path.exists(LOGO_FILE) else None, layout="wide")
 
 # =========================
-# CUSTOM CSS: NUKE HEADER, APPLE FONT, PITCH BLACK
+# DYNAMIC HTML & CSS INJECTION
 # =========================
+def get_base64_of_bin_file(bin_file):
+    with open(bin_file, 'rb') as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+# Base CSS (Hide Headers & Set Font)
 custom_style = """
     <style>
         /* 1. NUKE THE ENTIRE HEADER */
@@ -30,19 +38,46 @@ custom_style = """
         /* 2. Force Apple Font (San Francisco) */
         html, body, [class*="css"], .stTextInput>label, .stMarkdown, p, h1, h2, h3, h4, h5, h6 {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+            color: #ffffff !important;
         }
+"""
+
+# If wallpaper.png exists, inject it as the background
+if os.path.exists(WALLPAPER_FILE):
+    img_base64 = get_base64_of_bin_file(WALLPAPER_FILE)
+    custom_style += f"""
+        /* 3. Inject Full-Screen Wallpaper */
+        .stApp {{
+            background-image: url("data:image/png;base64,{img_base64}") !important;
+            background-size: cover !important;
+            background-position: center !important;
+            background-attachment: fixed !important;
+        }}
         
-        /* 3. Force Pitch Black Background */
+        /* 4. Apple Glassmorphism Effect for Readability */
+        .block-container {{
+            background-color: rgba(10, 10, 10, 0.85) !important;
+            padding: 2.5rem !important;
+            border-radius: 20px !important;
+            margin-top: 3rem !important;
+            backdrop-filter: blur(10px) !important;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5) !important;
+        }}
+        
+        /* Sidebar styling to match */
+        [data-testid="stSidebar"] {{
+            background-color: rgba(10, 10, 10, 0.95) !important;
+        }}
+    """
+else:
+    # Fallback to Pitch Black if the image isn't found
+    custom_style += """
         .stApp {
             background-color: #000000 !important;
         }
-        
-        /* Ensure Text is crisp White */
-        h1, p, label, .stMarkdown {
-            color: #ffffff !important;
-        }
-    </style>
-"""
+    """
+
+custom_style += "</style>"
 st.markdown(custom_style, unsafe_allow_html=True)
 
 # =========================
@@ -65,7 +100,7 @@ with st.sidebar:
 
 # --- MODULE 1: DATA FORMATTER ---
 if nav_selection == "Data Formatter":
-    st.markdown("<h1 style='text-align: center;'>Bridges</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>Bridges Data Engine</h1>", unsafe_allow_html=True)
 
     uf_col1, uf_col2, uf_col3 = st.columns([1, 1.5, 1])
     with uf_col2:
