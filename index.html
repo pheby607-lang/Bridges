@@ -199,4 +199,131 @@
                 <h1>Bridges</h1>
                 <label class="upload-label" id="drop-zone-purchase" for="purchase-upload">
                     <p style="font-size: 22px; font-weight: 800; color: #00ffcc;">📦 DRAG OR UPLOAD PURCHASE 📦</p>
-                    <p style="
+                    <p style="font-size: 14px; opacity: 0.6; margin-top: 10px;">Supports .xlsx and .csv</p>
+                    <input id="purchase-upload" type="file" accept=".xlsx, .csv" />
+                </label>
+                <div id="purchase-status" class="status-msg"></div>
+                <button id="purchase-dl" class="btn" style="background: #00ffcc; color: #000;">DOWNLOAD PURCHASE EXCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let salesData = [];
+        let purchaseData = [];
+
+        function switchView(view) {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.getElementById('view-' + view).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // --- DRAG AND DROP SETUP ---
+        function setupDragAndDrop(elementId, type) {
+            const dropZone = document.getElementById(elementId);
+
+            // Prevent default browser behavior (opening the file)
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }, false);
+            });
+
+            // Visual feedback when dragging over
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => dropZone.classList.add('drag-over'), false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => dropZone.classList.remove('drag-over'), false);
+            });
+
+            // Handle the dropped file
+            dropZone.addEventListener('drop', (e) => {
+                const file = e.dataTransfer.files[0];
+                if (file) handleFileProcessing(file, type);
+            }, false);
+        }
+
+        // Initialize drag and drop for both sections
+        setupDragAndDrop('drop-zone-sales', 'sales');
+        setupDragAndDrop('drop-zone-purchase', 'purchase');
+
+        // Standard click-to-upload listeners
+        document.getElementById('sales-upload').addEventListener('change', (e) => handleFileProcessing(e.target.files[0], 'sales'));
+        document.getElementById('purchase-upload').addEventListener('change', (e) => handleFileProcessing(e.target.files[0], 'purchase'));
+
+        // Processing Router
+        function handleFileProcessing(file, type) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const data = new Uint8Array(event.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {header: 1, defval: ""});
+                
+                if (type === 'sales') processSales(json, file.name.toLowerCase());
+                else processPurchase(json, file.name.toLowerCase());
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function processSales(data, name) {
+            const date = new Date().toLocaleDateString('en-GB');
+            const h1 = data[0], h2 = data[1];
+            const headers = h1.map((v, i) => (String(h2[i]).trim() && String(h2[i]).toLowerCase() !== "nan") ? `${String(v).trim()} ${String(h2[i]).trim()}` : "");
+            
+            const pIdx = headers.findIndex(h => h.toLowerCase().includes("product") || h.toLowerCase().includes("system")) || 1;
+            const gIdx = headers.findIndex(h => h.toLowerCase().includes("gst")) || 2;
+            const bIdx = headers.findIndex(h => h.toLowerCase().includes("billing")) || 3;
+            const stores = headers.map((h, i) => ({n: h, id: i})).filter(h => h.id > bIdx && h.n && !h.n.toLowerCase().includes("total"));
+
+            let melted = [];
+            for (let r = 2; r < data.length; r++) {
+                if(!data[r][pIdx]) continue;
+                stores.forEach((s, sIdx) => {
+                    let q = parseFloat(String(data[r][s.id] || "").replace(/[^\d.]/g, ''));
+                    if(q > 0) melted.push({p: data[r][pIdx], b: data[r][bIdx], g: data[r][gIdx], party: s.n, qty: q, v: sIdx + 1});
+                });
+            }
+            melted.sort((a,b) => a.v - b.v);
+
+            const isKA = ["bengaluru", "mysuru", "mangaluru", "hubballi", "belagavi"].some(c => name.includes(c));
+            salesData = [["SL", "voucher no", "voucher date", "Party name", "Product", "Qty", "GST %", "Rate per Qty excl.GST", "Cgst", "SGST", "IGST", "Total"]];
+
+            melted.forEach((item, i) => {
+                let g = Math.round(parseFloat(String(item.g).replace(/[^\d.]/g, '')) < 1 ? parseFloat(String(item.g).replace(/[^\d.]/g, ''))*100 : parseFloat(String(item.g).replace(/[^\d.]/g, '')));
+                let rate = parseFloat((parseFloat(String(item.b).replace(/[^\d.]/g, '')) / (1 + (g/100))).toFixed(2));
+                let tax = rate * (g/100) * item.qty;
+                let c = isKA ? parseFloat((tax/2).toFixed(2)) : 0, s = isKA ? parseFloat((tax/2).toFixed(2)) : 0, ig = isKA ? 0 : parseFloat(tax.toFixed(2));
+                salesData.push([i+1, item.v, date, item.party, item.p, item.qty, g, rate, c, s, ig, parseFloat(((rate*item.qty)+c+s+ig).toFixed(2))]);
+            });
+
+            document.getElementById('sales-status').innerText = "Sales Processed Successfully!";
+            document.getElementById('sales-dl').style.display = "block";
+        }
+
+        function processPurchase(data, name) {
+            // Placeholder until you provide headers tomorrow
+            purchaseData = data; 
+            document.getElementById('purchase-status').innerText = "Purchase Logic Ready for Config...";
+            document.getElementById('purchase-dl').style.display = "block";
+        }
+
+        document.getElementById('sales-dl').addEventListener('click', () => {
+            const ws = XLSX.utils.aoa_to_sheet(salesData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Bridges_Sales");
+            XLSX.writeFile(wb, "Bridges_Sales_Output.xlsx");
+        });
+
+        document.getElementById('purchase-dl').addEventListener('click', () => {
+            const ws = XLSX.utils.aoa_to_sheet(purchaseData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Bridges_Purchase");
+            XLSX.writeFile(wb, "Bridges_Purchase_Output.xlsx");
+        });
+    </script>
+</body>
+</html>
