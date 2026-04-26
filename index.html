@@ -3,173 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bridges | Data Engine</title>
+    <title>Bridges</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
     <style>
-        /* 1. THE NEON THEME VARIABLES */
+        /* THE ELITE PURPLE THEME */
         :root {
             --bg-black: #000000;
-            --panel-dark: rgba(10, 0, 20, 0.8);
-            --neon-purple: #a020f0;
-            --glow-purple: rgba(160, 32, 240, 0.4);
-            --text-main: #ffffff;
-            --text-dim: #a9a9a9;
+            --accent-purple: #bf00ff; /* Brighter Neon Purple */
+            --dark-purple: #1a0033;
+            --text-white: #ffffff;
+            --text-gray: #888888;
         }
 
         * {
             margin: 0; padding: 0; box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
+        /* FULL SCREEN WALLPAPER FIX */
         body {
             background-color: var(--bg-black);
-            /* Subtle purple ambient glow in corners */
-            background-image: 
-                radial-gradient(circle at 15% 15%, #1a0033 0%, transparent 35%),
-                radial-gradient(circle at 85% 85%, #0d001a 0%, transparent 35%);
+            background-image: url("wallpaper.png"); /* This pulls your file */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
             display: flex;
             height: 100vh;
+            width: 100vw;
             overflow: hidden;
-            color: var(--text-main);
+            color: var(--text-white);
         }
 
-        /* 2. SIDEBAR NAVIGATION */
+        /* MODERN SIDEBAR */
         .sidebar {
-            width: 280px;
-            background-color: #05000a;
-            padding: 30px;
+            width: 240px;
+            background: rgba(0, 0, 0, 0.85); /* Semi-transparent black */
+            backdrop-filter: blur(20px);
+            padding: 40px 20px;
             display: flex;
             flex-direction: column;
-            border-right: 1px solid rgba(160, 32, 240, 0.3);
-            box-shadow: 5px 0 20px rgba(0, 0, 0, 0.5);
+            border-right: 1px solid rgba(191, 0, 255, 0.3);
+            z-index: 10;
         }
 
-        .logo-area { text-align: center; margin-bottom: 40px; }
+        .logo-area { text-align: center; margin-bottom: 60px; }
         .logo-area img { 
-            max-width: 140px; 
-            filter: drop-shadow(0 0 10px var(--neon-purple)); 
+            max-width: 120px; 
+            filter: drop-shadow(0 0 15px var(--accent-purple)); 
         }
 
-        .nav-item {
-            padding: 15px;
-            margin-bottom: 12px;
+        .nav-active {
+            padding: 16px;
             border-radius: 12px;
-            cursor: pointer;
-            background: rgba(160, 32, 240, 0.05);
-            border: 1px solid rgba(160, 32, 240, 0.1);
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            font-weight: 500;
-        }
-
-        .nav-item:hover {
-            background: rgba(160, 32, 240, 0.2);
-            border-color: var(--neon-purple);
-            transform: translateX(8px);
-            box-shadow: 0 0 15px var(--glow-purple);
-        }
-
-        .coming-soon {
-            padding: 15px;
-            color: #444;
-            border: 1px dashed #333;
-            border-radius: 12px;
-            margin-top: 10px;
-            font-size: 14px;
+            background: linear-gradient(135deg, rgba(191, 0, 255, 0.2), transparent);
+            border: 1px solid var(--accent-purple);
+            color: var(--text-white);
+            font-weight: 700;
             text-align: center;
+            letter-spacing: 1px;
+            box-shadow: 0 0 20px rgba(191, 0, 255, 0.2);
         }
 
-        hr { border: 0; height: 1px; background: var(--neon-purple); opacity: 0.2; margin: 25px 0; }
-
-        /* 3. MAIN DASHBOARD AREA */
+        /* MAIN CONTENT AREA */
         .main-content {
             flex: 1;
-            padding: 40px;
             display: flex;
             justify-content: center;
             align-items: center;
-            /* Wallpaper overlay if file exists */
-            background-image: url("wallpaper.png");
-            background-size: cover;
-            background-position: center;
+            padding: 40px;
+            position: relative;
         }
 
-        .glass-panel {
-            background: var(--panel-dark);
-            padding: 50px;
-            border-radius: 30px;
-            border: 1px solid rgba(160, 32, 240, 0.4);
+        /* THE CONVERTER CARD */
+        .main-card {
+            background: rgba(5, 5, 5, 0.7); /* Deep dark glass */
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+            padding: 60px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
             width: 100%;
-            max-width: 850px;
+            max-width: 700px;
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         h1 {
-            text-align: center;
-            font-size: 32px;
-            margin-bottom: 35px;
-            letter-spacing: 3px;
-            font-weight: 800;
-            text-transform: uppercase;
-            background: linear-gradient(to bottom, #ffffff, var(--neon-purple));
+            font-size: 48px;
+            font-weight: 900;
+            margin-bottom: 40px;
+            letter-spacing: -1px;
+            background: linear-gradient(to right, #fff, var(--accent-purple));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        /* 4. THE UPLOADER - PERFECTLY CENTERED */
-        .file-upload-wrapper {
+        /* THE UPLOAD BOX */
+        .drop-zone {
+            width: 100%;
+            height: 200px;
+            border: 2px dashed rgba(191, 0, 255, 0.5);
+            border-radius: 24px;
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
-            width: 100%;
-            border: 2px dashed var(--neon-purple);
-            border-radius: 20px;
-            padding: 70px;
-            background: rgba(160, 32, 240, 0.02);
-            transition: 0.4s;
+            align-items: center;
             cursor: pointer;
-            text-align: center;
+            transition: 0.3s;
+            background: rgba(191, 0, 255, 0.03);
         }
 
-        .file-upload-wrapper:hover {
-            background: rgba(160, 32, 240, 0.07);
-            border-style: solid;
-            box-shadow: inset 0 0 30px rgba(160, 32, 240, 0.1);
+        .drop-zone:hover {
+            border-color: var(--accent-purple);
+            background: rgba(191, 0, 255, 0.08);
+            box-shadow: 0 0 30px rgba(191, 0, 255, 0.1);
         }
+
+        .drop-zone p { font-size: 18px; font-weight: 600; color: #fff; }
+        .drop-zone span { font-size: 14px; color: var(--text-gray); margin-top: 8px; }
 
         input[type="file"] { display: none; }
 
-        .btn {
-            background: var(--neon-purple);
+        /* THE ACTION BUTTON */
+        .convert-btn {
+            background: var(--accent-purple);
             color: white;
             border: none;
-            padding: 20px;
-            border-radius: 15px;
+            padding: 20px 40px;
+            border-radius: 16px;
             font-size: 18px;
             font-weight: 800;
             width: 100%;
-            margin-top: 35px;
+            margin-top: 30px;
             cursor: pointer;
-            box-shadow: 0 5px 25px rgba(160, 32, 240, 0.5);
             display: none;
             transition: 0.3s;
+            box-shadow: 0 10px 25px rgba(191, 0, 255, 0.4);
         }
 
-        .btn:hover {
+        .convert-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 35px rgba(160, 32, 240, 0.7);
+            box-shadow: 0 15px 35px rgba(191, 0, 255, 0.6);
         }
 
-        #status { 
-            text-align: center; 
-            margin-top: 25px; 
-            font-weight: 600; 
-            color: var(--neon-purple);
-            text-transform: uppercase;
+        #status-text {
+            margin-top: 25px;
+            font-weight: 600;
+            color: var(--accent-purple);
+            font-size: 14px;
             letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* VERSION TAG */
+        .version {
+            margin-top: auto;
+            text-align: center;
+            font-size: 10px;
+            color: var(--text-gray);
+            letter-spacing: 2px;
         }
     </style>
 </head>
@@ -177,121 +177,106 @@
 
     <div class="sidebar">
         <div class="logo-area">
-            <img src="logo.png" alt="Bridges" onerror="this.style.display='none'">
+            <img src="logo.png" alt="B" onerror="this.style.display='none'">
         </div>
-        
-        <div class="nav-item">Data Formatter</div>
-        <div class="nav-item" style="opacity: 0.4; cursor: not-allowed;">My Work</div>
-        <div class="nav-item" style="opacity: 0.4; cursor: not-allowed;">Your Learning</div>
-        
-        <hr>
-        
-        <div class="coming-soon">Purchase Formats</div>
-        <div class="coming-soon">Bank Statements</div>
-        
-        <div style="margin-top: auto; text-align: center; font-size: 10px; color: #333;">
-            VERSION 3.0 | NO-LOGIN SECURE
-        </div>
+        <div class="nav-active">FORMATTER</div>
+        <div class="version">V 5.0 | BY BRIDGES</div>
     </div>
 
     <div class="main-content">
-        <div class="glass-panel">
-            <h1>Bridges Engine</h1>
+        <div class="main-card">
+            <h1>Bridges</h1>
             
-            <label class="file-upload-wrapper" for="file-upload">
-                <div style="font-size: 22px; font-weight: 700; margin-bottom: 10px;">⚡ UPLOAD ORDER SHEET ⚡</div>
-                <div style="color: var(--text-dim); font-size: 14px;">Drag & Drop or Click to Browse</div>
-                <input id="file-upload" type="file" accept=".xlsx, .csv" />
+            <label class="drop-zone" for="file-input">
+                <p>Drop Excel File</p>
+                <span>or click to browse your computer</span>
+                <input id="file-input" type="file" accept=".xlsx, .csv" />
             </label>
 
-            <div id="status"></div>
-            <button id="download-btn" class="btn">GENERATE FORMATTED EXCEL</button>
+            <div id="status-text"></div>
+            <button id="download-btn" class="convert-btn">DOWNLOAD CONVERTED SHEET</button>
         </div>
     </div>
 
     <script>
-        let finalWorkbookData = [];
+        let processedData = [];
 
-        document.getElementById('file-upload').addEventListener('change', handleFile, false);
-        document.getElementById('download-btn').addEventListener('click', downloadExcel, false);
-
-        function handleFile(e) {
+        document.getElementById('file-input').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
-            const fileName = file.name.toLowerCase();
             
-            document.getElementById('status').innerText = "CALCULATING TAXES...";
-            document.getElementById('status').style.color = "#a020f0";
-
+            document.getElementById('status-text').innerText = "Processing Logic...";
+            
             const reader = new FileReader();
             reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, {type: 'array'});
-                    const rawData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {header: 1, defval: ""});
-                    processData(rawData, fileName);
-                } catch (err) {
-                    document.getElementById('status').innerText = "ERROR PROCESSING FILE";
-                }
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                const json = XLSX.utils.sheet_to_json(sheet, {header: 1, defval: ""});
+                
+                runBridgesEngine(json, file.name.toLowerCase());
             };
             reader.readAsArrayBuffer(file);
-        }
+        });
 
-        function processData(data, fileName) {
-            const today = new Date();
-            const today_ist = String(today.getDate()).padStart(2, '0') + '/' + String(today.getMonth() + 1).padStart(2, '0') + '/' + today.getFullYear();
+        function runBridgesEngine(data, fileName) {
+            const today = new Date().toLocaleDateString('en-GB'); // DD/MM/YYYY
+            
+            const h1 = data[0];
+            const h2 = data[1];
+            let headers = h1.map((val, i) => {
+                let sub = String(h2[i] || "").trim();
+                return (sub && sub.toLowerCase() !== "nan") ? `${String(val).trim()} ${sub}`.trim() : "";
+            });
 
-            const header1 = data[0];
-            const header2 = data[1];
-            let combinedHeaders = [];
-            for(let i=0; i < Math.max(header1.length, header2.length); i++) {
-                let p = String(header1[i] || "").trim();
-                let s = String(header2[i] || "").trim();
-                combinedHeaders.push(s && s.toLowerCase() !== "nan" ? `${p} ${s}`.trim() : "");
-            }
+            let pIdx = headers.findIndex(h => h.toLowerCase().includes("product") || h.toLowerCase().includes("system")) || 1;
+            let gIdx = headers.findIndex(h => h.toLowerCase().includes("gst")) || 2;
+            let bIdx = headers.findIndex(h => h.toLowerCase().includes("billing")) || 3;
 
-            let productIdx = combinedHeaders.findIndex(c => c.toLowerCase().includes("product") || c.toLowerCase().includes("system")) || 1;
-            let gstIdx = combinedHeaders.findIndex(c => c.toLowerCase().includes("gst")) || 2;
-            let billingIdx = combinedHeaders.findIndex(c => c.toLowerCase().includes("billing")) || 3;
+            let stores = headers.map((h, i) => ({name: h, idx: i})).filter(h => h.idx > bIdx && h.name && !h.name.toLowerCase().includes("total"));
 
-            let storeCols = [];
-            for(let i = billingIdx + 1; i < combinedHeaders.length; i++) {
-                if(combinedHeaders[i] && !combinedHeaders[i].toLowerCase().includes("total")) {
-                    storeCols.push({name: combinedHeaders[i], index: i});
-                }
-            }
+            let results = [["SL", "voucher no", "voucher date", "Party name", "Product", "Qty", "GST %", "Rate per Qty excl.GST", "Cgst", "SGST", "IGST", "Total"]];
 
-            let melted = [];
+            let rowCount = 0;
             for (let r = 2; r < data.length; r++) {
-                if(!data[r][productIdx]) continue;
-                storeCols.forEach((store, sIdx) => {
-                    let qty = parseFloat(String(data[r][store.index] || "").replace(/[^\d.]/g, ''));
+                if(!data[r][pIdx]) continue;
+                
+                stores.forEach((store, sIdx) => {
+                    let rawQty = String(data[r][store.idx] || "").replace(/[^\d.]/g, '');
+                    let qty = parseFloat(rawQty);
+                    
                     if(qty > 0) {
-                        melted.push({
-                            p: data[r][productIdx],
-                            b: data[r][billingIdx],
-                            g: data[r][gstIdx],
-                            party: store.name,
-                            qty: qty,
-                            vNo: sIdx + 1
-                        });
+                        rowCount++;
+                        let gRaw = parseFloat(String(data[r][gIdx]).replace(/[^\d.]/g, '')) || 0;
+                        let gPercent = (gRaw < 1 && gRaw > 0) ? Math.round(gRaw * 100) : Math.round(gRaw);
+                        let bill = parseFloat(String(data[r][bIdx]).replace(/[^\d.]/g, '')) || 0;
+                        
+                        let rate = parseFloat((bill / (1 + (gPercent / 100))).toFixed(2));
+                        let tax = rate * (gPercent / 100) * qty;
+                        
+                        const isKA = ["bengaluru", "mysuru", "mangaluru", "hubballi", "belagavi"].some(c => fileName.includes(c));
+                        
+                        let c = isKA ? parseFloat((tax/2).toFixed(2)) : 0;
+                        let s = isKA ? parseFloat((tax/2).toFixed(2)) : 0;
+                        let i = isKA ? 0 : parseFloat(tax.toFixed(2));
+                        let total = parseFloat(((rate * qty) + c + s + i).toFixed(2));
+
+                        results.push([rowCount, sIdx + 1, today, store.name, data[r][pIdx], qty, gPercent, rate, c, s, i, total]);
                     }
                 });
             }
 
-            melted.sort((a, b) => a.vNo - b.vNo);
+            processedData = results;
+            document.getElementById('status-text').innerText = `SUCCESS: ${rowCount} ROWS GENERATED`;
+            document.getElementById('download-btn').style.display = "block";
+        }
 
-            const karnataka_cities = ["bengaluru", "mysuru", "mangaluru", "hubballi", "dharwad", "belagavi", "kalaburagi", "ballari", "vijayapura", "shivamogga", "tumakuru", "raichur", "bidar", "hospet", "gadag", "udupi", "chitradurga", "hassan", "mandya", "kolar", "chikkaballapur", "ramanagara", "chikkamagaluru", "madikeri", "karwar", "bagalkot", "yadgir", "koppal", "haveri", "davanagere", "chamarajanagar", "kodagu", "bhadravati", "robertsonpet", "kolar gold fields", "sirsi", "dandeli", "ranebennur", "gokak", "jamkhandi", "sindhanur", "gangavati", "ilkal", "sagar"];
-            const isKarnataka = karnataka_cities.some(city => fileName.includes(city));
-
-            finalWorkbookData = [["SL", "voucher no", "voucher date", "Party name", "Product", "Qty", "GST %", "Rate per Qty excl.GST", "Cgst", "SGST", "IGST", "Total"]];
-
-            melted.forEach((item, i) => {
-                let gRaw = parseFloat(String(item.g).replace(/[^\d.]/g, '')) || 0;
-                let gPercent = (gRaw < 1 && gRaw > 0) ? Math.round(gRaw * 100) : Math.round(gRaw);
-                let billPrice = parseFloat(String(item.b).replace(/[^\d.]/g, '')) || 0;
-                
-                let rateExcl = parseFloat((billPrice / (1 + (gPercent / 100))).toFixed(2));
-                let tax = rateExcl * (gPercent / 100) * item.qty;
-                
-                let cgst = isKarnataka ? parseFloat((
+        document.getElementById('download-btn').addEventListener('click', function() {
+            const ws = XLSX.utils.aoa_to_sheet(processedData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Bridges_Output");
+            XLSX.writeFile(wb, "Bridges_Output.xlsx");
+        });
+    </script>
+</body>
+</html>
