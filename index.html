@@ -3,165 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bridges Data Engine</title>
+    <title>Bridges | Data Engine</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
     <style>
-        /* 1. Reset and Apply Apple Font (San Francisco) */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            color: #ffffff;
+        /* 1. THE NEON THEME VARIABLES */
+        :root {
+            --bg-black: #000000;
+            --panel-dark: rgba(10, 0, 20, 0.8);
+            --neon-purple: #a020f0;
+            --glow-purple: rgba(160, 32, 240, 0.4);
+            --text-main: #ffffff;
+            --text-dim: #a9a9a9;
         }
 
-        /* 2. Full-Screen Wallpaper Background */
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
         body {
-            background-image: url("wallpaper.png");
-            background-color: #000000; /* Fallback */
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            background-color: var(--bg-black);
+            /* Subtle purple ambient glow in corners */
+            background-image: 
+                radial-gradient(circle at 15% 15%, #1a0033 0%, transparent 35%),
+                radial-gradient(circle at 85% 85%, #0d001a 0%, transparent 35%);
             display: flex;
             height: 100vh;
             overflow: hidden;
+            color: var(--text-main);
         }
 
-        /* 3. Glassmorphism Sidebar */
+        /* 2. SIDEBAR NAVIGATION */
         .sidebar {
             width: 280px;
-            background-color: rgba(10, 10, 10, 0.95);
-            padding: 20px;
+            background-color: #05000a;
+            padding: 30px;
             display: flex;
             flex-direction: column;
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            border-right: 1px solid rgba(160, 32, 240, 0.3);
+            box-shadow: 5px 0 20px rgba(0, 0, 0, 0.5);
         }
 
-        .logo-area {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .logo-area img {
-            max-width: 150px;
-        }
-
-        .nav-item, .coming-soon-btn {
-            padding: 12px 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: 0.3s;
+        .logo-area { text-align: center; margin-bottom: 40px; }
+        .logo-area img { 
+            max-width: 140px; 
+            filter: drop-shadow(0 0 10px var(--neon-purple)); 
         }
 
         .nav-item {
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            background: rgba(160, 32, 240, 0.05);
+            border: 1px solid rgba(160, 32, 240, 0.1);
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
         }
 
         .nav-item:hover {
-            background-color: rgba(255, 255, 255, 0.2);
+            background: rgba(160, 32, 240, 0.2);
+            border-color: var(--neon-purple);
+            transform: translateX(8px);
+            box-shadow: 0 0 15px var(--glow-purple);
         }
 
-        .coming-soon-btn {
-            background-color: transparent;
-            border: 1px dashed rgba(255, 255, 255, 0.3);
-            color: #888;
-            cursor: not-allowed;
+        .coming-soon {
+            padding: 15px;
+            color: #444;
+            border: 1px dashed #333;
+            border-radius: 12px;
+            margin-top: 10px;
+            font-size: 14px;
+            text-align: center;
         }
 
-        hr {
-            border: 0;
-            height: 1px;
-            background: rgba(255, 255, 255, 0.2);
-            margin: 20px 0;
-        }
+        hr { border: 0; height: 1px; background: var(--neon-purple); opacity: 0.2; margin: 25px 0; }
 
-        /* 4. Main Glassmorphism Dashboard Area */
+        /* 3. MAIN DASHBOARD AREA */
         .main-content {
             flex: 1;
             padding: 40px;
-            overflow-y: auto;
             display: flex;
             justify-content: center;
+            align-items: center;
+            /* Wallpaper overlay if file exists */
+            background-image: url("wallpaper.png");
+            background-size: cover;
+            background-position: center;
         }
 
         .glass-panel {
-            background-color: rgba(10, 10, 10, 0.85);
-            padding: 40px;
-            border-radius: 20px;
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--panel-dark);
+            padding: 50px;
+            border-radius: 30px;
+            border: 1px solid rgba(160, 32, 240, 0.4);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
             width: 100%;
-            max-width: 900px;
-            height: fit-content;
+            max-width: 850px;
         }
 
         h1 {
             text-align: center;
-            margin-bottom: 30px;
-            font-weight: 600;
-            letter-spacing: 1px;
+            font-size: 32px;
+            margin-bottom: 35px;
+            letter-spacing: 3px;
+            font-weight: 800;
+            text-transform: uppercase;
+            background: linear-gradient(to bottom, #ffffff, var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        /* 5. Custom File Uploader UI - FIX APPLIED HERE */
+        /* 4. THE UPLOADER - PERFECTLY CENTERED */
         .file-upload-wrapper {
-            display: block; /* Forces it to take up the full width */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             width: 100%;
-            border: 2px dashed rgba(255, 255, 255, 0.4);
-            border-radius: 12px;
-            padding: 40px;
-            text-align: center; /* Centers the text perfectly now */
-            background-color: rgba(255, 255, 255, 0.05);
-            transition: 0.3s;
+            border: 2px dashed var(--neon-purple);
+            border-radius: 20px;
+            padding: 70px;
+            background: rgba(160, 32, 240, 0.02);
+            transition: 0.4s;
             cursor: pointer;
-            margin-bottom: 20px;
+            text-align: center;
         }
 
         .file-upload-wrapper:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-color: #ffffff;
+            background: rgba(160, 32, 240, 0.07);
+            border-style: solid;
+            box-shadow: inset 0 0 30px rgba(160, 32, 240, 0.1);
         }
 
-        input[type="file"] {
-            display: none;
-        }
-
-        .custom-file-upload {
-            display: inline-block;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: 500;
-        }
+        input[type="file"] { display: none; }
 
         .btn {
-            background-color: #ffffff;
-            color: #000000;
+            background: var(--neon-purple);
+            color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: 800;
             width: 100%;
+            margin-top: 35px;
+            cursor: pointer;
+            box-shadow: 0 5px 25px rgba(160, 32, 240, 0.5);
+            display: none;
             transition: 0.3s;
-            margin-top: 20px;
-            display: none; /* Hidden until data is processed */
         }
 
         .btn:hover {
-            background-color: #e0e0e0;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 35px rgba(160, 32, 240, 0.7);
         }
 
-        #status {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 14px;
-            color: #4CAF50; /* Success Green */
+        #status { 
+            text-align: center; 
+            margin-top: 25px; 
+            font-weight: 600; 
+            color: var(--neon-purple);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
     </style>
 </head>
@@ -169,34 +177,35 @@
 
     <div class="sidebar">
         <div class="logo-area">
-            <img src="logo.png" alt="Bridges Logo" onerror="this.style.display='none'">
+            <img src="logo.png" alt="Bridges" onerror="this.style.display='none'">
         </div>
         
-        <h3 style="color: #a9a9a9; margin-bottom: 10px; font-size: 14px;">🗂️ Active Modules</h3>
         <div class="nav-item">Data Formatter</div>
-        <div class="nav-item" onclick="alert('My Work Module - Coming Soon to the Web Version!')">My Work</div>
-        <div class="nav-item" onclick="alert('Your Learning Module - Coming Soon to the Web Version!')">Your Learning</div>
+        <div class="nav-item" style="opacity: 0.4; cursor: not-allowed;">My Work</div>
+        <div class="nav-item" style="opacity: 0.4; cursor: not-allowed;">Your Learning</div>
         
         <hr>
         
-        <h3 style="color: #a9a9a9; margin-bottom: 10px; font-size: 14px;">🚀 Coming Soon</h3>
-        <button class="coming-soon-btn" disabled>Purchase Formats</button>
-        <button class="coming-soon-btn" disabled>Bank Statements</button>
+        <div class="coming-soon">Purchase Formats</div>
+        <div class="coming-soon">Bank Statements</div>
+        
+        <div style="margin-top: auto; text-align: center; font-size: 10px; color: #333;">
+            VERSION 3.0 | NO-LOGIN SECURE
+        </div>
     </div>
 
     <div class="main-content">
         <div class="glass-panel">
-            <h1>Bridges Data Engine</h1>
+            <h1>Bridges Engine</h1>
             
             <label class="file-upload-wrapper" for="file-upload">
-                <div class="custom-file-upload">
-                    📁 Click here to Upload Excel or CSV
-                </div>
+                <div style="font-size: 22px; font-weight: 700; margin-bottom: 10px;">⚡ UPLOAD ORDER SHEET ⚡</div>
+                <div style="color: var(--text-dim); font-size: 14px;">Drag & Drop or Click to Browse</div>
                 <input id="file-upload" type="file" accept=".xlsx, .csv" />
             </label>
 
             <div id="status"></div>
-            <button id="download-btn" class="btn">⬇️ Download Formatted Excel</button>
+            <button id="download-btn" class="btn">GENERATE FORMATTED EXCEL</button>
         </div>
     </div>
 
@@ -207,196 +216,82 @@
         document.getElementById('download-btn').addEventListener('click', downloadExcel, false);
 
         function handleFile(e) {
-            const files = e.target.files;
-            if (files.length === 0) return;
-            const file = files[0];
+            const file = e.target.files[0];
+            if (!file) return;
             const fileName = file.name.toLowerCase();
             
-            document.getElementById('status').innerText = "Processing Data...";
-            document.getElementById('status').style.color = "#FFC107"; 
+            document.getElementById('status').innerText = "CALCULATING TAXES...";
+            document.getElementById('status').style.color = "#a020f0";
 
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, {type: 'array'});
-                    const firstSheetName = workbook.SheetNames[0];
-                    const worksheet = workbook.Sheets[firstSheetName];
-                    
-                    const rawData = XLSX.utils.sheet_to_json(worksheet, {header: 1, defval: ""});
-                    
+                    const rawData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {header: 1, defval: ""});
                     processData(rawData, fileName);
-                } catch (error) {
-                    document.getElementById('status').innerText = "Error parsing file. Ensure it is a valid format.";
-                    document.getElementById('status').style.color = "#FF5252";
-                    console.error(error);
+                } catch (err) {
+                    document.getElementById('status').innerText = "ERROR PROCESSING FILE";
                 }
             };
             reader.readAsArrayBuffer(file);
         }
 
         function processData(data, fileName) {
-            if(data.length < 3) {
-                alert("File too small. Expecting headers on rows 1 and 2, data starting row 3.");
-                return;
-            }
-
             const today = new Date();
-            const today_ist = String(today.getDate()).padStart(2, '0') + '/' + 
-                              String(today.getMonth() + 1).padStart(2, '0') + '/' + 
-                              today.getFullYear();
+            const today_ist = String(today.getDate()).padStart(2, '0') + '/' + String(today.getMonth() + 1).padStart(2, '0') + '/' + today.getFullYear();
 
             const header1 = data[0];
             const header2 = data[1];
             let combinedHeaders = [];
-            
             for(let i=0; i < Math.max(header1.length, header2.length); i++) {
-                let p = header1[i] ? String(header1[i]).trim() : "";
-                let s = header2[i] ? String(header2[i]).trim() : "";
-                if (s && s.toLowerCase() !== "nan") {
-                    combinedHeaders.push(`${p} ${s}`.trim());
-                } else {
-                    combinedHeaders.push("");
-                }
+                let p = String(header1[i] || "").trim();
+                let s = String(header2[i] || "").trim();
+                combinedHeaders.push(s && s.toLowerCase() !== "nan" ? `${p} ${s}`.trim() : "");
             }
 
-            let productColIdx = -1, billingColIdx = -1, gstColIdx = -1;
-            
-            for(let i=0; i < combinedHeaders.length; i++) {
-                let col = combinedHeaders[i].toLowerCase();
-                if(col === "") continue;
-                
-                if (productColIdx === -1 && (col.includes("system") || col.includes("product") || col.includes("item"))) productColIdx = i;
-                if (billingColIdx === -1 && col.includes("billing")) billingColIdx = i;
-                if (gstColIdx === -1 && col.includes("gst")) gstColIdx = i;
-            }
+            let productIdx = combinedHeaders.findIndex(c => c.toLowerCase().includes("product") || c.toLowerCase().includes("system")) || 1;
+            let gstIdx = combinedHeaders.findIndex(c => c.toLowerCase().includes("gst")) || 2;
+            let billingIdx = combinedHeaders.findIndex(c => c.toLowerCase().includes("billing")) || 3;
 
-            if(productColIdx === -1) productColIdx = 1;
-            if(gstColIdx === -1) gstColIdx = 2;
-            if(billingColIdx === -1) billingColIdx = 3;
-
-            let storeColumns = [];
-            for(let i = billingColIdx + 1; i < combinedHeaders.length; i++) {
+            let storeCols = [];
+            for(let i = billingIdx + 1; i < combinedHeaders.length; i++) {
                 if(combinedHeaders[i] && !combinedHeaders[i].toLowerCase().includes("total")) {
-                    storeColumns.push({name: combinedHeaders[i], index: i});
+                    storeCols.push({name: combinedHeaders[i], index: i});
                 }
             }
 
-            let voucherMap = {};
-            storeColumns.forEach((col, index) => {
-                voucherMap[col.name] = index + 1;
-            });
-
-            let meltedData = [];
+            let melted = [];
             for (let r = 2; r < data.length; r++) {
-                let row = data[r];
-                if(!row || row.length === 0) continue;
-
-                let product = row[productColIdx];
-                let rawBilling = row[billingColIdx];
-                let rawGst = row[gstColIdx];
-
-                if(!product) continue;
-
-                storeColumns.forEach(store => {
-                    let rawQty = String(row[store.index] || "").replace(/[^\d.]/g, '');
-                    let qty = parseFloat(rawQty);
-                    
-                    if (!isNaN(qty) && qty > 0) {
-                        meltedData.push({
-                            product: product,
-                            billing: rawBilling,
-                            gst: rawGst,
+                if(!data[r][productIdx]) continue;
+                storeCols.forEach((store, sIdx) => {
+                    let qty = parseFloat(String(data[r][store.index] || "").replace(/[^\d.]/g, ''));
+                    if(qty > 0) {
+                        melted.push({
+                            p: data[r][productIdx],
+                            b: data[r][billingIdx],
+                            g: data[r][gstIdx],
                             party: store.name,
                             qty: qty,
-                            voucherNo: voucherMap[store.name]
+                            vNo: sIdx + 1
                         });
                     }
                 });
             }
 
-            meltedData.sort((a, b) => a.voucherNo - b.voucherNo);
+            melted.sort((a, b) => a.vNo - b.vNo);
 
-            const karnataka_cities = [
-                "bengaluru", "mysuru", "mangaluru", "hubballi", "dharwad", "belagavi",
-                "kalaburagi", "ballari", "vijayapura", "shivamogga", "tumakuru", "raichur",
-                "bidar", "hospet", "gadag", "udupi", "chitradurga", "hassan", "mandya",
-                "kolar", "chikkaballapur", "ramanagara", "chikkamagaluru", "madikeri",
-                "karwar", "bagalkot", "yadgir", "koppal", "haveri", "davanagere",
-                "chamarajanagar", "kodagu", "bhadravati", "robertsonpet", "kolar gold fields",
-                "sirsi", "dandeli", "ranebennur", "gokak", "jamkhandi", "sindhanur",
-                "gangavati", "ilkal", "sagar"
-            ];
+            const karnataka_cities = ["bengaluru", "mysuru", "mangaluru", "hubballi", "dharwad", "belagavi", "kalaburagi", "ballari", "vijayapura", "shivamogga", "tumakuru", "raichur", "bidar", "hospet", "gadag", "udupi", "chitradurga", "hassan", "mandya", "kolar", "chikkaballapur", "ramanagara", "chikkamagaluru", "madikeri", "karwar", "bagalkot", "yadgir", "koppal", "haveri", "davanagere", "chamarajanagar", "kodagu", "bhadravati", "robertsonpet", "kolar gold fields", "sirsi", "dandeli", "ranebennur", "gokak", "jamkhandi", "sindhanur", "gangavati", "ilkal", "sagar"];
             const isKarnataka = karnataka_cities.some(city => fileName.includes(city));
 
-            finalWorkbookData = [];
-            
-            finalWorkbookData.push([
-                "SL", "voucher no", "voucher date", "Party name", "Product", "Qty", 
-                "GST %", "Rate per Qty excl.GST", "Cgst", "SGST", "IGST", "Total"
-            ]);
+            finalWorkbookData = [["SL", "voucher no", "voucher date", "Party name", "Product", "Qty", "GST %", "Rate per Qty excl.GST", "Cgst", "SGST", "IGST", "Total"]];
 
-            meltedData.forEach((item, index) => {
-                let gstStr = String(item.gst || "").replace(/[^\d.]/g, '');
-                let gstNum = parseFloat(gstStr) || 0;
-                let gstPercent = (gstNum < 1 && gstNum > 0) ? Math.round(gstNum * 100) : Math.round(gstNum);
-
-                let billingStr = String(item.billing || "").replace(/[^\d.]/g, '');
-                let billingPrice = parseFloat(billingStr) || 0;
-
-                let rateExcl = 0;
-                if (gstPercent === 5) rateExcl = billingPrice / 1.05;
-                else if (gstPercent === 12) rateExcl = billingPrice / 1.12;
-                else if (gstPercent === 18) rateExcl = billingPrice / 1.18;
-                else if (gstPercent === 28) rateExcl = billingPrice / 1.28;
-                else if (gstPercent === 40) rateExcl = billingPrice / 1.40;
-                else rateExcl = billingPrice / (1 + (gstPercent / 100));
+            melted.forEach((item, i) => {
+                let gRaw = parseFloat(String(item.g).replace(/[^\d.]/g, '')) || 0;
+                let gPercent = (gRaw < 1 && gRaw > 0) ? Math.round(gRaw * 100) : Math.round(gRaw);
+                let billPrice = parseFloat(String(item.b).replace(/[^\d.]/g, '')) || 0;
                 
-                rateExcl = parseFloat(rateExcl.toFixed(2));
-
-                let totalTax = rateExcl * (gstPercent / 100) * item.qty;
-                let cgst = 0, sgst = 0, igst = 0;
-
-                if (isKarnataka) {
-                    cgst = parseFloat((totalTax / 2).toFixed(2));
-                    sgst = parseFloat((totalTax / 2).toFixed(2));
-                } else {
-                    igst = parseFloat(totalTax.toFixed(2));
-                }
-
-                let totalRow = (rateExcl * item.qty) + cgst + sgst + igst;
-
-                finalWorkbookData.push([
-                    index + 1,              
-                    item.voucherNo,         
-                    today_ist,              
-                    item.party,             
-                    item.product,           
-                    item.qty,               
-                    gstPercent,             
-                    rateExcl,               
-                    cgst,                   
-                    sgst,                   
-                    igst,                   
-                    parseFloat(totalRow.toFixed(2)) 
-                ]);
-            });
-
-            let taxType = isKarnataka ? 'CGST & SGST (Karnataka Detected)' : 'IGST';
-            document.getElementById('status').innerText = `Success! Generated ${meltedData.length} Rows. Tax Applied: ${taxType}`;
-            document.getElementById('status').style.color = "#4CAF50";
-            document.getElementById('download-btn').style.display = "block";
-        }
-
-        function downloadExcel() {
-            if(finalWorkbookData.length === 0) return;
-            
-            const ws = XLSX.utils.aoa_to_sheet(finalWorkbookData);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Formatted Data");
-            
-            XLSX.writeFile(wb, "Bridges_Output.xlsx");
-        }
-    </script>
-</body>
-</html>
+                let rateExcl = parseFloat((billPrice / (1 + (gPercent / 100))).toFixed(2));
+                let tax = rateExcl * (gPercent / 100) * item.qty;
+                
+                let cgst = isKarnataka ? parseFloat((
