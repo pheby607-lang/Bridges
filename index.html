@@ -11,155 +11,49 @@
             --bg-black: #000000;
             --accent-purple: #a020f0;
             --dim-purple: rgba(160, 32, 240, 0.2);
-            --glass: rgba(10, 10, 10, 0.8);
+            --glass: rgba(10, 10, 10, 0.85);
             --neon-glow: 0 0 20px rgba(160, 32, 240, 0.4);
         }
 
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            color: #ffffff;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #ffffff; }
 
         body {
             background-color: var(--bg-black);
             background-image: url("wallpaper.png"); 
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
+            background-size: cover; background-position: center; background-attachment: fixed;
+            display: flex; height: 100vh; overflow: hidden;
         }
 
         /* SIDEBAR */
         .sidebar {
-            width: 260px;
-            background: rgba(5, 0, 15, 0.95);
-            backdrop-filter: blur(25px);
-            padding: 40px 15px;
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid rgba(160, 32, 240, 0.2);
-            z-index: 100;
+            width: 260px; background: rgba(5, 0, 15, 0.95); backdrop-filter: blur(25px);
+            padding: 40px 15px; display: flex; flex-direction: column; border-right: 1px solid rgba(160, 32, 240, 0.2); z-index: 100;
         }
 
         .logo-area { text-align: center; margin-bottom: 40px; }
-        .logo-area img { 
-            max-width: 140px; 
-            mix-blend-mode: screen; 
-            filter: drop-shadow(0 0 10px var(--accent-purple));
-        }
+        .logo-area img { max-width: 140px; mix-blend-mode: screen; filter: drop-shadow(0 0 10px var(--accent-purple)); }
 
-        .nav-category {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--accent-purple);
-            margin: 20px 0 10px 10px;
-            font-weight: 800;
-        }
-
-        .nav-item {
-            padding: 12px 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            margin-bottom: 5px;
-            transition: 0.3s;
-            font-weight: 500;
-            border: 1px solid transparent;
-        }
-
+        .nav-category { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-purple); margin: 20px 0 10px 10px; font-weight: 800; }
+        .nav-item { padding: 12px 20px; border-radius: 10px; cursor: pointer; margin-bottom: 5px; transition: 0.3s; font-weight: 500; border: 1px solid transparent; }
         .nav-item:hover { background: rgba(255, 255, 255, 0.05); }
-
-        .nav-item.active {
-            background: var(--dim-purple);
-            border: 1px solid var(--accent-purple);
-            box-shadow: 0 0 15px rgba(160, 32, 240, 0.2);
-        }
+        .nav-item.active { background: var(--dim-purple); border: 1px solid var(--accent-purple); box-shadow: 0 0 15px rgba(160, 32, 240, 0.2); }
 
         /* MAIN AREA */
-        .main-content {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 40px;
-        }
-
-        .view-section {
-            width: 100%;
-            max-width: 800px;
-            display: none;
-            animation: fadeIn 0.4s ease;
-        }
-
+        .main-content { flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px; }
+        .view-section { width: 100%; max-width: 800px; display: none; animation: fadeIn 0.4s ease; }
         .view-section.active { display: block; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .card {
-            background: var(--glass);
-            padding: 60px;
-            border-radius: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(30px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-            text-align: center;
-        }
-
-        h1 {
-            font-size: 52px;
-            font-weight: 900;
-            margin-bottom: 40px;
-            background: linear-gradient(to right, #fff, var(--accent-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -2px;
-        }
+        .card { background: var(--glass); padding: 60px; border-radius: 40px; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(30px); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6); text-align: center; }
+        h1 { font-size: 52px; font-weight: 900; margin-bottom: 40px; background: linear-gradient(to right, #fff, var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -2px; }
 
         /* DRAG & DROP ZONE */
-        .upload-label {
-            width: 100%;
-            border: 2px dashed var(--accent-purple);
-            border-radius: 24px;
-            padding: 70px 20px;
-            background: rgba(160, 32, 240, 0.03);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: block;
-            position: relative;
-        }
+        .upload-label { width: 100%; border: 2px dashed var(--accent-purple); border-radius: 24px; padding: 70px 20px; background: rgba(160, 32, 240, 0.03); cursor: pointer; transition: all 0.3s ease; display: block; position: relative; }
+        .upload-label.drag-over { background: rgba(160, 32, 240, 0.15); border-color: #ffffff; box-shadow: var(--neon-glow); transform: scale(1.02); }
 
-        /* Visual state when dragging a file over the box */
-        .upload-label.drag-over {
-            background: rgba(160, 32, 240, 0.15);
-            border-color: #ffffff;
-            box-shadow: var(--neon-glow);
-            transform: scale(1.02);
-        }
-
-        .btn {
-            background: var(--accent-purple);
-            color: white;
-            border: none;
-            padding: 22px;
-            border-radius: 15px;
-            font-size: 18px;
-            font-weight: bold;
-            width: 100%;
-            margin-top: 30px;
-            cursor: pointer;
-            display: none;
-            box-shadow: 0 10px 25px rgba(160, 32, 240, 0.4);
-        }
-
-        .status-msg {
-            margin-top: 25px;
-            font-weight: bold;
-            color: var(--accent-purple);
-            text-transform: uppercase;
-        }
+        .btn { background: var(--accent-purple); color: white; border: none; padding: 22px; border-radius: 15px; font-size: 18px; font-weight: bold; width: 100%; margin-top: 30px; cursor: pointer; display: none; box-shadow: 0 10px 25px rgba(160, 32, 240, 0.4); }
+        .status-msg { margin-top: 25px; font-weight: bold; color: var(--accent-purple); text-transform: uppercase; }
 
         input[type="file"] { display: none; }
     </style>
@@ -167,17 +61,11 @@
 <body>
 
     <div class="sidebar">
-        <div class="logo-area">
-            <img src="logo.png" alt="Bridges">
-        </div>
-
+        <div class="logo-area"><img src="logo.png" alt="Bridges" onerror="this.style.display='none'"></div>
         <div class="nav-category">Formatter</div>
         <div class="nav-item active" onclick="switchView('sales')">Sales</div>
-        <div class="nav-item" onclick="switchView('purchase')">Purchase</div>
-        
-        <div style="margin-top: auto; text-align: center; font-size: 10px; color: var(--accent-purple); opacity: 0.5;">
-            PRO EDITION V6.1
-        </div>
+        <div class="nav-item" onclick="switchView('purchase')">Purchase (GSTR-2B)</div>
+        <div style="margin-top: auto; text-align: center; font-size: 10px; color: var(--accent-purple); opacity: 0.5;">PRO EDITION V7.1</div>
     </div>
 
     <div class="main-content">
@@ -186,7 +74,6 @@
                 <h1>Bridges</h1>
                 <label class="upload-label" id="drop-zone-sales" for="sales-upload">
                     <p style="font-size: 22px; font-weight: 800;">⚡ DRAG OR UPLOAD SALES ⚡</p>
-                    <p style="font-size: 14px; opacity: 0.6; margin-top: 10px;">Supports .xlsx and .csv</p>
                     <input id="sales-upload" type="file" accept=".xlsx, .csv" />
                 </label>
                 <div id="sales-status" class="status-msg"></div>
@@ -197,20 +84,18 @@
         <div id="view-purchase" class="view-section">
             <div class="card">
                 <h1>Bridges</h1>
-                <label class="upload-label" id="drop-zone-purchase" for="purchase-upload">
-                    <p style="font-size: 22px; font-weight: 800; color: #00ffcc;">📦 DRAG OR UPLOAD PURCHASE 📦</p>
-                    <p style="font-size: 14px; opacity: 0.6; margin-top: 10px;">Supports .xlsx and .csv</p>
+                <label class="upload-label" id="drop-zone-purchase" for="purchase-upload" style="border-color: #00ffcc;">
+                    <p style="font-size: 22px; font-weight: 800; color: #00ffcc;">📦 DRAG OR UPLOAD GSTR-2B 📦</p>
                     <input id="purchase-upload" type="file" accept=".xlsx, .csv" />
                 </label>
-                <div id="purchase-status" class="status-msg"></div>
-                <button id="purchase-dl" class="btn" style="background: #00ffcc; color: #000;">DOWNLOAD PURCHASE EXCEL</button>
+                <div id="purchase-status" class="status-msg" style="color: #00ffcc;"></div>
+                <button id="purchase-dl" class="btn" style="background: #00ffcc; color: #000;">DOWNLOAD TALLY PURCHASE</button>
             </div>
         </div>
     </div>
 
     <script>
-        let salesData = [];
-        let purchaseData = [];
+        let salesData = [], purchaseData = [];
 
         function switchView(view) {
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
@@ -219,61 +104,35 @@
             event.currentTarget.classList.add('active');
         }
 
-        // --- DRAG AND DROP SETUP ---
-        function setupDragAndDrop(elementId, type) {
-            const dropZone = document.getElementById(elementId);
-
-            // Prevent default browser behavior (opening the file)
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                dropZone.addEventListener(eventName, e => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }, false);
-            });
-
-            // Visual feedback when dragging over
-            ['dragenter', 'dragover'].forEach(eventName => {
-                dropZone.addEventListener(eventName, () => dropZone.classList.add('drag-over'), false);
-            });
-
-            ['dragleave', 'drop'].forEach(eventName => {
-                dropZone.addEventListener(eventName, () => dropZone.classList.remove('drag-over'), false);
-            });
-
-            // Handle the dropped file
-            dropZone.addEventListener('drop', (e) => {
-                const file = e.dataTransfer.files[0];
-                if (file) handleFileProcessing(file, type);
-            }, false);
+        // DRAG & DROP INIT
+        function setupDrag(id, type) {
+            const el = document.getElementById(id);
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => el.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); }));
+            ['dragenter', 'dragover'].forEach(evt => el.addEventListener(evt, () => el.classList.add('drag-over')));
+            ['dragleave', 'drop'].forEach(evt => el.addEventListener(evt, () => el.classList.remove('drag-over')));
+            el.addEventListener('drop', e => { if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0], type); });
         }
+        setupDrag('drop-zone-sales', 'sales'); setupDrag('drop-zone-purchase', 'purchase');
+        document.getElementById('sales-upload').onchange = e => handleFile(e.target.files[0], 'sales');
+        document.getElementById('purchase-upload').onchange = e => handleFile(e.target.files[0], 'purchase');
 
-        // Initialize drag and drop for both sections
-        setupDragAndDrop('drop-zone-sales', 'sales');
-        setupDragAndDrop('drop-zone-purchase', 'purchase');
-
-        // Standard click-to-upload listeners
-        document.getElementById('sales-upload').addEventListener('change', (e) => handleFileProcessing(e.target.files[0], 'sales'));
-        document.getElementById('purchase-upload').addEventListener('change', (e) => handleFileProcessing(e.target.files[0], 'purchase'));
-
-        // Processing Router
-        function handleFileProcessing(file, type) {
+        function handleFile(file, type) {
             const reader = new FileReader();
             reader.onload = (event) => {
                 const data = new Uint8Array(event.target.result);
                 const workbook = XLSX.read(data, {type: 'array'});
                 const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {header: 1, defval: ""});
-                
                 if (type === 'sales') processSales(json, file.name.toLowerCase());
-                else processPurchase(json, file.name.toLowerCase());
+                else processPurchase(json);
             };
             reader.readAsArrayBuffer(file);
         }
 
+        // === SALES LOGIC ===
         function processSales(data, name) {
             const date = new Date().toLocaleDateString('en-GB');
             const h1 = data[0], h2 = data[1];
             const headers = h1.map((v, i) => (String(h2[i]).trim() && String(h2[i]).toLowerCase() !== "nan") ? `${String(v).trim()} ${String(h2[i]).trim()}` : "");
-            
             const pIdx = headers.findIndex(h => h.toLowerCase().includes("product") || h.toLowerCase().includes("system")) || 1;
             const gIdx = headers.findIndex(h => h.toLowerCase().includes("gst")) || 2;
             const bIdx = headers.findIndex(h => h.toLowerCase().includes("billing")) || 3;
@@ -288,42 +147,142 @@
                 });
             }
             melted.sort((a,b) => a.v - b.v);
-
             const isKA = ["bengaluru", "mysuru", "mangaluru", "hubballi", "belagavi"].some(c => name.includes(c));
+            
             salesData = [["SL", "voucher no", "voucher date", "Party name", "Product", "Qty", "GST %", "Rate per Qty excl.GST", "Cgst", "SGST", "IGST", "Total"]];
-
             melted.forEach((item, i) => {
                 let g = Math.round(parseFloat(String(item.g).replace(/[^\d.]/g, '')) < 1 ? parseFloat(String(item.g).replace(/[^\d.]/g, ''))*100 : parseFloat(String(item.g).replace(/[^\d.]/g, '')));
                 let rate = parseFloat((parseFloat(String(item.b).replace(/[^\d.]/g, '')) / (1 + (g/100))).toFixed(2));
                 let tax = rate * (g/100) * item.qty;
-                let c = isKA ? parseFloat((tax/2).toFixed(2)) : 0, s = isKA ? parseFloat((tax/2).toFixed(2)) : 0, ig = isKA ? 0 : parseFloat(tax.toFixed(2));
-                salesData.push([i+1, item.v, date, item.party, item.p, item.qty, g, rate, c, s, ig, parseFloat(((rate*item.qty)+c+s+ig).toFixed(2))]);
+                let c = isKA ? (tax/2).toFixed(2) : 0, st = isKA ? (tax/2).toFixed(2) : 0, ig = isKA ? 0 : tax.toFixed(2);
+                salesData.push([i+1, item.v, date, item.party, item.p, item.qty, g, rate, c, st, ig, (rate*item.qty + parseFloat(c) + parseFloat(st) + parseFloat(ig)).toFixed(2)]);
             });
 
-            document.getElementById('sales-status').innerText = "Sales Processed Successfully!";
+            document.getElementById('sales-status').innerText = "SALES PROCESSED SUCCESSFULLY!";
             document.getElementById('sales-dl').style.display = "block";
         }
 
-        function processPurchase(data, name) {
-            // Placeholder until you provide headers tomorrow
-            purchaseData = data; 
-            document.getElementById('purchase-status').innerText = "Purchase Logic Ready for Config...";
+        // === THE TAX DETECTIVE ALGEBRA SOLVER ===
+        function deduceTaxRates(totalTaxable, totalTax) {
+            const rates = [0.05, 0.12, 0.18, 0.28, 0.40];
+            const margin = 1.5;
+            if (totalTaxable <= 0) return [];
+            
+            for (let r of rates) {
+                if (Math.abs((totalTaxable * r) - totalTax) <= margin) {
+                    return [{ rate: r * 100, taxable: totalTaxable, tax: totalTax }];
+                }
+            }
+            
+            let splits = [];
+            for (let i = 0; i < rates.length; i++) {
+                for (let j = i + 1; j < rates.length; j++) {
+                    let r1 = rates[i], r2 = rates[j];
+                    let t1 = (totalTax - (totalTaxable * r2)) / (r1 - r2);
+                    let t2 = totalTaxable - t1;
+                    
+                    if (t1 > 5 && t2 > 5) {
+                        splits.push([
+                            { rate: r1 * 100, taxable: t1, tax: t1 * r1 },
+                            { rate: r2 * 100, taxable: t2, tax: t2 * r2 }
+                        ]);
+                    }
+                }
+            }
+            if (splits.length > 0) return splits[0]; 
+            return [{ rate: "MANUAL", taxable: totalTaxable, tax: totalTax }]; 
+        }
+
+        // === PURCHASE LOGIC (GSTR-2B) ===
+        function processPurchase(data) {
+            const status = document.getElementById('purchase-status');
+            
+            let headerIdx = 0;
+            for(let i = 0; i < Math.min(20, data.length); i++) {
+                if(data[i].some(c => String(c).toLowerCase().includes('trade/legal name'))) {
+                    headerIdx = i; break;
+                }
+            }
+            
+            const headers = data[headerIdx].map(h => String(h).toLowerCase().trim());
+            const pIdx = headers.findIndex(h => h.includes('trade/legal'));
+            const invIdx = headers.findIndex(h => h.includes('invoice number'));
+            const taxValIdx = headers.findIndex(h => h.includes('taxable value'));
+            const igstIdx = headers.findIndex(h => h.includes('integrated tax'));
+            const cgstIdx = headers.findIndex(h => h.includes('central tax'));
+            const sgstIdx = headers.findIndex(h => h.includes('state/ut tax'));
+
+            if(pIdx === -1 || taxValIdx === -1) {
+                status.innerText = "ERROR: Could not find required columns in sheet."; return;
+            }
+
+            let results = [["Date", "Voucher Type", "Party Name (Cr)", "Narration", "Dr Ledger 1", "Amount 1 (Taxable)", "Dr Ledger 2", "Amount 2", "Dr Ledger 3", "Amount 3", "Total Invoice Value"]];
+            
+            for(let r = headerIdx + 1; r < data.length; r++) {
+                let party = String(data[r][pIdx] || "").trim();
+                if(!party || party.toLowerCase().includes("total")) continue;
+
+                let inv = String(data[r][invIdx] || "").trim();
+                let taxable = parseFloat(data[r][taxValIdx]) || 0;
+                let igst = parseFloat(data[r][igstIdx]) || 0;
+                let cgst = parseFloat(data[r][cgstIdx]) || 0;
+                let sgst = parseFloat(data[r][sgstIdx]) || 0;
+                
+                if(taxable === 0) continue;
+
+                let pLower = party.toLowerCase();
+                let isBankOrPhonePe = pLower.includes('bank limited') || pLower.replace(/\s/g,'').includes('phonepe');
+                
+                let vType = isBankOrPhonePe ? "Journal voucher" : "Purchase";
+                let narration = `Being purchase recorded as per 2B (${inv})`;
+                let isLocal = (cgst > 0 || sgst > 0);
+                
+                let splits = deduceTaxRates(taxable, igst + cgst + sgst);
+
+                splits.forEach(split => {
+                    // Hard Override for Bank/PhonePe
+                    let rateLabel = isBankOrPhonePe ? "18%" : (split.rate === "MANUAL" ? "MANUAL" : `${split.rate}%`);
+                    
+                    let purLedger = isLocal ? "Purchase Local" : "Purchase Interstate";
+                    
+                    let drLedger2 = isLocal ? `Input cgst @ ${rateLabel}` : `Input igst @ ${rateLabel}`;
+                    let amt2 = isLocal ? (split.tax / 2).toFixed(2) : split.tax.toFixed(2);
+                    
+                    let drLedger3 = isLocal ? `Input sgst @ ${rateLabel}` : "";
+                    let amt3 = isLocal ? (split.tax / 2).toFixed(2) : "";
+
+                    results.push([
+                        "31/3/2026",
+                        vType,
+                        party,
+                        narration,
+                        purLedger,
+                        split.taxable.toFixed(2),
+                        drLedger2,
+                        amt2,
+                        drLedger3,
+                        amt3,
+                        (split.taxable + split.tax).toFixed(2)
+                    ]);
+                });
+            }
+
+            purchaseData = results;
+            status.innerText = `READY: FORMATTED ${results.length - 1} VOUCHERS`;
             document.getElementById('purchase-dl').style.display = "block";
         }
 
-        document.getElementById('sales-dl').addEventListener('click', () => {
+        // DOWNLOAD HANDLERS
+        document.getElementById('sales-dl').onclick = () => {
             const ws = XLSX.utils.aoa_to_sheet(salesData);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Bridges_Sales");
-            XLSX.writeFile(wb, "Bridges_Sales_Output.xlsx");
-        });
-
-        document.getElementById('purchase-dl').addEventListener('click', () => {
+            XLSX.utils.book_append_sheet(wb, ws, "Sales"); XLSX.writeFile(wb, "Bridges_Sales_Output.xlsx");
+        };
+        document.getElementById('purchase-dl').onclick = () => {
             const ws = XLSX.utils.aoa_to_sheet(purchaseData);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Bridges_Purchase");
-            XLSX.writeFile(wb, "Bridges_Purchase_Output.xlsx");
-        });
+            XLSX.utils.book_append_sheet(wb, ws, "Purchase"); XLSX.writeFile(wb, "Bridges_Purchase_Output.xlsx");
+        };
     </script>
 </body>
 </html>
