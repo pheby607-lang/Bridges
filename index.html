@@ -39,13 +39,16 @@
         .logo-area { text-align: center; margin-bottom: 40px; color: #fff; font-size: 28px; font-weight: 900; letter-spacing: 1px;}
         .logo-area img { max-width: 140px; margin-bottom: 10px; }
 
-        .nav-category { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #8ba1b7; margin: 20px 0 10px 10px; font-weight: 700; }
-        .nav-item { padding: 14px 20px; border-radius: 6px; cursor: pointer; margin-bottom: 5px; transition: 0.2s; font-weight: 500; color: #d0dbe6; border-left: 4px solid transparent; }
+        .nav-category { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #8ba1b7; margin: 24px 0 10px 10px; font-weight: 700; }
+        .nav-item { padding: 14px 20px; border-radius: 6px; cursor: pointer; margin-bottom: 5px; transition: 0.2s; font-weight: 500; color: #d0dbe6; border-left: 4px solid transparent; display: flex; justify-content: space-between; align-items: center;}
         .nav-item:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
         .nav-item.active { background: rgba(0, 112, 242, 0.2); border-left: 4px solid var(--accent-blue); color: #ffffff; font-weight: bold; }
+        
+        .nav-item.locked { opacity: 0.6; }
+        .nav-item.locked:hover { background: transparent; cursor: not-allowed; }
 
         /* MAIN AREA */
-        .main-content { flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px; }
+        .main-content { flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px; overflow-y: auto; }
         .view-section { width: 100%; max-width: 800px; display: none; animation: fadeIn 0.3s ease; }
         .view-section.active { display: block; }
 
@@ -75,6 +78,10 @@
         
         .status-msg { margin-top: 20px; font-weight: bold; color: var(--accent-green); font-size: 15px; }
 
+        /* LOCKED STATE INFO BOX */
+        .info-box { background: var(--bg-page); border: 1px solid var(--border-color); border-radius: 8px; padding: 30px; text-align: left; color: var(--text-main); }
+        .info-box ul { margin-top: 15px; margin-left: 20px; color: var(--text-muted); line-height: 1.8; }
+
         input[type="file"] { display: none; }
     </style>
 </head>
@@ -85,10 +92,16 @@
             <img src="logo.png" alt="" onerror="this.style.display='none'">
             <div>Finflo</div>
         </div>
+        
         <div class="nav-category">Data Processing</div>
-        <div class="nav-item active" onclick="switchView('sales')">Sales</div>
-        <div class="nav-item" onclick="switchView('purchase')">Purchase</div>
-        <div style="margin-top: auto; text-align: center; font-size: 11px; color: #8ba1b7;">FINFLO ENTERPRISE V9.2</div>
+        <div class="nav-item active" id="nav-sales" onclick="switchView('sales')">Sales</div>
+        <div class="nav-item" id="nav-purchase" onclick="switchView('purchase')">Purchase</div>
+        
+        <div class="nav-category">Reconciliation</div>
+        <div class="nav-item locked" id="nav-brs" onclick="switchView('brs')">BRS <span>🔒</span></div>
+        <div class="nav-item locked" id="nav-ledgers" onclick="switchView('ledgers')">Ledgers <span>🔒</span></div>
+
+        <div style="margin-top: auto; text-align: center; font-size: 11px; color: #8ba1b7;">FINFLO ENTERPRISE V9.3</div>
     </div>
 
     <div class="main-content">
@@ -117,6 +130,24 @@
                 <button id="purchase-dl" class="btn" style="background: var(--accent-green); box-shadow: 0 4px 10px rgba(16, 126, 62, 0.3);">Download Tally Purchase</button>
             </div>
         </div>
+
+        <div id="view-locked" class="view-section">
+            <div class="card">
+                <h1 style="color: var(--bg-sidebar);">Module Locked</h1>
+                <div class="subtitle" id="locked-subtitle">This interactive workspace is under development.</div>
+                
+                <div class="info-box">
+                    <strong>Upcoming Interactive Features:</strong>
+                    <ul>
+                        <li>On-screen SAP Dark Blue Reporting Dashboard.</li>
+                        <li>Live <strong>"Difference"</strong> calculation column for line items.</li>
+                        <li>Sales vs Receipts (Cash/Card/UPI) Auto-Matching.</li>
+                        <li>Purchase Register vs Bank Statement Auto-Matching.</li>
+                        <li>Review and adjust data instantly before downloading.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -132,8 +163,16 @@
         function switchView(view) {
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            document.getElementById('view-' + view).classList.add('active');
-            event.currentTarget.classList.add('active');
+            
+            if (view === 'brs' || view === 'ledgers') {
+                document.getElementById('view-locked').classList.add('active');
+                document.getElementById('nav-' + view).classList.add('active');
+                let name = view === 'brs' ? 'Bank Reconciliation (BRS)' : 'Ledger Reconciliation';
+                document.getElementById('locked-subtitle').innerText = `The ${name} interactive workspace is currently being built.`;
+            } else {
+                document.getElementById('view-' + view).classList.add('active');
+                document.getElementById('nav-' + view).classList.add('active');
+            }
         }
 
         function setupDrag(id, type) {
@@ -154,7 +193,7 @@
                 const file = files[0];
                 if (document.getElementById('view-sales').classList.contains('active')) {
                     handleFile(file, 'sales');
-                } else {
+                } else if (document.getElementById('view-purchase').classList.contains('active')) {
                     handleFile(file, 'purchase');
                 }
             }
@@ -310,44 +349,4 @@
                     let igstLabel = rLabel === "MANUAL" ? "MANUAL" : `${rLabel}%`;
                     let cgstSgstLabel = rLabel === "MANUAL" ? "MANUAL" : `${rLabel / 2}%`;
                     
-                    let drLedger2 = isIGST ? `Input igst @ ${igstLabel}` : `Input cgst @ ${cgstSgstLabel}`;
-                    let amt2 = isIGST ? split.tax.toFixed(2) : (split.tax / 2).toFixed(2);
-                    
-                    let drLedger3 = isIGST ? "" : `Input sgst @ ${cgstSgstLabel}`;
-                    let amt3 = isIGST ? "" : (split.tax / 2).toFixed(2);
-
-                    results.push([
-                        "31/3/2026",
-                        vType,
-                        party,
-                        narration,
-                        purLedger,
-                        split.taxable.toFixed(2),
-                        drLedger2,
-                        amt2,
-                        drLedger3,
-                        amt3,
-                        (split.taxable + split.tax).toFixed(2)
-                    ]);
-                });
-            }
-
-            purchaseData = results;
-            status.innerText = `✓ Processed ${results.length - 1} Vouchers Successfully`;
-            document.getElementById('purchase-dl').style.display = "block";
-        }
-
-        // DOWNLOAD HANDLERS
-        document.getElementById('sales-dl').onclick = () => {
-            const ws = XLSX.utils.aoa_to_sheet(salesData);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Sales"); XLSX.writeFile(wb, "Finflo_Sales.xlsx");
-        };
-        document.getElementById('purchase-dl').onclick = () => {
-            const ws = XLSX.utils.aoa_to_sheet(purchaseData);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Purchase"); XLSX.writeFile(wb, "Finflo_Purchase.xlsx");
-        };
-    </script>
-</body>
-</html>
+                    let drLedger2 = is
