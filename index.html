@@ -151,6 +151,7 @@
     <script>
         let salesData = [], purchaseData = [];
 
+        // Corrected parseNum function to handle formats like "42,212.14" safely
         const parseNum = val => {
             if (!val) return 0;
             if (typeof val === 'number') return val;
@@ -332,6 +333,7 @@
                 let vType = isBankOrPhonePe ? "Journal voucher" : "Purchase";
                 let narration = `Being purchase recorded as per 2B (${inv})`;
                 
+                // Strict math check for routing
                 let isIGST = igst > (cgst + sgst);
                 let purLedger = isIGST ? "Purchase Interstate" : "Purchase Local";
                 
