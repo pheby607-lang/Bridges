@@ -209,7 +209,7 @@
 
         // === UPGRADED SALES LOGIC ===
         function processSales(data, name) {
-            const date = new Date().toLocaleDateString('en-GB');
+            const date = "31-03-2026"; // Explicitly hardcoded format as requested
             const h1 = data[0], h2 = data[1];
             const headers = h1.map((v, i) => (String(h2[i]).trim() && String(h2[i]).toLowerCase() !== "nan") ? `${String(v).trim()} ${String(h2[i]).trim()}` : "");
             const pIdx = headers.findIndex(h => h.toLowerCase().includes("product") || h.toLowerCase().includes("system")) || 1;
@@ -229,7 +229,6 @@
             
             salesData = [["SL", "voucher no", "voucher date", "Party name", "Product", "Qty", "GST %", "Rate per Qty excl.GST", "Cgst", "SGST", "IGST", "Total"]];
             
-            // STRICT LIST: Removed generic brand names. ONLY these 16 specific locations remain.
             const localKeywords = [
                 "chikmagalur", "frazer town", "hal", "hesaraghatta", "hoskote", 
                 "jeevan bima nagar", "kammanahalli", "kannamangala", "kempapura", 
@@ -246,7 +245,6 @@
                 
                 let pLower = String(item.party).toLowerCase();
                 
-                // FIXED LOGIC: Strict word boundary check (\b).
                 let isLocal = localKeywords.some(keyword => {
                     let regex = new RegExp('\\b' + keyword + '\\b', 'i');
                     return regex.test(pLower);
@@ -256,7 +254,13 @@
                 let st = isLocal ? (tax/2).toFixed(2) : 0;
                 let ig = isLocal ? 0 : tax.toFixed(2);
                 
-                salesData.push([i+1, item.v, date, item.party, item.p, item.qty, g, rate, c, st, ig, (rate*item.qty + parseFloat(c) + parseFloat(st) + parseFloat(ig)).toFixed(2)]);
+                // Converted string amounts to pure Numbers using parseFloat for Excel Summing
+                let cNum = parseFloat(c);
+                let stNum = parseFloat(st);
+                let igNum = parseFloat(ig);
+                let totalNum = parseFloat((rate * item.qty + cNum + stNum + igNum).toFixed(2));
+                
+                salesData.push([i+1, item.v, date, item.party, item.p, item.qty, g, rate, cNum, stNum, igNum, totalNum]);
             });
 
             document.getElementById('sales-status').innerText = "✓ Sales Processed Successfully";
@@ -333,7 +337,9 @@
 
                 let pLower = party.toLowerCase();
                 let isBankOrPhonePe = pLower.includes('bank limited') || pLower.replace(/\s/g,'').includes('phonepe');
-                let vType = isBankOrPhonePe ? "Journal voucher" : "Purchase";
+                
+                // Changed "Journal voucher" to exactly "Journal"
+                let vType = isBankOrPhonePe ? "Journal" : "Purchase";
                 let narration = `Being purchase recorded as per 2B (${inv})`;
                 
                 let isIGST = igst > (cgst + sgst);
@@ -357,18 +363,24 @@
                     let drLedger3 = isIGST ? "" : `Input sgst @ ${cgstSgstLabel}`;
                     let amt3 = isIGST ? "" : (split.tax / 2).toFixed(2);
 
+                    // Converted string amounts to pure Numbers using parseFloat for Excel Summing
+                    let taxableNum = parseFloat(split.taxable.toFixed(2));
+                    let amt2Num = amt2 !== "" ? parseFloat(amt2) : "";
+                    let amt3Num = amt3 !== "" ? parseFloat(amt3) : "";
+                    let totalValNum = parseFloat((split.taxable + split.tax).toFixed(2));
+
                     results.push([
-                        "31/3/2026",
+                        "31-03-2026",  // Explicitly hardcoded format as requested
                         vType,
                         party,
                         narration,
                         purLedger,
-                        split.taxable.toFixed(2),
+                        taxableNum,
                         drLedger2,
-                        amt2,
+                        amt2Num,
                         drLedger3,
-                        amt3,
-                        (split.taxable + split.tax).toFixed(2)
+                        amt3Num,
+                        totalValNum
                     ]);
                 });
             }
