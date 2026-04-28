@@ -38,6 +38,7 @@
         }
 
         .logo-area { text-align: center; margin-bottom: 40px; color: #fff; font-size: 28px; font-weight: 900; letter-spacing: 1px;}
+        /* LOGO SIZE CONTROL */
         .logo-area img { max-width: 90px; margin-bottom: 10px; }
 
         .nav-category { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #8ba1b7; margin: 24px 0 10px 10px; font-weight: 700; }
@@ -62,9 +63,7 @@
         .pnl-card { background: #fff; padding: 25px; border-radius: 8px; border: 1px solid var(--border-color); }
         .pnl-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; font-size: 15px; }
         .pnl-total { font-weight: 800; font-size: 18px; border-top: 2px solid var(--text-main); margin-top: 10px; padding-top: 10px; }
-        .profit { color: var(--accent-green); }
-        .loss { color: var(--accent-red); }
-
+        
         /* UPLOAD ZONE */
         .upload-label { 
             width: 100%; border: 2px dashed var(--accent-blue); border-radius: 12px; 
@@ -84,6 +83,7 @@
 
     <div class="sidebar">
         <div class="logo-area">
+            <img src="logo.png" alt="" onerror="this.style.display='none'">
             <div>Finflo</div>
         </div>
         
@@ -96,7 +96,7 @@
         <div class="nav-item" id="nav-brs" onclick="switchView('brs')">BRS Dashboard</div>
         <div class="nav-item" id="nav-ledgers" onclick="switchView('ledgers')">Ledgers</div>
 
-        <div style="margin-top: auto; text-align: center; font-size: 11px; color: #8ba1b7;">FINFLO ENTERPRISE V9.8</div>
+        <div style="margin-top: auto; text-align: center; font-size: 11px; color: #8ba1b7;">FINFLO ENTERPRISE V10.0</div>
     </div>
 
     <div class="main-content">
@@ -125,33 +125,24 @@
         <div id="view-pnl" class="view-section">
             <div class="card">
                 <h1>Profit & Loss Statement</h1>
-                <div class="subtitle">Automatically generated from your Sales and Purchase data</div>
-                
+                <div class="subtitle">Taxable Values (Date: 31-03-2026)</div>
                 <div class="pnl-grid">
                     <div class="pnl-card">
-                        <h3 style="margin-bottom:15px; color:var(--accent-green);">Trading Account (Income)</h3>
-                        <div class="pnl-row"><span>Revenue from Operations</span><span id="pnl-revenue">0.00</span></div>
-                        <div class="pnl-row"><span>Other Income</span><span>0.00</span></div>
+                        <h3 style="margin-bottom:15px; color:var(--accent-green);">Income</h3>
+                        <div class="pnl-row"><span>Revenue (Sales)</span><span id="pnl-revenue">0.00</span></div>
                         <div class="pnl-total"><span>Total Income</span><span id="pnl-total-income">0.00</span></div>
                     </div>
-                    
                     <div class="pnl-card">
-                        <h3 style="margin-bottom:15px; color:var(--accent-red);">Trading Account (Expenses)</h3>
-                        <div class="pnl-row"><span>Cost of Goods Sold (Purchase)</span><span id="pnl-cogs">0.00</span></div>
-                        <div class="pnl-row"><span>Direct Expenses</span><span>0.00</span></div>
+                        <h3 style="margin-bottom:15px; color:var(--accent-red);">Direct Expenses</h3>
+                        <div class="pnl-row"><span>Purchases</span><span id="pnl-cogs">0.00</span></div>
                         <div class="pnl-total"><span>Total Direct Costs</span><span id="pnl-total-costs">0.00</span></div>
                     </div>
                 </div>
-
                 <div class="pnl-card" style="margin-top:20px; background: #f9f9f9; border: 2px solid var(--accent-blue);">
                     <div class="pnl-row" style="border:none; font-size:20px; font-weight:bold;">
                         <span>GROSS PROFIT</span>
-                        <span id="pnl-gross-profit" class="profit">0.00</span>
+                        <span id="pnl-gross-profit">0.00</span>
                     </div>
-                </div>
-
-                <div class="info-box" style="margin-top:20px; text-align:left; background:#fff; padding:20px; border:1px solid #ddd; border-radius:8px;">
-                    <strong>Note:</strong> This statement reflects the taxable values from your uploaded files (Date: 31-03-2026). Indirect expenses like rent and salaries are currently set to zero.
                 </div>
             </div>
         </div>
@@ -178,16 +169,14 @@
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             document.getElementById('nav-' + view).classList.add('active');
-            
-            if (view === 'brs' || view === 'ledgers') {
-                document.getElementById('view-locked').classList.add('active');
-            } else {
+            if (view === 'brs' || view === 'ledgers') document.getElementById('view-locked').classList.add('active');
+            else {
                 document.getElementById('view-' + view).classList.add('active');
                 if (view === 'pnl') updatePNL();
             }
         }
 
-        // --- CORE ENGINES ---
+        // --- ENGINES ---
         function handleFile(file, type) {
             const reader = new FileReader();
             reader.onload = (e) => {
@@ -200,10 +189,8 @@
             reader.readAsArrayBuffer(file);
         }
 
-        document.getElementById('sales-upload').onchange = e => handleFile(e.target.files[0], 'sales');
-        document.getElementById('purchase-upload').onchange = e => handleFile(e.target.files[0], 'purchase');
-
         function processSales(data) {
+            const date = "31-03-2026";
             const h1 = data[0], h2 = data[1];
             const headers = h1.map((v, i) => `${String(v).trim()} ${String(h2[i]||'').trim()}`.toLowerCase());
             const pIdx = headers.findIndex(h => h.includes("product") || h.includes("system")) || 1;
@@ -212,7 +199,6 @@
 
             salesData = [["SL", "voucher no", "voucher date", "Party name", "Product", "Qty", "GST %", "Rate per Qty excl.GST", "Cgst", "SGST", "IGST", "Total"]];
             totalRevenue = 0;
-
             const localKeywords = ["chikmagalur", "frazer town", "hal", "hesaraghatta", "hoskote", "jeevan bima nagar", "kammanahalli", "kannamangala", "kempapura", "k r puram", "nelamangala", "new bel road", "sahakaranagar", "t c palya", "kalyan nagar", "vidyaranyapura"];
 
             for (let r = 2; r < data.length; r++) {
@@ -221,16 +207,14 @@
                     let q = parseNum(data[r][s.id]);
                     if(q > 0) {
                         let billRate = parseNum(data[r][bIdx]);
-                        let g = 18; // Default GST for summary
+                        let g = 18; 
                         let rate = parseFloat((billRate / 1.18).toFixed(2));
                         let taxable = rate * q;
                         totalRevenue += taxable;
-                        
                         let isLocal = localKeywords.some(kw => new RegExp('\\b' + kw + '\\b', 'i').test(s.n));
                         let tax = taxable * 0.18;
                         let c = isLocal ? tax/2 : 0, st = isLocal ? tax/2 : 0, ig = isLocal ? 0 : tax;
-
-                        salesData.push([salesData.length, sIdx+1, "31-03-2026", s.n, data[r][pIdx], q, g, rate, parseFloat(c.toFixed(2)), parseFloat(st.toFixed(2)), parseFloat(ig.toFixed(2)), parseFloat((taxable+tax).toFixed(2))]);
+                        salesData.push([salesData.length, sIdx+1, date, s.n, data[r][pIdx], q, g, rate, parseFloat(c.toFixed(2)), parseFloat(st.toFixed(2)), parseFloat(ig.toFixed(2)), parseFloat((taxable+tax).toFixed(2))]);
                     }
                 });
             }
@@ -238,12 +222,32 @@
             document.getElementById('sales-dl').style.display = "block";
         }
 
+        function deduceTaxRates(totalTaxable, totalTax) {
+            const rates = [0.0, 0.05, 0.12, 0.18, 0.28, 0.40];
+            const margin = 2.5; 
+            if (totalTaxable <= 0) return [];
+            for (let r of rates) if (Math.abs((totalTaxable * r) - totalTax) <= margin) return [{ rate: r * 100, taxable: totalTaxable, tax: totalTax }];
+            for (let i = 0; i < rates.length; i++) {
+                for (let j = i + 1; j < rates.length; j++) {
+                    let r1 = rates[i], r2 = rates[j];
+                    let t1 = (totalTax - (totalTaxable * r2)) / (r1 - r2);
+                    let t2 = totalTaxable - t1;
+                    if (t1 > 1 && t2 > 1) return [{ rate: r1 * 100, taxable: t1, tax: t1 * r1 }, { rate: r2 * 100, taxable: t2, tax: t2 * r2 }];
+                }
+            }
+            return [{ rate: "MANUAL", taxable: totalTaxable, tax: totalTax }]; 
+        }
+
         function processPurchase(data) {
             let headerIdx = 0;
             for(let i=0; i<20; i++) if(data[i].some(c => String(c).toLowerCase().includes('taxable value'))) { headerIdx = i; break; }
             const h = data[headerIdx].map(v => String(v).toLowerCase());
-            const taxValIdx = h.findIndex(v => v.includes('taxable value'));
             const pIdx = h.findIndex(v => v.includes('trade/legal'));
+            const invIdx = h.findIndex(v => v.includes('invoice') || v.includes('document'));
+            const taxValIdx = h.findIndex(v => v.includes('taxable value'));
+            const igstIdx = h.findIndex(v => v.includes('integrated tax'));
+            const cgstIdx = h.findIndex(v => v.includes('central tax'));
+            const sgstIdx = h.findIndex(v => v.includes('state/ut tax'));
 
             purchaseData = [["Date", "Voucher Type", "Party Name (Cr)", "Narration", "Dr Ledger 1", "Amount 1 (Taxable)", "Dr Ledger 2", "Amount 2", "Dr Ledger 3", "Amount 3", "Total Invoice Value"]];
             totalCOGS = 0;
@@ -251,9 +255,25 @@
             for(let r = headerIdx + 1; r < data.length; r++) {
                 let party = String(data[r][pIdx] || "").trim();
                 let taxable = parseNum(data[r][taxValIdx]);
-                if(!party || taxable === 0) continue;
+                if(!party || party.toLowerCase().includes("total") || taxable === 0) continue;
                 totalCOGS += taxable;
-                purchaseData.push(["31-03-2026", "Purchase", party, "Being purchase recorded", "Purchase Local", taxable, "Input Tax", taxable*0.18, "", "", taxable*1.18]);
+                let igst = parseNum(data[r][igstIdx]), cgst = parseNum(data[r][cgstIdx]), sgst = parseNum(data[r][sgstIdx]);
+                let totalTax = igst + cgst + sgst;
+                let inv = invIdx !== -1 ? String(data[r][invIdx] || "").trim() : "N/A";
+                let isBank = party.toLowerCase().includes('bank') || party.toLowerCase().includes('phonepe');
+                let isIGST = igst > (cgst + sgst);
+                let splits = deduceTaxRates(taxable, totalTax);
+
+                splits.forEach(split => {
+                    let rLabel = split.rate === "MANUAL" ? "MANUAL" : `${split.rate}%`;
+                    let subLabel = split.rate === "MANUAL" ? "MANUAL" : `${split.rate / 2}%`;
+                    let dr2 = isIGST ? `Input igst @ ${rLabel}` : `Input cgst @ ${subLabel}`;
+                    let amt2 = isIGST ? parseFloat(split.tax.toFixed(2)) : parseFloat((split.tax / 2).toFixed(2));
+                    let dr3 = isIGST ? "" : `Input sgst @ ${subLabel}`;
+                    let amt3 = isIGST ? "" : parseFloat((split.tax / 2).toFixed(2));
+
+                    purchaseData.push(["31-03-2026", isBank ? "Journal" : "Purchase", party, `Being purchase recorded as per 2B (${inv})`, isIGST ? "Purchase Interstate" : "Purchase Local", parseFloat(split.taxable.toFixed(2)), dr2, amt2, dr3, amt3, parseFloat((split.taxable + split.tax).toFixed(2))]);
+                });
             }
             document.getElementById('purchase-status').innerText = "✓ Purchase Processed";
             document.getElementById('purchase-dl').style.display = "block";
@@ -264,11 +284,10 @@
             document.getElementById('pnl-total-income').innerText = totalRevenue.toLocaleString('en-IN', {minimumFractionDigits: 2});
             document.getElementById('pnl-cogs').innerText = totalCOGS.toLocaleString('en-IN', {minimumFractionDigits: 2});
             document.getElementById('pnl-total-costs').innerText = totalCOGS.toLocaleString('en-IN', {minimumFractionDigits: 2});
-            
             let gp = totalRevenue - totalCOGS;
             const gpEl = document.getElementById('pnl-gross-profit');
             gpEl.innerText = gp.toLocaleString('en-IN', {minimumFractionDigits: 2});
-            gpEl.className = gp >= 0 ? "profit" : "loss";
+            gpEl.style.color = gp >= 0 ? "var(--accent-green)" : "var(--accent-red)";
         }
 
         document.getElementById('sales-dl').onclick = () => {
