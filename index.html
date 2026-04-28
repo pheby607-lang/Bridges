@@ -151,7 +151,6 @@
     <script>
         let salesData = [], purchaseData = [];
 
-        // Corrected parseNum function to handle formats like "42,212.14" safely
         const parseNum = val => {
             if (!val) return 0;
             if (typeof val === 'number') return val;
@@ -247,7 +246,12 @@
                 let tax = rate * (g/100) * item.qty;
                 
                 let pLower = String(item.party).toLowerCase();
-                let isLocal = localKeywords.some(keyword => pLower.includes(keyword));
+                
+                // FIXED LOGIC: Strict word boundary check (\b) to prevent "hal" from matching inside other words.
+                let isLocal = localKeywords.some(keyword => {
+                    let regex = new RegExp('\\b' + keyword + '\\b', 'i');
+                    return regex.test(pLower);
+                });
                 
                 let c = isLocal ? (tax/2).toFixed(2) : 0;
                 let st = isLocal ? (tax/2).toFixed(2) : 0;
@@ -333,7 +337,6 @@
                 let vType = isBankOrPhonePe ? "Journal voucher" : "Purchase";
                 let narration = `Being purchase recorded as per 2B (${inv})`;
                 
-                // Strict math check for routing
                 let isIGST = igst > (cgst + sgst);
                 let purLedger = isIGST ? "Purchase Interstate" : "Purchase Local";
                 
