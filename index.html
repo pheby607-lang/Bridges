@@ -3,57 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bridges</title>
+    <title>Finflo | Enterprise</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
     <style>
+        /* SAP ENTERPRISE COLOR PALETTE */
         :root {
-            --bg-black: #000000;
-            --accent-purple: #a020f0;
-            --dim-purple: rgba(160, 32, 240, 0.2);
-            --glass: rgba(10, 10, 10, 0.85);
-            --neon-glow: 0 0 20px rgba(160, 32, 240, 0.4);
+            --bg-page: #f3f4f7;        /* Soft corporate gray background */
+            --bg-card: #ffffff;        /* Pure white cards */
+            --bg-sidebar: #0a1931;     /* Deep Navy Blue sidebar */
+            --accent-blue: #0070f2;    /* Standard SAP Primary Blue */
+            --accent-light: #e5f0fa;   /* Very light blue for hovering */
+            --accent-green: #107e3e;   /* SAP Success Green */
+            --text-main: #1c2733;      /* Dark gray text for readability */
+            --text-muted: #6a6d70;     /* Muted text */
+            --border-color: #d9d9d9;   /* Clean subtle borders */
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #ffffff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
 
         body {
-            background-color: var(--bg-black);
-            background-image: url("wallpaper.png"); 
-            background-size: cover; background-position: center; background-attachment: fixed;
+            background-color: var(--bg-page);
+            color: var(--text-main);
             display: flex; height: 100vh; overflow: hidden;
         }
 
-        /* SIDEBAR */
+        /* SIDEBAR (Dark & Professional) */
         .sidebar {
-            width: 260px; background: rgba(5, 0, 15, 0.95); backdrop-filter: blur(25px);
-            padding: 40px 15px; display: flex; flex-direction: column; border-right: 1px solid rgba(160, 32, 240, 0.2); z-index: 100;
+            width: 260px; background: var(--bg-sidebar); 
+            padding: 40px 15px; display: flex; flex-direction: column; 
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1); z-index: 100;
         }
 
-        .logo-area { text-align: center; margin-bottom: 40px; }
-        .logo-area img { max-width: 140px; mix-blend-mode: screen; filter: drop-shadow(0 0 10px var(--accent-purple)); }
+        .logo-area { text-align: center; margin-bottom: 40px; color: #fff; font-size: 28px; font-weight: 900; letter-spacing: 1px;}
+        .logo-area img { max-width: 140px; margin-bottom: 10px; }
 
-        .nav-category { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-purple); margin: 20px 0 10px 10px; font-weight: 800; }
-        .nav-item { padding: 12px 20px; border-radius: 10px; cursor: pointer; margin-bottom: 5px; transition: 0.3s; font-weight: 500; border: 1px solid transparent; }
-        .nav-item:hover { background: rgba(255, 255, 255, 0.05); }
-        .nav-item.active { background: var(--dim-purple); border: 1px solid var(--accent-purple); box-shadow: 0 0 15px rgba(160, 32, 240, 0.2); }
+        .nav-category { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #8ba1b7; margin: 20px 0 10px 10px; font-weight: 700; }
+        .nav-item { padding: 14px 20px; border-radius: 6px; cursor: pointer; margin-bottom: 5px; transition: 0.2s; font-weight: 500; color: #d0dbe6; border-left: 4px solid transparent; }
+        .nav-item:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
+        .nav-item.active { background: rgba(0, 112, 242, 0.2); border-left: 4px solid var(--accent-blue); color: #ffffff; font-weight: bold; }
 
         /* MAIN AREA */
         .main-content { flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px; }
-        .view-section { width: 100%; max-width: 800px; display: none; animation: fadeIn 0.4s ease; }
+        .view-section { width: 100%; max-width: 800px; display: none; animation: fadeIn 0.3s ease; }
         .view-section.active { display: block; }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .card { background: var(--glass); padding: 60px; border-radius: 40px; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(30px); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6); text-align: center; }
-        h1 { font-size: 52px; font-weight: 900; margin-bottom: 40px; background: linear-gradient(to right, #fff, var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -2px; }
+        /* CORPORATE CARDS */
+        .card { background: var(--bg-card); padding: 50px 60px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: var(--shadow); text-align: center; }
+        h1 { font-size: 36px; font-weight: 700; margin-bottom: 10px; color: var(--text-main); }
+        .subtitle { color: var(--text-muted); font-size: 16px; margin-bottom: 40px; }
 
         /* DRAG & DROP ZONE */
-        .upload-label { width: 100%; border: 2px dashed var(--accent-purple); border-radius: 24px; padding: 70px 20px; background: rgba(160, 32, 240, 0.03); cursor: pointer; transition: all 0.3s ease; display: block; position: relative; }
-        .upload-label.drag-over { background: rgba(160, 32, 240, 0.15); border-color: #ffffff; box-shadow: var(--neon-glow); transform: scale(1.02); }
+        .upload-label { 
+            width: 100%; border: 2px dashed var(--accent-blue); border-radius: 12px; 
+            padding: 60px 20px; background: var(--accent-light); cursor: pointer; 
+            transition: all 0.2s ease; display: block; position: relative; 
+        }
+        .upload-label p { font-size: 20px; font-weight: 600; color: var(--accent-blue); }
+        .upload-label.drag-over { background: #d0e5f7; border-color: #0054b6; transform: scale(1.01); }
 
-        .btn { background: var(--accent-purple); color: white; border: none; padding: 22px; border-radius: 15px; font-size: 18px; font-weight: bold; width: 100%; margin-top: 30px; cursor: pointer; display: none; box-shadow: 0 10px 25px rgba(160, 32, 240, 0.4); }
-        .status-msg { margin-top: 25px; font-weight: bold; color: var(--accent-purple); text-transform: uppercase; }
+        .btn { 
+            background: var(--accent-blue); color: white; border: none; padding: 18px; 
+            border-radius: 8px; font-size: 16px; font-weight: bold; width: 100%; 
+            margin-top: 30px; cursor: pointer; display: none; transition: 0.2s;
+            box-shadow: 0 4px 10px rgba(0, 112, 242, 0.3);
+        }
+        .btn:hover { background: #0054b6; }
+        
+        .status-msg { margin-top: 20px; font-weight: bold; color: var(--accent-green); font-size: 15px; }
 
         input[type="file"] { display: none; }
     </style>
@@ -61,35 +81,40 @@
 <body>
 
     <div class="sidebar">
-        <div class="logo-area"><img src="logo.png" alt="Bridges" onerror="this.style.display='none'"></div>
-        <div class="nav-category">Formatter</div>
-        <div class="nav-item active" onclick="switchView('sales')">Sales</div>
-        <div class="nav-item" onclick="switchView('purchase')">Purchases</div>
-        <div style="margin-top: auto; text-align: center; font-size: 10px; color: var(--accent-purple); opacity: 0.5;">PRO EDITION V8.6</div>
+        <div class="logo-area">
+            <img src="logo.png" alt="" onerror="this.style.display='none'">
+            <div>Finflo</div>
+        </div>
+        <div class="nav-category">Data Processing</div>
+        <div class="nav-item active" onclick="switchView('sales')">Sales Conversion</div>
+        <div class="nav-item" onclick="switchView('purchase')">Purchases (GSTR-2B)</div>
+        <div style="margin-top: auto; text-align: center; font-size: 11px; color: #8ba1b7;">FINFLO ENTERPRISE V8.8</div>
     </div>
 
     <div class="main-content">
         <div id="view-sales" class="view-section active">
             <div class="card">
-                <h1>Bridges</h1>
+                <h1>Sales Conversion</h1>
+                <div class="subtitle">Upload your multi-column sales sheet for Tally formatting</div>
                 <label class="upload-label" id="drop-zone-sales" for="sales-upload">
-                    <p style="font-size: 22px; font-weight: 800;">⚡ DRAG OR UPLOAD SALES ⚡</p>
+                    <p>📄 Drag & Drop Sales Excel Here</p>
                     <input id="sales-upload" type="file" accept=".xlsx, .csv" />
                 </label>
                 <div id="sales-status" class="status-msg"></div>
-                <button id="sales-dl" class="btn">DOWNLOAD SALES EXCEL</button>
+                <button id="sales-dl" class="btn">Download Tally Sales Excel</button>
             </div>
         </div>
 
         <div id="view-purchase" class="view-section">
             <div class="card">
-                <h1>Bridges</h1>
-                <label class="upload-label" id="drop-zone-purchase" for="purchase-upload" style="border-color: #00ffcc;">
-                    <p style="font-size: 22px; font-weight: 800; color: #00ffcc;">📦 DRAG OR UPLOAD PURCHASES 📦</p>
+                <h1>Purchase Conversion</h1>
+                <div class="subtitle">Upload your raw GSTR-2B sheet for tax deduction processing</div>
+                <label class="upload-label" id="drop-zone-purchase" for="purchase-upload" style="border-color: var(--accent-green); background: #e6f4ea;">
+                    <p style="color: var(--accent-green);">📦 Drag & Drop Purchase Excel Here</p>
                     <input id="purchase-upload" type="file" accept=".xlsx, .csv" />
                 </label>
-                <div id="purchase-status" class="status-msg" style="color: #00ffcc;"></div>
-                <button id="purchase-dl" class="btn" style="background: #00ffcc; color: #000;">DOWNLOAD TALLY PURCHASE</button>
+                <div id="purchase-status" class="status-msg"></div>
+                <button id="purchase-dl" class="btn" style="background: var(--accent-green); box-shadow: 0 4px 10px rgba(16, 126, 62, 0.3);">Download Tally Purchase Excel</button>
             </div>
         </div>
     </div>
@@ -135,7 +160,7 @@
             reader.readAsArrayBuffer(file);
         }
 
-        // === UPGRADED SALES LOGIC ===
+        // === SALES LOGIC ===
         function processSales(data, name) {
             const date = new Date().toLocaleDateString('en-GB');
             const h1 = data[0], h2 = data[1];
@@ -157,7 +182,6 @@
             
             salesData = [["SL", "voucher no", "voucher date", "Party name", "Product", "Qty", "GST %", "Rate per Qty excl.GST", "Cgst", "SGST", "IGST", "Total"]];
             
-            // YOUR CUSTOM LOCAL STORES LIST
             const localKeywords = [
                 "chikmagalur", "frazer town", "hal", "hesaraghatta", "hoskote", 
                 "jeevan bima nagar", "kammanahalli", "kannamangala", "kempapura", 
@@ -172,7 +196,6 @@
                 let rate = parseFloat((billRate / (1 + (g/100))).toFixed(2));
                 let tax = rate * (g/100) * item.qty;
                 
-                // Check if the party name contains any of the local keywords
                 let pLower = String(item.party).toLowerCase();
                 let isLocal = localKeywords.some(keyword => pLower.includes(keyword));
                 
@@ -183,11 +206,11 @@
                 salesData.push([i+1, item.v, date, item.party, item.p, item.qty, g, rate, c, st, ig, (rate*item.qty + parseFloat(c) + parseFloat(st) + parseFloat(ig)).toFixed(2)]);
             });
 
-            document.getElementById('sales-status').innerText = "SALES PROCESSED SUCCESSFULLY!";
+            document.getElementById('sales-status').innerText = "✓ Sales Sheet Processed Successfully";
             document.getElementById('sales-dl').style.display = "block";
         }
 
-        // === THE TAX DETECTIVE ALGEBRA SOLVER ===
+        // === TAX DETECTIVE ALGEBRA SOLVER ===
         function deduceTaxRates(totalTaxable, totalTax) {
             const rates = [0.05, 0.12, 0.18, 0.28, 0.40];
             const margin = 2.0; 
@@ -218,7 +241,7 @@
             return [{ rate: "MANUAL", taxable: totalTaxable, tax: totalTax }]; 
         }
 
-        // === PURCHASE LOGIC (TALLY LEDGER FORMAT) ===
+        // === STRICT PURCHASE ROUTING ===
         function processPurchase(data) {
             const status = document.getElementById('purchase-status');
             
@@ -238,7 +261,7 @@
             const sgstIdx = headers.findIndex(h => h.includes('state/ut tax'));
 
             if(pIdx === -1 || taxValIdx === -1) {
-                status.innerText = "ERROR: Could not find required columns in sheet."; return;
+                status.innerText = "Error: Could not locate required headers."; return;
             }
 
             let results = [["Date", "Voucher Type", "Party Name (Cr)", "Narration", "Dr Ledger 1", "Amount 1 (Taxable)", "Dr Ledger 2", "Amount 2", "Dr Ledger 3", "Amount 3", "Total Invoice Value"]];
@@ -257,13 +280,13 @@
 
                 let pLower = party.toLowerCase();
                 let isBankOrPhonePe = pLower.includes('bank limited') || pLower.replace(/\s/g,'').includes('phonepe');
-                
                 let vType = isBankOrPhonePe ? "Journal voucher" : "Purchase";
                 let narration = `Being purchase recorded as per 2B (${inv})`;
-                let isLocal = (cgst > 0 || sgst > 0);
+                
+                let isIGST = igst > (cgst + sgst);
+                let purLedger = isIGST ? "Purchase Interstate" : "Purchase Local";
                 
                 let splits = [];
-
                 if (isBankOrPhonePe) {
                     splits = [{ rate: 18, taxable: taxable, tax: taxable * 0.18 }];
                 } else {
@@ -275,12 +298,11 @@
                     let igstLabel = rLabel === "MANUAL" ? "MANUAL" : `${rLabel}%`;
                     let cgstSgstLabel = rLabel === "MANUAL" ? "MANUAL" : `${rLabel / 2}%`;
                     
-                    let purLedger = isLocal ? "Purchase Local" : "Purchase Interstate";
-                    let drLedger2 = isLocal ? `Input cgst @ ${cgstSgstLabel}` : `Input igst @ ${igstLabel}`;
-                    let amt2 = isLocal ? (split.tax / 2).toFixed(2) : split.tax.toFixed(2);
+                    let drLedger2 = isIGST ? `Input igst @ ${igstLabel}` : `Input cgst @ ${cgstSgstLabel}`;
+                    let amt2 = isIGST ? split.tax.toFixed(2) : (split.tax / 2).toFixed(2);
                     
-                    let drLedger3 = isLocal ? `Input sgst @ ${cgstSgstLabel}` : "";
-                    let amt3 = isLocal ? (split.tax / 2).toFixed(2) : "";
+                    let drLedger3 = isIGST ? "" : `Input sgst @ ${cgstSgstLabel}`;
+                    let amt3 = isIGST ? "" : (split.tax / 2).toFixed(2);
 
                     results.push([
                         "31/3/2026",
@@ -299,7 +321,7 @@
             }
 
             purchaseData = results;
-            status.innerText = `READY: FORMATTED ${results.length - 1} VOUCHERS`;
+            status.innerText = `✓ Processed ${results.length - 1} Vouchers Successfully`;
             document.getElementById('purchase-dl').style.display = "block";
         }
 
@@ -307,12 +329,12 @@
         document.getElementById('sales-dl').onclick = () => {
             const ws = XLSX.utils.aoa_to_sheet(salesData);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Sales"); XLSX.writeFile(wb, "Bridges_Sales_Output.xlsx");
+            XLSX.utils.book_append_sheet(wb, ws, "Sales"); XLSX.writeFile(wb, "Finflo_Sales_Output.xlsx");
         };
         document.getElementById('purchase-dl').onclick = () => {
             const ws = XLSX.utils.aoa_to_sheet(purchaseData);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Purchases"); XLSX.writeFile(wb, "Bridges_Purchases_Output.xlsx");
+            XLSX.utils.book_append_sheet(wb, ws, "Purchases"); XLSX.writeFile(wb, "Finflo_Purchases_Output.xlsx");
         };
     </script>
 </body>
