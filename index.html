@@ -92,7 +92,7 @@
         <div class="nav-item" id="nav-brs" onclick="switchView('brs')">BRS</div>
         <div class="nav-item" id="nav-ledgers" onclick="switchView('ledgers')">Ledgers</div>
 
-        <div style="margin-top: auto; text-align: center; font-size: 11px; color: #8ba1b7;">FINFLO ENTERPRISE V10.9</div>
+        <div style="margin-top: auto; text-align: center; font-size: 11px; color: #8ba1b7;">FINFLO ENTERPRISE V10.10</div>
     </div>
 
     <div class="main-content">
@@ -138,7 +138,9 @@
     </div>
 
     <script>
+        // Data arrays and filename memory variables
         let salesData = [], purchaseData = [], bankData = [];
+        let salesFileName = "Sales.xlsx", purchaseFileName = "Purchase.xlsx", bankFileName = "Bank Statement.xlsx";
 
         const parseNum = val => {
             if (!val) return 0;
@@ -158,17 +160,31 @@
             }
         }
 
-        // === MASTER FILE HANDLER ===
+        // === MASTER FILE HANDLER (UPDATED FOR FILENAMES) ===
         function handleFile(file, type) {
             if (!file) return;
+            
+            // Capture the exact name uploaded, ensuring it ends in .xlsx so the download works properly
+            let originalName = file.name.replace(/\.[^/.]+$/, "") + ".xlsx";
+
             const reader = new FileReader();
             reader.onload = (e) => {
                 const data = new Uint8Array(e.target.result);
                 const workbook = XLSX.read(data, {type: 'array'});
                 const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {header: 1, defval: ""});
-                if (type === 'sales') processSales(json);
-                else if (type === 'purchase') processPurchase(json);
-                else if (type === 'bank') processBank(json);
+                
+                if (type === 'sales') { 
+                    salesFileName = originalName; 
+                    processSales(json); 
+                }
+                else if (type === 'purchase') { 
+                    purchaseFileName = originalName; 
+                    processPurchase(json); 
+                }
+                else if (type === 'bank') { 
+                    bankFileName = originalName; 
+                    processBank(json); 
+                }
             };
             reader.readAsArrayBuffer(file);
         }
@@ -178,7 +194,7 @@
         document.getElementById('purchase-upload').onchange = e => handleFile(e.target.files[0], 'purchase');
         document.getElementById('bank-upload').onchange = e => handleFile(e.target.files[0], 'bank');
 
-        // === DRAG & DROP LOGIC (FIXED) ===
+        // === DRAG & DROP LOGIC ===
         document.querySelectorAll('.upload-label').forEach(label => {
             label.addEventListener('dragover', (e) => {
                 e.preventDefault();
@@ -208,7 +224,7 @@
             });
         });
 
-        // === PASTE LOGIC (FIXED) ===
+        // === PASTE LOGIC ===
         document.addEventListener('paste', (e) => {
             if (e.clipboardData.files && e.clipboardData.files.length > 0) {
                 const file = e.clipboardData.files[0];
@@ -220,7 +236,7 @@
             }
         });
 
-        // === BANK STATEMENT ENGINE (UPDATED WITH BALANCE) ===
+        // === BANK STATEMENT ENGINE (UNTOUCHED FROM V10.9) ===
         function processBank(data) {
             const status = document.getElementById('bank-status');
             let hIdx = -1;
@@ -234,8 +250,6 @@
             const tDateIdx = h.findIndex(v => v.includes('tran') && v.includes('date'));
             const vDateIdx = h.findIndex(v => v.includes('value date'));
             const partIdx = h.findIndex(v => v.includes('particulars'));
-            
-            // FIND THE BALANCE COLUMN
             const balIdx = h.findIndex(v => v.includes('balance'));
 
             bankData = [["Transaction Date", "Value Date", "Particulars", "Debit", "Credit", "Balance"]];
@@ -267,7 +281,6 @@
                     if (!isNaN(num5) && num5 !== 0) cr = num5;
                 }
 
-                // GRAB THE BALANCE NUMBER
                 if (balIdx !== -1) {
                     let bStr = String(data[r][balIdx] || "").trim();
                     let bNum = parseFloat(bStr.replace(/[^\d.-]/g, ''));
@@ -276,7 +289,7 @@
 
                 bankData.push([tDate, vDate, part, dr, cr, bal]);
             }
-            status.innerText = "✓ Bank Statement Processed Date-Wise";
+            status.innerText = `✓ Bank Statement Processed (${bankData.length - 1} rows)`;
             document.getElementById('bank-dl').style.display = "block";
         }
 
@@ -425,21 +438,24 @@
             document.getElementById('purchase-dl').style.display = "block";
         }
 
-        // === DOWNLOAD TRIGGERS ===
+        // === DOWNLOAD TRIGGERS (UPDATED TO USE EXACT UPLOADED FILENAME) ===
         document.getElementById('sales-dl').onclick = () => {
             const ws = XLSX.utils.aoa_to_sheet(salesData);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Sales"); XLSX.writeFile(wb, "Finflo_Sales.xlsx");
+            XLSX.utils.book_append_sheet(wb, ws, "Sales"); 
+            XLSX.writeFile(wb, salesFileName); // Uses original name
         };
         document.getElementById('purchase-dl').onclick = () => {
             const ws = XLSX.utils.aoa_to_sheet(purchaseData);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Purchase"); XLSX.writeFile(wb, "Finflo_Purchase.xlsx");
+            XLSX.utils.book_append_sheet(wb, ws, "Purchase"); 
+            XLSX.writeFile(wb, purchaseFileName); // Uses original name
         };
         document.getElementById('bank-dl').onclick = () => {
             const ws = XLSX.utils.aoa_to_sheet(bankData);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Bank Statement"); XLSX.writeFile(wb, "Finflo_Bank.xlsx");
+            XLSX.utils.book_append_sheet(wb, ws, "Bank Statement"); 
+            XLSX.writeFile(wb, bankFileName); // Uses original name
         };
     </script>
 </body>
