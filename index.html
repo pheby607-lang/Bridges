@@ -790,18 +790,6 @@
             <div class="nav-item" id="nav-bank" onclick="switchView('bank')">
                 <span class="nav-icon">▥</span><span>Bank Statement</span>
             </div>
-
-            <div class="nav-folder" onclick="toggleFolder('uninuts')">
-                <span class="nav-icon">□</span><span>UNI NUTS INDIA LLP</span>
-            </div>
-            <div class="folder-content open" id="uninuts-content">
-                <div class="nav-item" onclick="switchView('sales')">
-                    <span class="nav-icon">↳</span><span>Sales Exports</span>
-                </div>
-                <div class="nav-item" onclick="switchView('purchase')">
-                    <span class="nav-icon">↳</span><span>Purchase 2B</span>
-                </div>
-            </div>
         </div>
 
         <div class="sidebar-version">FINFLO ENTERPRISE V10.17</div>
@@ -1003,36 +991,56 @@
     <!-- NEW MODAL OVERLAY -->
     <div class="auth-overlay" id="auth-overlay">
         <div class="auth-modal">
-            <h2>Log in or sign up in seconds</h2>
-            <p class="auth-subtitle">Use your email or another service to continue with Finflo (it's free)!</p>
             
-            <button class="auth-btn" onclick="executeLogin()">
-                <span class="auth-icon">📱</span> 
-                <span>Continue with phone number</span>
-            </button>
-            <button class="auth-btn" onclick="executeLogin()">
-                <span class="auth-icon">
-                    <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                    </svg>
-                </span> 
-                <span>Continue with Google</span>
-            </button>
-            <button class="auth-btn" onclick="executeLogin()">
-                <span class="auth-icon">✉️</span> 
-                <span>Continue with email</span>
-            </button>
-            
-            <div class="auth-alt-link">Continue another way</div>
-            
-            <p class="auth-terms">By continuing, you agree to Finflo's <a href="#">Terms of Use</a>.<br>Read our <a href="#">Privacy Policy</a>.</p>
-            
-            <div class="auth-business" onclick="executeLogin()">
-                <span class="auth-icon-inline">🏢</span> <span>Signing up for a business</span>
+            <!-- MAIN AUTH VIEW -->
+            <div id="auth-main-view">
+                <h2>Log in or sign up in seconds</h2>
+                <p class="auth-subtitle">Use your email or another service to continue with Finflo (it's free)!</p>
+                
+                <button class="auth-btn" onclick="alert('Phone auth requires a backend messaging service (like Firebase SMS or Twilio).')">
+                    <span class="auth-icon">📱</span> 
+                    <span>Continue with phone number</span>
+                </button>
+                <button class="auth-btn" onclick="handleGoogleAuth()">
+                    <span class="auth-icon">
+                        <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                        </svg>
+                    </span> 
+                    <span>Continue with Google</span>
+                </button>
+                <button class="auth-btn" onclick="showEmailAuth()">
+                    <span class="auth-icon">✉️</span> 
+                    <span>Continue with email</span>
+                </button>
+                
+                <div class="auth-alt-link">Continue another way</div>
+                
+                <p class="auth-terms">By continuing, you agree to Finflo's <a href="#">Terms of Use</a>.<br>Read our <a href="#">Privacy Policy</a>.</p>
+                
+                <div class="auth-business">
+                    <span class="auth-icon-inline">🏢</span> <span>Signing up for a business</span>
+                </div>
             </div>
+
+            <!-- EMAIL SIGNUP / LOGIN VIEW -->
+            <div id="auth-email-view" style="display: none; flex-direction: column; gap: 12px;">
+                <h2>Continue with Email</h2>
+                <p class="auth-subtitle" style="margin-bottom: 15px;">If you don't have an account, one will be created automatically.</p>
+                
+                <input type="email" id="auth-email" placeholder="Email address" style="padding: 14px; border-radius: 6px; border: 1px solid #4a4d55; background: transparent; color: white; font-size: 15px; outline: none;">
+                <input type="password" id="auth-pass" placeholder="Password" style="padding: 14px; border-radius: 6px; border: 1px solid #4a4d55; background: transparent; color: white; font-size: 15px; outline: none;">
+                
+                <button class="auth-btn" style="background: #4e5edb; border-color: #4e5edb; margin-top: 8px;" onclick="handleEmailAuth()">Log In / Sign Up</button>
+                
+                <div class="auth-alt-link" style="margin: 10px 0; color: #8a8d93;" onclick="showAuthMain()">Back to options</div>
+                
+                <div id="auth-error" style="color: #d57b83; font-size: 13px; text-align: center;"></div>
+            </div>
+
         </div>
     </div>
 
@@ -1042,9 +1050,11 @@
         let salesFileName = "Sales.xlsx", purchaseFileName = "Purchase.xlsx", bankFileName = "Bank Statement.xlsx";
         let globalTotalSales = 0, globalTotalPurchase = 0;
 
-        // AUTH & TOP NAV LOGIC
+        // ==========================================
+        // AUTH LOGIC (Email Form & Local Storage)
+        // ==========================================
         
-        // 1. Check local storage on load to remember the user
+        // 1. Check local storage on page load
         window.addEventListener('DOMContentLoaded', () => {
             const savedUser = localStorage.getItem('finfloUserInitials');
             if (savedUser) {
@@ -1055,35 +1065,92 @@
             }
         });
 
-        // 2. Open the custom modal
+        // 2. Open Modal
         document.getElementById('login-btn').onclick = function() {
             document.getElementById('auth-overlay').style.display = 'flex';
         };
 
-        // 3. Close modal when clicking outside of it
+        // 3. Close Modal when clicking outside
         document.getElementById('auth-overlay').onclick = function(e) {
             if (e.target === this) {
                 this.style.display = 'none';
+                // reset views
+                setTimeout(() => { showAuthMain(); }, 300);
             }
         };
 
-        // 4. Handle login selection (asks for name to generate avatar, then saves to localStorage)
-        function executeLogin() {
-            let name = prompt("Enter your name to complete Sign In:");
-            if (name && name.trim().length >= 2) {
-                let initials = name.trim().substring(0,2).toUpperCase();
-                
-                // Save to local storage
-                localStorage.setItem('finfloUserInitials', initials);
-                
-                // Update UI
-                document.getElementById('auth-overlay').style.display = 'none';
-                document.getElementById('login-btn').style.display = 'none';
-                let avatar = document.getElementById('user-avatar');
-                avatar.innerText = initials;
-                avatar.style.display = 'flex';
+        // 4. View Switching inside modal
+        function showEmailAuth() {
+            document.getElementById('auth-main-view').style.display = 'none';
+            document.getElementById('auth-email-view').style.display = 'flex';
+            document.getElementById('auth-error').innerText = '';
+        }
+
+        function showAuthMain() {
+            document.getElementById('auth-email-view').style.display = 'none';
+            document.getElementById('auth-main-view').style.display = 'block';
+            document.getElementById('auth-email').value = '';
+            document.getElementById('auth-pass').value = '';
+        }
+
+        // 5. Handle the Email/Password validation and storage
+        function handleEmailAuth() {
+            let email = document.getElementById('auth-email').value.trim();
+            let pass = document.getElementById('auth-pass').value.trim();
+            let errorEl = document.getElementById('auth-error');
+            
+            if(!email || !pass) { 
+                errorEl.innerText = 'Please enter both email and password.'; 
+                return; 
+            }
+            
+            // Get database from local storage
+            let users = JSON.parse(localStorage.getItem('finfloUsers') || '{}');
+            
+            if(users[email]) {
+                // Email exists, verify password
+                if(users[email] === pass) {
+                    completeLogin(email);
+                } else {
+                    errorEl.innerText = 'Incorrect password.';
+                }
+            } else {
+                // Email does not exist, create new account
+                users[email] = pass;
+                localStorage.setItem('finfloUsers', JSON.stringify(users));
+                completeLogin(email);
             }
         }
+
+        // 6. Handle Google Auth Placeholder
+        function handleGoogleAuth() {
+            alert("To connect real Google accounts, a Backend Database (like Firebase) and a Google Cloud Client ID are required. Simulating login for now.");
+            completeLogin("Google User");
+        }
+
+        // 7. Finish Login and update UI
+        function completeLogin(identifier) {
+            // Get first letter of email to use as avatar
+            let initials = identifier.substring(0,2).toUpperCase();
+            
+            // Save current session
+            localStorage.setItem('finfloUserInitials', initials);
+            
+            // Close modal and show avatar
+            document.getElementById('auth-overlay').style.display = 'none';
+            document.getElementById('login-btn').style.display = 'none';
+            let avatar = document.getElementById('user-avatar');
+            avatar.innerText = initials;
+            avatar.style.display = 'flex';
+            
+            // Reset view for next time
+            showAuthMain();
+        }
+
+
+        // ==========================================
+        // TOP NAV LOGIC
+        // ==========================================
 
         document.getElementById('cal-trigger').onclick = function(e) {
             e.stopPropagation();
