@@ -5,240 +5,888 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finflo | Enterprise</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    
+
     <style>
         :root {
-            --bg-page: #f4f7f6;        
-            --bg-card: #ffffff;        
-            --bg-sidebar: #0a1931;     
-            --accent-blue: #4f46e5;    
-            --accent-light: #e0e7ff;   
-            --accent-green: #10b981;   
-            --text-main: #111827;      
-            --text-muted: #6b7280;     
-            --border-color: #e5e7eb;   
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --bg-page: #f4f6fa;
+            --bg-card: #ffffff;
+            --bg-sidebar: #e9eef4;
+            --bg-sidebar-active: #d8dee7;
+            --accent-blue: #4e5edb;
+            --accent-blue-dark: #4350c8;
+            --accent-green: #47a985;
+            --accent-red: #d57b83;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --text-soft: #9ca3af;
+            --border-color: #e3e7ee;
+            --shadow: 0 3px 10px rgba(15, 23, 42, 0.08);
+            --sidebar-width: 210px;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
 
-        body { background-color: var(--bg-page); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+        body {
+            background: var(--bg-page);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            overflow: hidden;
+        }
 
-        /* SIDEBAR (Matches Screenshot) */
-        .sidebar { width: 260px; background: var(--bg-sidebar); padding: 30px 15px; display: flex; flex-direction: column; z-index: 100; flex-shrink: 0; }
-        .logo-area { display: flex; align-items: center; color: #fff; font-size: 20px; font-weight: 700; margin-bottom: 40px; padding-left: 10px; }
-        .logo-icon { width: 24px; height: 24px; background: var(--accent-blue); border-radius: 4px; margin-right: 12px; display: inline-block; }
+        /* LEFT SIDEBAR */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-sidebar);
+            border-right: 1px solid #d7dde6;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        .logo-area {
+            height: 62px;
+            display: flex;
+            align-items: center;
+            padding: 0 18px;
+            gap: 9px;
+            color: #111827;
+            font-size: 18px;
+            font-weight: 400;
+            white-space: nowrap;
+        }
+
+        .logo-area strong {
+            font-weight: 700;
+        }
+
+        .logo-mark {
+            width: 19px;
+            height: 19px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .logo-mark::before,
+        .logo-mark::after,
+        .logo-dot {
+            content: "";
+            position: absolute;
+            height: 5px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #5167dd, #3949b8);
+            left: 0;
+        }
+
+        .logo-mark::before { width: 18px; top: 1px; }
+        .logo-mark::after { width: 13px; top: 8px; }
+        .logo-dot { width: 7px; top: 15px; }
+
+        .sidebar-menu {
+            padding-top: 14px;
+            flex: 1;
+        }
+
+        .nav-item,
+        .nav-folder {
+            height: 50px;
+            padding: 0 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #1f2937;
+            font-size: 14px;
+            font-weight: 400;
+            cursor: pointer;
+            transition: 0.18s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover,
+        .nav-folder:hover,
+        .nav-item.active {
+            background: var(--bg-sidebar-active);
+        }
+
+        .nav-item.active {
+            border-left-color: var(--accent-blue);
+            font-weight: 500;
+        }
+
+        .nav-icon {
+            width: 18px;
+            font-size: 17px;
+            color: #667085;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .folder-content {
+            display: none;
+        }
         
-        .nav-category { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #6b7280; margin: 20px 0 10px 15px; font-weight: 600; }
+        .folder-content.open {
+            display: block;
+        }
+
+        .folder-content .nav-item {
+            height: 48px;
+            padding-left: 35px;
+            font-size: 13px;
+        }
+
+        .nav-folder {
+            margin-top: 18px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.2px;
+        }
+
+        .nav-folder .nav-icon {
+            font-size: 18px;
+        }
+
+        .sidebar-version {
+            padding: 18px;
+            color: #7c8796;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        /* RIGHT SIDE */
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .top-nav {
+            height: 62px;
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 22px 0 30px;
+            flex-shrink: 0;
+        }
+
+        .nav-breadcrumb {
+            font-size: 14px;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .top-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-container::before {
+            content: "⌕";
+            position: absolute;
+            top: 50%;
+            left: 12px;
+            transform: translateY(-52%);
+            font-size: 20px;
+            color: #8b95a4;
+            line-height: 1;
+        }
+
+        .search-container input {
+            width: 275px;
+            height: 37px;
+            border: 1px solid #eef1f5;
+            background: #f3f5f9;
+            border-radius: 7px;
+            padding: 0 14px 0 38px;
+            outline: none;
+            font-size: 13px;
+            color: #111827;
+        }
+
+        .search-container input::placeholder {
+            color: #8b95a4;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            position: relative;
+        }
+
+        .icon-btn {
+            color: #677386;
+            cursor: pointer;
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        .login-btn {
+            background: var(--accent-blue);
+            color: #ffffff;
+            border: none;
+            height: 34px;
+            padding: 0 15px;
+            border-radius: 7px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 3px 8px rgba(78, 94, 219, 0.25);
+        }
+
+        .login-btn:hover {
+            background: var(--accent-blue-dark);
+        }
+
+        .avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #8e9aac;
+            color: #ffffff;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .calendar-modal {
+            position: absolute;
+            top: 46px;
+            right: 72px;
+            width: 300px;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 18px;
+            display: none;
+            z-index: 300;
+        }
+
+        .calendar-modal h3 {
+            font-size: 15px;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eef1f5;
+        }
+
+        .fy-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 9px;
+        }
+
+        .fy-month {
+            padding: 9px 0;
+            background: #f5f7fb;
+            border-radius: 7px;
+            font-size: 12px;
+            text-align: center;
+            color: #667085;
+            font-weight: 600;
+        }
+
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 25px 30px 38px;
+        }
+
+        .view-section {
+            display: none;
+            animation: fadeIn 0.22s ease;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-heading-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: #111827;
+        }
+
+        .dashboard-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .secondary-btn,
+        .primary-btn {
+            height: 36px;
+            padding: 0 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .secondary-btn {
+            background: #ffffff;
+            border: 1px solid #d9dee7;
+            color: #111827;
+        }
+
+        .primary-btn {
+            background: var(--accent-blue);
+            border: 1px solid var(--accent-blue);
+            color: #ffffff;
+            box-shadow: 0 3px 8px rgba(78, 94, 219, 0.22);
+        }
+
+        .dashboard-top-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .ui-card {
+            background: var(--bg-card);
+            border: 1px solid #dde3ec;
+            border-radius: 9px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .card-title-bar {
+            min-height: 61px;
+            padding: 18px 20px 14px;
+            border-bottom: 1px solid #edf0f4;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .ui-card-header {
+            font-size: 22px;
+            font-weight: 800;
+            color: #111827;
+            letter-spacing: -0.2px;
+        }
+
+        .ui-card-subtitle {
+            font-size: 13px;
+            color: #333b49;
+            line-height: 1.45;
+            max-width: 520px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .metric-block {
+            padding: 20px 24px;
+            border-right: 1px solid #edf0f4;
+            min-height: 111px;
+        }
+
+        .metric-block:nth-child(2n) {
+            border-right: none;
+        }
+
+        .metric-block:nth-child(n+3) {
+            border-top: 1px solid #edf0f4;
+        }
+
+        .metric-title {
+            color: #747d8c;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .metric-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .metric-value {
+            font-size: 23px;
+            line-height: 1;
+            font-weight: 400;
+            color: #111827;
+        }
+
+        .metric-pct {
+            color: var(--accent-green);
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .metric-pct.red {
+            color: var(--accent-red);
+        }
+
+        .metric-pct::before {
+            content: "▲";
+            font-size: 8px;
+            margin-right: 4px;
+        }
         
-        .nav-item { padding: 12px 15px; border-radius: 8px; cursor: pointer; margin-bottom: 5px; transition: 0.2s; font-weight: 500; color: #9ca3af; display: flex; align-items: center; font-size: 14px;}
-        .nav-item:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
-        .nav-item.active { background: rgba(79, 70, 229, 0.15); color: #ffffff; font-weight: 600; }
-        .nav-icon { margin-right: 12px; font-size: 16px; width: 20px; text-align: center; }
+        .metric-pct.red::before {
+            content: "▼";
+        }
 
-        .nav-folder { padding: 12px 15px; border-radius: 8px; cursor: pointer; margin-bottom: 5px; transition: 0.2s; font-weight: 600; color: #d1d5db; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
-        .nav-folder:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
-        .folder-content { display: none; margin-left: 15px; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 10px; margin-top: 5px; margin-bottom: 15px; }
-        .folder-content.open { display: block; }
-        .folder-content .nav-item { padding: 10px 15px; font-size: 13px; margin-bottom: 2px; }
+        .progress-bar {
+            height: 4px;
+            background: #ebedf2;
+            border-radius: 99px;
+            overflow: hidden;
+        }
 
-        /* MAIN CONTENT AREA */
-        .content-wrapper { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .progress-fill {
+            height: 100%;
+            border-radius: 99px;
+        }
 
-        /* TOP NAV BAR (Matches Screenshot) */
-        .top-nav { height: 70px; background: var(--bg-page); display: flex; justify-content: space-between; align-items: center; padding: 0 40px; z-index: 50; }
-        .nav-breadcrumb { font-size: 15px; font-weight: 500; color: var(--text-muted); }
-        .search-container input { padding: 10px 16px; border-radius: 8px; border: 1px solid var(--border-color); width: 300px; font-size: 13px; outline: none; background: #fff; color: var(--text-main); }
-        .search-container input::placeholder { color: #9ca3af; }
-        
-        .nav-actions { display: flex; align-items: center; gap: 15px; position: relative; }
-        .icon-btn { cursor: pointer; font-size: 18px; color: var(--text-muted); transition: 0.2s; }
-        .icon-btn:hover { color: var(--text-main); }
-        
-        .login-btn { background: var(--accent-blue); color: #fff; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; }
-        .login-btn:hover { background: #4338ca; }
-        .avatar { width: 36px; height: 36px; border-radius: 50%; background: #9ca3af; color: white; display: none; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; letter-spacing: 1px;}
-        
-        /* CALENDAR MODAL */
-        .calendar-modal { position: absolute; top: 50px; right: 100px; background: #fff; border: 1px solid var(--border-color); border-radius: 12px; box-shadow: var(--shadow); padding: 20px; width: 300px; display: none; z-index: 200; }
-        .calendar-modal h3 { font-size: 15px; margin-bottom: 15px; color: var(--text-main); border-bottom: 1px solid #eee; padding-bottom: 10px; font-weight: 600; }
-        .fy-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; text-align: center; }
-        .fy-month { padding: 10px 0; background: #f8f9fa; border-radius: 6px; font-size: 12px; font-weight: 500; color: var(--text-muted); }
+        .progress-fill.blue { width: 72%; background: #b8c3d6; }
+        .progress-fill.green { width: 36%; background: #b8c3d6; }
+        .progress-fill.red { width: 45%; background: #d98f96; }
 
-        /* VIEWS */
-        .main-content { flex: 1; padding: 0 40px 40px 40px; overflow-y: auto; }
-        .view-section { display: none; animation: fadeIn 0.2s ease; }
-        .view-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .rank-card .rank-content {
+            padding: 18px 20px;
+        }
 
-        /* DASHBOARD UI (EXACT MATCH) */
-        .ui-card { background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-color); box-shadow: var(--shadow); padding: 25px; margin-bottom: 30px; }
-        .ui-card-header { font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 5px; }
-        .ui-card-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 25px; }
-        
-        .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-        .metric-block { padding-right: 20px; }
-        .metric-title { font-size: 14px; color: var(--text-muted); margin-bottom: 8px; font-weight: 500; }
-        .metric-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px; }
-        .metric-value { font-size: 32px; font-weight: 700; color: var(--text-main); line-height: 1; }
-        .metric-pct { font-size: 13px; color: var(--accent-green); font-weight: 600; display: flex; align-items: center; }
-        .metric-pct::before { content: "▲"; font-size: 10px; margin-right: 4px; }
-        
-        .progress-bar { height: 4px; background: #f3f4f6; border-radius: 2px; width: 100%; overflow: hidden; }
-        .progress-fill.blue { width: 70%; height: 100%; background: var(--accent-blue); }
-        .progress-fill.green { width: 45%; height: 100%; background: var(--accent-green); }
+        .rank-total-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 17px;
+        }
 
-        /* HISTORY TABLE */
-        table { width: 100%; border-collapse: collapse; text-align: left; }
-        th { padding: 12px 0; color: var(--text-muted); font-size: 12px; border-bottom: 1px solid var(--border-color); font-weight: 600; }
-        td { padding: 16px 0; border-bottom: 1px solid #f3f4f6; font-size: 14px; color: var(--text-main); font-weight: 500; }
-        .dl-btn-small { background: #f3f4f6; color: var(--text-main); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 12px; }
-        .dl-btn-small:hover { background: #e5e7eb; }
+        .rank-label {
+            color: #747d8c;
+            font-size: 14px;
+            margin-bottom: 7px;
+        }
 
-        /* UPLOAD VIEWS */
-        .upload-wrapper { max-width: 700px; }
-        .upload-label { width: 100%; border: 2px dashed #cbd5e1; border-radius: 12px; padding: 60px 20px; background: #f8fafc; cursor: pointer; transition: all 0.2s ease; display: block; text-align: center; margin-top: 20px;}
-        .upload-label p { font-size: 16px; font-weight: 600; color: var(--accent-blue); }
-        .btn { background: var(--accent-blue); color: white; border: none; padding: 14px; border-radius: 8px; font-size: 14px; font-weight: 600; width: 100%; margin-top: 20px; cursor: pointer; display: none; transition: 0.2s; }
-        .btn:hover { background: #4338ca; }
-        .status-msg { margin-top: 15px; font-weight: 600; color: var(--accent-green); font-size: 14px; text-align: center; }
-        input[type="file"] { display: none; }
+        .rank-value {
+            font-size: 22px;
+            font-weight: 400;
+        }
+
+        .rank-line {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #edf0f4;
+            font-size: 14px;
+        }
+
+        .rank-line:last-child {
+            border-bottom: none;
+            font-weight: 700;
+        }
+
+        .history-card {
+            padding-bottom: 8px;
+        }
+
+        .history-intro {
+            padding: 18px 20px 8px;
+        }
+
+        .view-all-btn {
+            background: #ffffff;
+            border: 1px solid #d9dee7;
+            border-radius: 7px;
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        table {
+            width: calc(100% - 40px);
+            margin: 14px 20px 20px;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            padding: 13px 10px;
+            color: #667085;
+            font-size: 14px;
+            font-weight: 500;
+            border: 1px solid #e9edf3;
+            border-left: none;
+            border-right: none;
+            background: #fbfcfd;
+        }
+
+        td {
+            padding: 14px 10px;
+            border-bottom: 1px solid #eef1f5;
+            font-size: 14px;
+            color: #111827;
+        }
+
+        .dl-btn-small {
+            background: #f5f7fb;
+            color: #111827;
+            border: 1px solid #d9dee7;
+            padding: 7px 12px;
+            border-radius: 7px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .dl-btn-small:hover {
+            background: #e9eef5;
+        }
+
+        /* UPLOAD PAGES */
+        .upload-page {
+            max-width: 820px;
+        }
+
+        .upload-card {
+            padding: 0 0 24px;
+        }
+
+        .upload-content {
+            padding: 22px;
+        }
+
+        .upload-label {
+            width: 100%;
+            min-height: 210px;
+            border: 2px dashed #c9d2df;
+            border-radius: 10px;
+            padding: 55px 20px;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .upload-label:hover {
+            background: #f3f6fb;
+            transform: translateY(-1px);
+        }
+
+        .upload-label p {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--accent-blue);
+        }
+
+        .btn {
+            background: var(--accent-blue);
+            color: #ffffff;
+            border: none;
+            height: 45px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            width: 100%;
+            margin-top: 18px;
+            cursor: pointer;
+            display: none;
+        }
+
+        .btn:hover {
+            background: var(--accent-blue-dark);
+        }
+
+        .status-msg {
+            margin-top: 14px;
+            color: var(--accent-green);
+            font-size: 14px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        @media (max-width: 980px) {
+            body { overflow: auto; }
+            .sidebar { width: 78px; }
+            .logo-area { justify-content: center; padding: 0; }
+            .logo-area span, .nav-item span:last-child, .nav-folder span:last-child, .sidebar-version { display: none; }
+            .nav-item, .nav-folder { justify-content: center; padding: 0; }
+            .dashboard-top-grid { grid-template-columns: 1fr; }
+            .top-nav { padding: 0 16px; }
+            .search-container input { width: 180px; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
+    <aside class="sidebar">
         <div class="logo-area">
-            <div class="logo-icon"></div> Finflo Enterprise
-        </div>
-        
-        <div class="nav-category">Home</div>
-        <div class="nav-item active" id="nav-dashboard" onclick="switchView('dashboard')">
-            <span class="nav-icon">⊞</span> Dashboard
+            <div class="logo-mark"><div class="logo-dot"></div></div>
+            <span><strong>Finflo</strong> Enterprise</span>
         </div>
 
-        <div class="nav-category">Data Processing</div>
-        <div class="nav-folder" onclick="toggleFolder('uninuts')">
-            <span>📁 UNI NUTS INDIA LLP</span>
-            <span id="uninuts-arrow">▼</span>
-        </div>
-        
-        <div class="folder-content open" id="uninuts-content">
-            <div class="nav-item" id="nav-sales" onclick="switchView('sales')">Sales</div>
-            <div class="nav-item" id="nav-purchase" onclick="switchView('purchase')">Purchase</div>
-            <div class="nav-item" id="nav-bank" onclick="switchView('bank')">Bank Statement</div>
+        <div class="sidebar-menu">
+            <div class="nav-item active" id="nav-dashboard" onclick="switchView('dashboard')">
+                <span class="nav-icon">▦</span><span>Data Processing</span>
+            </div>
+            <div class="nav-item" id="nav-sales" onclick="switchView('sales')">
+                <span class="nav-icon">⌁</span><span>Sales</span>
+            </div>
+            <div class="nav-item" id="nav-purchase" onclick="switchView('purchase')">
+                <span class="nav-icon">▤</span><span>Purchase</span>
+            </div>
+            <div class="nav-item" id="nav-bank" onclick="switchView('bank')">
+                <span class="nav-icon">▥</span><span>Bank Statement</span>
+            </div>
+
+            <div class="nav-folder" onclick="toggleFolder('uninuts')">
+                <span class="nav-icon">□</span><span>UNI NUTS INDIA LLP</span>
+            </div>
+            <div class="folder-content open" id="uninuts-content">
+                <div class="nav-item" onclick="switchView('sales')">
+                    <span class="nav-icon">↳</span><span>Sales Exports</span>
+                </div>
+                <div class="nav-item" onclick="switchView('purchase')">
+                    <span class="nav-icon">↳</span><span>Purchase 2B</span>
+                </div>
+            </div>
         </div>
 
-        <div style="margin-top: auto; text-align: center; font-size: 11px; color: #4b5563;">FINFLO ENTERPRISE V10.17</div>
-    </div>
+        <div class="sidebar-version">FINFLO ENTERPRISE V10.17</div>
+    </aside>
 
-    <div class="content-wrapper">
-        <div class="top-nav">
+    <main class="content-wrapper">
+        <header class="top-nav">
             <div class="nav-breadcrumb">Home</div>
-            <div class="search-container">
-                <input type="text" id="top-search" placeholder="Search...">
-            </div>
-            <div class="nav-actions">
-                <div class="icon-btn" id="cal-trigger">📅</div>
-                <div class="icon-btn">🔔</div>
-                <button class="login-btn" id="login-btn">Login / Sign Up</button>
-                <div class="avatar" id="user-avatar">UN</div>
+            <div class="top-right">
+                <div class="search-container">
+                    <input type="text" id="top-search" placeholder="Search...">
+                </div>
+                <div class="nav-actions">
+                    <div class="icon-btn" id="cal-trigger">▣</div>
+                    <div class="icon-btn">♢</div>
+                    <button class="login-btn" id="login-btn">Sign In</button>
+                    <div class="avatar" id="user-avatar">UN</div>
 
-                <div class="calendar-modal" id="cal-modal">
-                    <h3>Financial Year 2026-2027</h3>
-                    <div class="fy-grid">
-                        <div class="fy-month">Apr 26</div><div class="fy-month">May 26</div><div class="fy-month">Jun 26</div>
-                        <div class="fy-month">Jul 26</div><div class="fy-month">Aug 26</div><div class="fy-month">Sep 26</div>
-                        <div class="fy-month">Oct 26</div><div class="fy-month">Nov 26</div><div class="fy-month">Dec 26</div>
-                        <div class="fy-month">Jan 27</div><div class="fy-month">Feb 27</div><div class="fy-month">Mar 27</div>
+                    <div class="calendar-modal" id="cal-modal">
+                        <h3>Financial Year 2026-2027</h3>
+                        <div class="fy-grid">
+                            <div class="fy-month">Apr 26</div><div class="fy-month">May 26</div><div class="fy-month">Jun 26</div>
+                            <div class="fy-month">Jul 26</div><div class="fy-month">Aug 26</div><div class="fy-month">Sep 26</div>
+                            <div class="fy-month">Oct 26</div><div class="fy-month">Nov 26</div><div class="fy-month">Dec 26</div>
+                            <div class="fy-month">Jan 27</div><div class="fy-month">Feb 27</div><div class="fy-month">Mar 27</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </header>
 
-        <div class="main-content">
-            
+        <section class="main-content">
+
             <div id="view-dashboard" class="view-section active">
-                
-                <div class="ui-card">
-                    <div class="ui-card-header">OVERVIEW</div>
-                    <div class="ui-card-subtitle">Total Sales Dashboard</div>
-                    
-                    <div class="metrics-grid">
-                        <div class="metric-block">
-                            <div class="metric-title">Total Sales</div>
-                            <div class="metric-row">
-                                <div class="metric-value" id="dash-total-sales">₹0</div>
-                                <div class="metric-pct">Live</div>
-                            </div>
-                            <div class="progress-bar"><div class="progress-fill blue"></div></div>
+                <div class="page-heading-row">
+                    <h1 class="page-title">SALES DASHBOARD</h1>
+                    <div class="dashboard-actions">
+                        <button class="secondary-btn">New Dashboard</button>
+                        <button class="primary-btn">Create Report</button>
+                    </div>
+                </div>
+
+                <div class="dashboard-top-grid">
+                    <div class="ui-card">
+                        <div class="card-title-bar">
+                            <div class="ui-card-header">OVERVIEW</div>
                         </div>
-                        
-                        <div class="metric-block">
-                            <div class="metric-title">Total Purchase</div>
-                            <div class="metric-row">
-                                <div class="metric-value" id="dash-total-purchase">₹0</div>
-                                <div class="metric-pct">Live</div>
+                        <div class="metrics-grid">
+                            <div class="metric-block">
+                                <div class="metric-title">Total Sales</div>
+                                <div class="metric-row">
+                                    <div class="metric-value" id="dash-total-sales">₹0</div>
+                                    <div class="metric-pct">6.01%</div>
+                                </div>
+                                <div class="progress-bar"><div class="progress-fill blue"></div></div>
                             </div>
-                            <div class="progress-bar"><div class="progress-fill green"></div></div>
+                            <div class="metric-block">
+                                <div class="metric-title">Total Investment</div>
+                                <div class="metric-row">
+                                    <div class="metric-value">₹133,714</div>
+                                    <div class="metric-pct">1.8%</div>
+                                </div>
+                                <div class="progress-bar"><div class="progress-fill green"></div></div>
+                            </div>
+                            <div class="metric-block">
+                                <div class="metric-title">Total Purchase</div>
+                                <div class="metric-row">
+                                    <div class="metric-value" id="dash-total-purchase">₹0</div>
+                                    <div class="metric-pct">1.58%</div>
+                                </div>
+                                <div class="progress-bar"><div class="progress-fill green"></div></div>
+                            </div>
+                            <div class="metric-block">
+                                <div class="metric-title">Total Deliveries</div>
+                                <div class="metric-row">
+                                    <div class="metric-value">₹179,000</div>
+                                    <div class="metric-pct red">1.3%</div>
+                                </div>
+                                <div class="progress-bar"><div class="progress-fill red"></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ui-card rank-card">
+                        <div class="card-title-bar">
+                            <div class="ui-card-header">RANK OVERVIEW</div>
+                        </div>
+                        <div class="rank-content">
+                            <div class="rank-total-row">
+                                <div>
+                                    <div class="rank-label">Total Amount</div>
+                                    <div class="rank-value">₹8,00,000</div>
+                                </div>
+                                <div class="metric-pct">3.21%</div>
+                            </div>
+                            <div class="rank-line"><span>Sales Amount</span><span>-₹8,00,000</span></div>
+                            <div class="rank-line"><span>Total Percent</span><span>-₹9,00,000</span></div>
+                            <div class="rank-line"><span>Total Amount</span><span>₹13,00,000</span></div>
                         </div>
                     </div>
                 </div>
 
-                <div class="ui-card">
-                    <div class="ui-card-header">RECENT TRANSACTIONS</div>
-                    <div class="ui-card-subtitle">History of converted excel files ready for download.</div>
-                    
+                <div class="ui-card history-card">
+                    <div class="card-title-bar">
+                        <div class="ui-card-header">OVERVIEW</div>
+                        <button class="view-all-btn">View All</button>
+                    </div>
+                    <div class="history-intro">
+                        <div class="ui-card-subtitle">Overview of total contents when your sales processing is complete, making your data presentation readable and clear.</div>
+                    </div>
                     <table>
                         <thead>
                             <tr>
                                 <th>File Name</th>
-                                <th>Date Converted</th>
-                                <th>Module Type</th>
+                                <th>Process Date</th>
+                                <th>Total Sales</th>
+                                <th>Status</th>
+                                <th>Amount</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody id="history-body">
-                            </tbody>
+                            <tr>
+                                <td>Company Data</td>
+                                <td>30 Apr 2026</td>
+                                <td>₹15,000.00</td>
+                                <td style="color: var(--accent-green);">Processed</td>
+                                <td>₹15,000.00</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
 
-            <div id="view-sales" class="view-section">
-                <div class="ui-card upload-wrapper">
-                    <div class="ui-card-header">Sales Processing</div>
-                    <div class="ui-card-subtitle">Upload your Tally Sales Export</div>
-                    <label class="upload-label" for="sales-upload"><p>📄 Drag or Paste Sales Excel Here</p></label>
-                    <input id="sales-upload" type="file" accept=".xlsx, .csv" />
-                    <div id="sales-status" class="status-msg"></div>
-                    <button id="sales-dl" class="btn">Download Tally Sales</button>
+            <div id="view-sales" class="view-section upload-page">
+                <div class="page-heading-row">
+                    <h1 class="page-title">SALES</h1>
+                </div>
+                <div class="ui-card upload-card">
+                    <div class="card-title-bar">
+                        <div>
+                            <div class="ui-card-header">Sales Processing</div>
+                            <div class="ui-card-subtitle">Upload your Tally Sales Export</div>
+                        </div>
+                    </div>
+                    <div class="upload-content">
+                        <label class="upload-label" for="sales-upload"><p>📄 Drag or Paste Sales Excel Here</p></label>
+                        <input id="sales-upload" type="file" accept=".xlsx, .csv" />
+                        <div id="sales-status" class="status-msg"></div>
+                        <button id="sales-dl" class="btn">Download Tally Sales</button>
+                    </div>
                 </div>
             </div>
 
-            <div id="view-purchase" class="view-section">
-                <div class="ui-card upload-wrapper">
-                    <div class="ui-card-header">Purchase Processing</div>
-                    <div class="ui-card-subtitle">Upload your 2B Purchase Excel</div>
-                    <label class="upload-label" for="purchase-upload" style="border-color: var(--accent-green);"><p style="color: var(--accent-green);">📦 Drag or Paste Purchase Excel Here</p></label>
-                    <input id="purchase-upload" type="file" accept=".xlsx, .csv" />
-                    <div id="purchase-status" class="status-msg"></div>
-                    <button id="purchase-dl" class="btn" style="background: var(--accent-green);">Download Tally Purchase</button>
+            <div id="view-purchase" class="view-section upload-page">
+                <div class="page-heading-row">
+                    <h1 class="page-title">PURCHASE</h1>
+                </div>
+                <div class="ui-card upload-card">
+                    <div class="card-title-bar">
+                        <div>
+                            <div class="ui-card-header">Purchase Processing</div>
+                            <div class="ui-card-subtitle">Upload your 2B Purchase Excel</div>
+                        </div>
+                    </div>
+                    <div class="upload-content">
+                        <label class="upload-label" for="purchase-upload" style="border-color: var(--accent-green);"><p style="color: var(--accent-green);">📦 Drag or Paste Purchase Excel Here</p></label>
+                        <input id="purchase-upload" type="file" accept=".xlsx, .csv" />
+                        <div id="purchase-status" class="status-msg"></div>
+                        <button id="purchase-dl" class="btn" style="background: var(--accent-green);">Download Tally Purchase</button>
+                    </div>
                 </div>
             </div>
 
-            <div id="view-bank" class="view-section">
-                <div class="ui-card upload-wrapper">
-                    <div class="ui-card-header">Bank Statement</div>
-                    <div class="ui-card-subtitle">Upload your Axis Bank Statement</div>
-                    <label class="upload-label" for="bank-upload" style="border-color: #4b5563;"><p style="color: #4b5563;">🏦 Drag or Paste Bank Excel Here</p></label>
-                    <input id="bank-upload" type="file" accept=".xlsx, .csv" />
-                    <div id="bank-status" class="status-msg"></div>
-                    <button id="bank-dl" class="btn" style="background: #4b5563;">Download Bank Excel</button>
+            <div id="view-bank" class="view-section upload-page">
+                <div class="page-heading-row">
+                    <h1 class="page-title">BANK STATEMENT</h1>
+                </div>
+                <div class="ui-card upload-card">
+                    <div class="card-title-bar">
+                        <div>
+                            <div class="ui-card-header">Bank Statement</div>
+                            <div class="ui-card-subtitle">Upload your Axis Bank Statement</div>
+                        </div>
+                    </div>
+                    <div class="upload-content">
+                        <label class="upload-label" for="bank-upload" style="border-color: #4b5563;"><p style="color: #4b5563;">🏦 Drag or Paste Bank Excel Here</p></label>
+                        <input id="bank-upload" type="file" accept=".xlsx, .csv" />
+                        <div id="bank-status" class="status-msg"></div>
+                        <button id="bank-dl" class="btn" style="background: #4b5563;">Download Bank Excel</button>
+                    </div>
                 </div>
             </div>
 
-        </div>
-    </div>
+        </section>
+    </main>
 
     <script>
         // GLOBALS & UI STATE
@@ -276,9 +924,8 @@
         // VIEW NAVIGATION
         function toggleFolder(folderId) {
             const content = document.getElementById(folderId + '-content');
-            const arrow = document.getElementById(folderId + '-arrow');
-            if (content.classList.contains('open')) { content.classList.remove('open'); arrow.innerText = '▶'; } 
-            else { content.classList.add('open'); arrow.innerText = '▼'; }
+            if (!content) return;
+            content.classList.toggle('open');
         }
 
         function switchView(view) {
@@ -300,6 +947,8 @@
             let tdName = document.createElement('td'); tdName.innerText = fileName;
             let tdDate = document.createElement('td'); tdDate.innerText = new Date().toLocaleDateString('en-IN');
             let tdType = document.createElement('td'); tdType.innerText = type;
+            let tdStudge = document.createElement('td'); tdStudge.innerText = "Processed"; tdStudge.style.color = "var(--accent-green)";
+            let tdAmount = document.createElement('td'); tdAmount.innerText = type === 'Sales' ? document.getElementById('dash-total-sales').innerText : type === 'Purchase' ? document.getElementById('dash-total-purchase').innerText : "-";
             
             let tdAction = document.createElement('td');
             let dlBtn = document.createElement('button');
@@ -313,7 +962,7 @@
             };
             tdAction.appendChild(dlBtn);
 
-            tr.appendChild(tdName); tr.appendChild(tdDate); tr.appendChild(tdType); tr.appendChild(tdAction);
+            tr.appendChild(tdName); tr.appendChild(tdDate); tr.appendChild(tdType); tr.appendChild(tdStudge); tr.appendChild(tdAmount); tr.appendChild(tdAction);
             tbody.prepend(tr); 
         }
 
@@ -406,7 +1055,7 @@
         });
 
         // =========================================================================
-        // STRICT INSTRUCTION APPLIED: PROCESSING ENGINES BELOW ARE 100% UNTOUCHED
+        // PROCESSING ENGINES BELOW KEPT SAME
         // =========================================================================
 
         function processBank(data) {
