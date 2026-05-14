@@ -579,6 +579,7 @@
         /* UPLOAD PAGES */
         .upload-page {
             max-width: 820px;
+            margin: 0 auto; /* Added to center the pages */
         }
 
         .upload-card {
@@ -1055,7 +1056,7 @@
         });
 
         // =========================================================================
-        // PROCESSING ENGINES BELOW KEPT SAME
+        // PROCESSING ENGINES BELOW
         // =========================================================================
 
         function processBank(data) {
@@ -1121,7 +1122,27 @@
             const bIdx = headers.findIndex(h => h.includes("billing")) || 3;
             const stores = headers.map((h, i) => ({n: h, id: i})).filter(h => h.id > bIdx && h.n && !h.n.includes("total"));
             salesData = [["SL", "voucher no", "voucher date", "Party name", "Product", "Qty", "GST %", "Rate per Qty excl.GST", "Cgst", "SGST", "IGST", "Total"]];
-            const localKeywords = ["chikmagalur", "frazer town", "hal", "hesaraghatta", "hoskote", "jeevan bima nagar", "jb nagar", "kammanahalli", "kannamangala", "kempapura", "kr puram", "k r puram", "nelamangala", "new bel road", "sahakaranagar", "t c palya", "tc palya", "kalyan nagar", "vidyaranyapura"];
+            
+            // EXACT name match list as provided
+            const localKeywords = [
+                "prime traders-chikmagalur",
+                "prime traders-frazer town",
+                "prime traders-hal",
+                "prime traders-hesaraghatta",
+                "prime traders-hoskote",
+                "prime traders-jeevan bima nagar",
+                "prime traders-kammanahalli",
+                "prime traders-kannamangala",
+                "prime traders-kempapura",
+                "prime traders-k r puram",
+                "prime traders-nelamangala",
+                "prime traders-new bel road",
+                "prime traders-sahakaranagar",
+                "prime traders-t c palya",
+                "super food ventures-kalyan nagar",
+                "superfood ventures-vidyaranyapura"
+            ];
+
             stores.forEach((s, sIdx) => {
                 for (let r = 2; r < data.length; r++) {
                     if(!data[r][pIdx]) continue;
@@ -1132,7 +1153,10 @@
                         let billRate = parseNum(data[r][bIdx]);
                         let rate = parseFloat((billRate / (1 + (g/100))).toFixed(2));
                         let taxable = rate * q;
-                        let isLocal = localKeywords.some(kw => new RegExp('\\b' + kw + '\\b', 'i').test(s.n));
+                        
+                        // Updated matching logic to look for the exact names from the list
+                        let isLocal = localKeywords.some(kw => s.n.toLowerCase().includes(kw));
+                        
                         let tax = taxable * (g/100);
                         let c = isLocal ? parseFloat((tax/2).toFixed(2)) : 0;
                         let st = isLocal ? parseFloat((tax/2).toFixed(2)) : 0;
