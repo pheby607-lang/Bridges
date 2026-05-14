@@ -8,86 +8,100 @@
     
     <style>
         :root {
-            --bg-page: #f8f9fa;        
+            --bg-page: #f4f7f6;        
             --bg-card: #ffffff;        
             --bg-sidebar: #0a1931;     
-            --accent-blue: #0070f2;    
-            --accent-light: #e5f0fa;   
-            --accent-green: #107e3e;   
-            --text-main: #1c2733;      
-            --text-muted: #6a6d70;     
-            --border-color: #e2e8f0;   
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --accent-blue: #4f46e5;    
+            --accent-light: #e0e7ff;   
+            --accent-green: #10b981;   
+            --text-main: #111827;      
+            --text-muted: #6b7280;     
+            --border-color: #e5e7eb;   
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
 
         body { background-color: var(--bg-page); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
 
-        /* SIDEBAR */
-        .sidebar { width: 260px; background: var(--bg-sidebar); padding: 40px 15px; display: flex; flex-direction: column; box-shadow: 2px 0 10px rgba(0,0,0,0.1); z-index: 100; flex-shrink: 0; }
-        .logo-area { text-align: center; margin-bottom: 40px; color: #fff; font-size: 24px; font-weight: 900; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 10px;}
-        .nav-category { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #8ba1b7; margin: 24px 0 10px 10px; font-weight: 700; }
-        .nav-folder { padding: 12px 15px; border-radius: 6px; cursor: pointer; margin-bottom: 5px; transition: 0.2s; font-weight: 700; color: #fff; background: rgba(255, 255, 255, 0.08); display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.1); font-size: 13px; }
-        .nav-folder:hover { background: rgba(255, 255, 255, 0.15); }
-        .folder-content { display: none; margin-left: 5px; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 5px; margin-top: 5px; margin-bottom: 15px; }
-        .folder-content.open { display: block; }
-        .nav-item { padding: 12px 15px; border-radius: 6px; cursor: pointer; margin-bottom: 5px; transition: 0.2s; font-weight: 500; color: #d0dbe6; border-left: 4px solid transparent; display: flex; justify-content: space-between; align-items: center; font-size: 14px;}
+        /* SIDEBAR (Matches Screenshot) */
+        .sidebar { width: 260px; background: var(--bg-sidebar); padding: 30px 15px; display: flex; flex-direction: column; z-index: 100; flex-shrink: 0; }
+        .logo-area { display: flex; align-items: center; color: #fff; font-size: 20px; font-weight: 700; margin-bottom: 40px; padding-left: 10px; }
+        .logo-icon { width: 24px; height: 24px; background: var(--accent-blue); border-radius: 4px; margin-right: 12px; display: inline-block; }
+        
+        .nav-category { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #6b7280; margin: 20px 0 10px 15px; font-weight: 600; }
+        
+        .nav-item { padding: 12px 15px; border-radius: 8px; cursor: pointer; margin-bottom: 5px; transition: 0.2s; font-weight: 500; color: #9ca3af; display: flex; align-items: center; font-size: 14px;}
         .nav-item:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
-        .nav-item.active { background: rgba(0, 112, 242, 0.2); border-left: 4px solid var(--accent-blue); color: #ffffff; font-weight: bold; }
+        .nav-item.active { background: rgba(79, 70, 229, 0.15); color: #ffffff; font-weight: 600; }
+        .nav-icon { margin-right: 12px; font-size: 16px; width: 20px; text-align: center; }
+
+        .nav-folder { padding: 12px 15px; border-radius: 8px; cursor: pointer; margin-bottom: 5px; transition: 0.2s; font-weight: 600; color: #d1d5db; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+        .nav-folder:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
+        .folder-content { display: none; margin-left: 15px; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 10px; margin-top: 5px; margin-bottom: 15px; }
+        .folder-content.open { display: block; }
+        .folder-content .nav-item { padding: 10px 15px; font-size: 13px; margin-bottom: 2px; }
 
         /* MAIN CONTENT AREA */
         .content-wrapper { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* TOP NAV BAR */
-        .top-nav { height: 80px; background: #fff; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 40px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); z-index: 50; }
-        .search-container input { padding: 12px 20px; border-radius: 20px; border: 1px solid var(--border-color); width: 350px; font-size: 14px; outline: none; background: #f8f9fa; transition: 0.2s; }
-        .search-container input:focus { border-color: var(--accent-blue); background: #fff; box-shadow: 0 0 0 3px var(--accent-light); }
-        .nav-actions { display: flex; align-items: center; gap: 20px; position: relative; }
-        .icon-btn { cursor: pointer; font-size: 20px; padding: 8px; border-radius: 50%; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
-        .icon-btn:hover { background: var(--accent-light); }
+        /* TOP NAV BAR (Matches Screenshot) */
+        .top-nav { height: 70px; background: var(--bg-page); display: flex; justify-content: space-between; align-items: center; padding: 0 40px; z-index: 50; }
+        .nav-breadcrumb { font-size: 15px; font-weight: 500; color: var(--text-muted); }
+        .search-container input { padding: 10px 16px; border-radius: 8px; border: 1px solid var(--border-color); width: 300px; font-size: 13px; outline: none; background: #fff; color: var(--text-main); }
+        .search-container input::placeholder { color: #9ca3af; }
         
-        .login-btn { background: #1c2733; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; transition: 0.2s; }
-        .login-btn:hover { background: #2a3a4c; }
-        .avatar { width: 40px; height: 40px; border-radius: 50%; background: #8ba1b7; color: white; display: none; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; letter-spacing: 1px;}
+        .nav-actions { display: flex; align-items: center; gap: 15px; position: relative; }
+        .icon-btn { cursor: pointer; font-size: 18px; color: var(--text-muted); transition: 0.2s; }
+        .icon-btn:hover { color: var(--text-main); }
+        
+        .login-btn { background: var(--accent-blue); color: #fff; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; }
+        .login-btn:hover { background: #4338ca; }
+        .avatar { width: 36px; height: 36px; border-radius: 50%; background: #9ca3af; color: white; display: none; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; letter-spacing: 1px;}
         
         /* CALENDAR MODAL */
-        .calendar-modal { position: absolute; top: 60px; right: 100px; background: #fff; border: 1px solid var(--border-color); border-radius: 12px; box-shadow: var(--shadow); padding: 20px; width: 300px; display: none; z-index: 200; }
-        .calendar-modal h3 { font-size: 16px; margin-bottom: 15px; color: var(--text-main); border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .calendar-modal { position: absolute; top: 50px; right: 100px; background: #fff; border: 1px solid var(--border-color); border-radius: 12px; box-shadow: var(--shadow); padding: 20px; width: 300px; display: none; z-index: 200; }
+        .calendar-modal h3 { font-size: 15px; margin-bottom: 15px; color: var(--text-main); border-bottom: 1px solid #eee; padding-bottom: 10px; font-weight: 600; }
         .fy-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; text-align: center; }
         .fy-month { padding: 10px 0; background: #f8f9fa; border-radius: 6px; font-size: 12px; font-weight: 500; color: var(--text-muted); }
-        
+
         /* VIEWS */
-        .main-content { flex: 1; padding: 40px; overflow-y: auto; }
-        .view-section { display: none; animation: fadeIn 0.3s ease; }
+        .main-content { flex: 1; padding: 0 40px 40px 40px; overflow-y: auto; }
+        .view-section { display: none; animation: fadeIn 0.2s ease; }
         .view-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* DASHBOARD UI */
-        .dash-header { font-size: 28px; font-weight: 800; margin-bottom: 30px; color: var(--text-main); }
-        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 40px; }
-        .dash-card { background: var(--bg-card); padding: 30px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: var(--shadow); }
-        .dash-card h3 { font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
-        .dash-card .amount { font-size: 36px; font-weight: 700; color: var(--text-main); }
+        /* DASHBOARD UI (EXACT MATCH) */
+        .ui-card { background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-color); box-shadow: var(--shadow); padding: 25px; margin-bottom: 30px; }
+        .ui-card-header { font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 5px; }
+        .ui-card-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 25px; }
         
-        .history-card { background: var(--bg-card); padding: 30px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: var(--shadow); }
-        .history-card h2 { font-size: 18px; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
+        .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .metric-block { padding-right: 20px; }
+        .metric-title { font-size: 14px; color: var(--text-muted); margin-bottom: 8px; font-weight: 500; }
+        .metric-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px; }
+        .metric-value { font-size: 32px; font-weight: 700; color: var(--text-main); line-height: 1; }
+        .metric-pct { font-size: 13px; color: var(--accent-green); font-weight: 600; display: flex; align-items: center; }
+        .metric-pct::before { content: "▲"; font-size: 10px; margin-right: 4px; }
         
+        .progress-bar { height: 4px; background: #f3f4f6; border-radius: 2px; width: 100%; overflow: hidden; }
+        .progress-fill.blue { width: 70%; height: 100%; background: var(--accent-blue); }
+        .progress-fill.green { width: 45%; height: 100%; background: var(--accent-green); }
+
+        /* HISTORY TABLE */
         table { width: 100%; border-collapse: collapse; text-align: left; }
-        th { padding: 12px 15px; color: var(--text-muted); font-size: 13px; border-bottom: 2px solid var(--border-color); }
-        td { padding: 15px; border-bottom: 1px solid var(--border-color); font-size: 14px; color: var(--text-main); font-weight: 500; }
-        .dl-btn-small { background: var(--accent-light); color: var(--accent-blue); border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 12px; }
-        .dl-btn-small:hover { background: var(--accent-blue); color: #fff; }
+        th { padding: 12px 0; color: var(--text-muted); font-size: 12px; border-bottom: 1px solid var(--border-color); font-weight: 600; }
+        td { padding: 16px 0; border-bottom: 1px solid #f3f4f6; font-size: 14px; color: var(--text-main); font-weight: 500; }
+        .dl-btn-small { background: #f3f4f6; color: var(--text-main); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 12px; }
+        .dl-btn-small:hover { background: #e5e7eb; }
 
-        /* UPLOAD CARDS */
-        .card { background: var(--bg-card); padding: 50px 60px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: var(--shadow); text-align: center; max-width: 800px; margin: 0 auto; }
-        .card h1 { font-size: 36px; font-weight: 700; margin-bottom: 10px; color: var(--text-main); }
-        .subtitle { color: var(--text-muted); font-size: 16px; margin-bottom: 40px; }
-        .upload-label { width: 100%; border: 2px dashed var(--accent-blue); border-radius: 12px; padding: 60px 20px; background: var(--accent-light); cursor: pointer; transition: all 0.2s ease; display: block; }
-        .upload-label p { font-size: 20px; font-weight: 600; color: var(--accent-blue); }
-        .btn { background: var(--accent-blue); color: white; border: none; padding: 18px; border-radius: 8px; font-size: 16px; font-weight: bold; width: 100%; margin-top: 30px; cursor: pointer; display: none; transition: 0.2s; }
-        .btn:hover { background: #0054b6; }
-        .status-msg { margin-top: 20px; font-weight: bold; color: var(--accent-green); font-size: 15px; }
+        /* UPLOAD VIEWS */
+        .upload-wrapper { max-width: 700px; }
+        .upload-label { width: 100%; border: 2px dashed #cbd5e1; border-radius: 12px; padding: 60px 20px; background: #f8fafc; cursor: pointer; transition: all 0.2s ease; display: block; text-align: center; margin-top: 20px;}
+        .upload-label p { font-size: 16px; font-weight: 600; color: var(--accent-blue); }
+        .btn { background: var(--accent-blue); color: white; border: none; padding: 14px; border-radius: 8px; font-size: 14px; font-weight: 600; width: 100%; margin-top: 20px; cursor: pointer; display: none; transition: 0.2s; }
+        .btn:hover { background: #4338ca; }
+        .status-msg { margin-top: 15px; font-weight: 600; color: var(--accent-green); font-size: 14px; text-align: center; }
         input[type="file"] { display: none; }
     </style>
 </head>
@@ -95,15 +109,17 @@
 
     <div class="sidebar">
         <div class="logo-area">
-            <div>Finflo Enterprise</div>
+            <div class="logo-icon"></div> Finflo Enterprise
         </div>
         
-        <div class="nav-category">Main Menu</div>
-        <div class="nav-item active" id="nav-dashboard" onclick="switchView('dashboard')">📊 Dashboard</div>
+        <div class="nav-category">Home</div>
+        <div class="nav-item active" id="nav-dashboard" onclick="switchView('dashboard')">
+            <span class="nav-icon">⊞</span> Dashboard
+        </div>
 
         <div class="nav-category">Data Processing</div>
         <div class="nav-folder" onclick="toggleFolder('uninuts')">
-            <span>🏢 UNI NUTS INDIA LLP</span>
+            <span>📁 UNI NUTS INDIA LLP</span>
             <span id="uninuts-arrow">▼</span>
         </div>
         
@@ -113,13 +129,14 @@
             <div class="nav-item" id="nav-bank" onclick="switchView('bank')">Bank Statement</div>
         </div>
 
-        <div style="margin-top: auto; text-align: center; font-size: 11px; color: #8ba1b7;">FINFLO ENTERPRISE V10.16</div>
+        <div style="margin-top: auto; text-align: center; font-size: 11px; color: #4b5563;">FINFLO ENTERPRISE V10.17</div>
     </div>
 
     <div class="content-wrapper">
         <div class="top-nav">
+            <div class="nav-breadcrumb">Home</div>
             <div class="search-container">
-                <input type="text" id="top-search" placeholder="Search features (e.g., 'sales', 'bank')...">
+                <input type="text" id="top-search" placeholder="Search...">
             </div>
             <div class="nav-actions">
                 <div class="icon-btn" id="cal-trigger">📅</div>
@@ -142,21 +159,36 @@
         <div class="main-content">
             
             <div id="view-dashboard" class="view-section active">
-                <h1 class="dash-header">SALES DASHBOARD</h1>
                 
-                <div class="dashboard-grid">
-                    <div class="dash-card">
-                        <h3>Total Sales</h3>
-                        <div class="amount" id="dash-total-sales">₹0</div>
-                    </div>
-                    <div class="dash-card">
-                        <h3>Total Purchase</h3>
-                        <div class="amount" id="dash-total-purchase">₹0</div>
+                <div class="ui-card">
+                    <div class="ui-card-header">OVERVIEW</div>
+                    <div class="ui-card-subtitle">Total Sales Dashboard</div>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric-block">
+                            <div class="metric-title">Total Sales</div>
+                            <div class="metric-row">
+                                <div class="metric-value" id="dash-total-sales">₹0</div>
+                                <div class="metric-pct">Live</div>
+                            </div>
+                            <div class="progress-bar"><div class="progress-fill blue"></div></div>
+                        </div>
+                        
+                        <div class="metric-block">
+                            <div class="metric-title">Total Purchase</div>
+                            <div class="metric-row">
+                                <div class="metric-value" id="dash-total-purchase">₹0</div>
+                                <div class="metric-pct">Live</div>
+                            </div>
+                            <div class="progress-bar"><div class="progress-fill green"></div></div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="history-card">
-                    <h2>CONVERSION HISTORY</h2>
+                <div class="ui-card">
+                    <div class="ui-card-header">RECENT TRANSACTIONS</div>
+                    <div class="ui-card-subtitle">History of converted excel files ready for download.</div>
+                    
                     <table>
                         <thead>
                             <tr>
@@ -173,9 +205,9 @@
             </div>
 
             <div id="view-sales" class="view-section">
-                <div class="card">
-                    <h1>Sales</h1>
-                    <div class="subtitle">Upload your Sales Excel</div>
+                <div class="ui-card upload-wrapper">
+                    <div class="ui-card-header">Sales Processing</div>
+                    <div class="ui-card-subtitle">Upload your Tally Sales Export</div>
                     <label class="upload-label" for="sales-upload"><p>📄 Drag or Paste Sales Excel Here</p></label>
                     <input id="sales-upload" type="file" accept=".xlsx, .csv" />
                     <div id="sales-status" class="status-msg"></div>
@@ -184,10 +216,10 @@
             </div>
 
             <div id="view-purchase" class="view-section">
-                <div class="card">
-                    <h1>Purchase</h1>
-                    <div class="subtitle">Upload your Purchase Excel</div>
-                    <label class="upload-label" for="purchase-upload" style="border-color: var(--accent-green); background: #e6f4ea;"><p style="color: var(--accent-green);">📦 Drag or Paste Purchase Excel Here</p></label>
+                <div class="ui-card upload-wrapper">
+                    <div class="ui-card-header">Purchase Processing</div>
+                    <div class="ui-card-subtitle">Upload your 2B Purchase Excel</div>
+                    <label class="upload-label" for="purchase-upload" style="border-color: var(--accent-green);"><p style="color: var(--accent-green);">📦 Drag or Paste Purchase Excel Here</p></label>
                     <input id="purchase-upload" type="file" accept=".xlsx, .csv" />
                     <div id="purchase-status" class="status-msg"></div>
                     <button id="purchase-dl" class="btn" style="background: var(--accent-green);">Download Tally Purchase</button>
@@ -195,13 +227,13 @@
             </div>
 
             <div id="view-bank" class="view-section">
-                <div class="card">
-                    <h1>Bank Statement</h1>
-                    <div class="subtitle">Upload your Bank Excel (Axis Format)</div>
-                    <label class="upload-label" for="bank-upload" style="border-color: #1c2733; background: #e8eaec;"><p style="color: #1c2733;">🏦 Drag or Paste Bank Excel Here</p></label>
+                <div class="ui-card upload-wrapper">
+                    <div class="ui-card-header">Bank Statement</div>
+                    <div class="ui-card-subtitle">Upload your Axis Bank Statement</div>
+                    <label class="upload-label" for="bank-upload" style="border-color: #4b5563;"><p style="color: #4b5563;">🏦 Drag or Paste Bank Excel Here</p></label>
                     <input id="bank-upload" type="file" accept=".xlsx, .csv" />
                     <div id="bank-status" class="status-msg"></div>
-                    <button id="bank-dl" class="btn" style="background: #1c2733;">Download Bank Excel</button>
+                    <button id="bank-dl" class="btn" style="background: #4b5563;">Download Bank Excel</button>
                 </div>
             </div>
 
@@ -282,14 +314,12 @@
             tdAction.appendChild(dlBtn);
 
             tr.appendChild(tdName); tr.appendChild(tdDate); tr.appendChild(tdType); tr.appendChild(tdAction);
-            tbody.prepend(tr); // Add to top
+            tbody.prepend(tr); 
         }
 
         function updateDashboardSums() {
-            // Recalculates sum safely without touching processing engines
             let tempSales = 0;
             for(let i=1; i<salesData.length; i++) {
-                // Column 11 is 'Total' in Sales array
                 let val = parseFloat(salesData[i][11]);
                 if(!isNaN(val)) tempSales += val;
             }
@@ -300,7 +330,6 @@
 
             let tempPurch = 0;
             for(let i=1; i<purchaseData.length; i++) {
-                // Column 12 is 'Total Invoice Value' in Purchase array
                 let val = parseFloat(purchaseData[i][12]);
                 if(!isNaN(val)) tempPurch += val;
             }
@@ -310,7 +339,6 @@
             }
         }
 
-        // === MASTER FILE HANDLER (UPDATED TO LOG TO HISTORY) ===
         function handleFile(file, type) {
             if (!file) return;
             let originalName = file.name.replace(/\.[^/.]+$/, "") + ".xlsx";
@@ -348,7 +376,6 @@
             return parseFloat(String(val).replace(/[^\d.-]/g, '')) || 0;
         };
 
-        // UI Listeners for Upload
         document.getElementById('sales-upload').onchange = e => handleFile(e.target.files[0], 'sales');
         document.getElementById('purchase-upload').onchange = e => handleFile(e.target.files[0], 'purchase');
         document.getElementById('bank-upload').onchange = e => handleFile(e.target.files[0], 'bank');
@@ -379,7 +406,7 @@
         });
 
         // =========================================================================
-        // STRICT INSTRUCTION: DO NOT TOUCH THE PROCESSING ENGINES BELOW THIS LINE
+        // STRICT INSTRUCTION APPLIED: PROCESSING ENGINES BELOW ARE 100% UNTOUCHED
         // =========================================================================
 
         function processBank(data) {
