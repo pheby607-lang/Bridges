@@ -907,7 +907,8 @@
         // NEW FEATURE: 2B VS REGISTER RECONCILIATION
         // ==========================================
 
-        const normalizeInvoice = str => String(str).replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+        // UPDATED: Automatically strips out "cn" from the normalized invoice string to handle Credit Notes
+        const normalizeInvoice = str => String(str).replace(/[^a-zA-Z0-9]/g, '').toLowerCase().replace(/cn/g, '');
 
         function handleReconFile(file, type) {
             const reader = new FileReader();
@@ -936,14 +937,20 @@
 
             // Extract 2B List
             let list2B = [], hIdx2b = -1;
-            for(let i=0; i<Math.min(20, raw2bData.length); i++) { if(raw2bData[i].some(c => String(c).toLowerCase().includes('taxable value'))) { hIdx2b = i; break; } }
+            for(let i=0; i<Math.min(50, raw2bData.length); i++) { 
+                let rowStr = raw2bData[i].map(c => String(c).toLowerCase()).join('|');
+                if(rowStr.includes('taxable') && (rowStr.includes('invoice') || rowStr.includes('document'))) { 
+                    hIdx2b = i; break; 
+                } 
+            }
             if(hIdx2b !== -1) {
                 const h2b = raw2bData[hIdx2b].map(v => String(v).toLowerCase().trim());
-                const pIdx = h2b.findIndex(v => v.includes('trade/legal') || v.includes('name'));
+                const pIdx = h2b.findIndex(v => v.includes('trade/legal') || v.includes('name') || v.includes('party'));
                 const invIdx = h2b.findIndex(v => v.includes('invoice') || v.includes('document'));
-                const taxIdx = h2b.findIndex(v => v.includes('taxable value'));
+                const taxIdx = h2b.findIndex(v => v.includes('taxable value') || v.includes('taxable'));
                 
                 for(let r = hIdx2b + 1; r < raw2bData.length; r++) {
+                    if(!raw2bData[r] || raw2bData[r].length === 0) continue;
                     let v = String(raw2bData[r][pIdx]||"").trim(), i = String(raw2bData[r][invIdx]||"").trim(), amt = parseNum(raw2bData[r][taxIdx]);
                     if(v && amt > 0 && !v.toLowerCase().includes('total')) list2B.push({vendor: v, inv: i, normInv: normalizeInvoice(i), amt: amt, matched: false});
                 }
@@ -951,14 +958,21 @@
 
             // Extract Register List
             let listReg = [], hIdxReg = -1;
-            for(let i=0; i<Math.min(20, rawRegData.length); i++) { if(rawRegData[i].some(c => String(c).toLowerCase().includes('taxable') || String(c).toLowerCase().includes('amount'))) { hIdxReg = i; break; } }
+            for(let i=0; i<Math.min(50, rawRegData.length); i++) { 
+                let rowStr = rawRegData[i].map(c => String(c).toLowerCase()).join('|');
+                if(rowStr.includes('particulars') && (rowStr.includes('voucher') || rowStr.includes('invoice'))) { 
+                    hIdxReg = i; break; 
+                } 
+            }
             if(hIdxReg !== -1) {
                 const hReg = rawRegData[hIdxReg].map(v => String(v).toLowerCase().trim());
-                const pIdx = hReg.findIndex(v => v.includes('party') || v.includes('vendor') || v.includes('name'));
-                const invIdx = hReg.findIndex(v => v.includes('vouch') || v.includes('invoice') || v.includes('doc'));
-                const taxIdx = hReg.findIndex(v => v.includes('taxable') || v.includes('amount') || v.includes('value'));
+                const pIdx = hReg.findIndex(v => v.includes('particulars') || v.includes('party') || v.includes('vendor') || v.includes('name'));
+                let invIdx = hReg.findIndex(v => v.includes('supplier invoice'));
+                if(invIdx === -1) invIdx = hReg.findIndex(v => v.includes('invoice') || v.includes('doc') || v.includes('vouch'));
+                const taxIdx = hReg.findIndex(v => v.includes('value') || v.includes('taxable') || v.includes('amount'));
                 
                 for(let r = hIdxReg + 1; r < rawRegData.length; r++) {
+                    if(!rawRegData[r] || rawRegData[r].length === 0) continue;
                     let v = String(rawRegData[r][pIdx]||"").trim(), i = String(rawRegData[r][invIdx]||"").trim(), amt = parseNum(rawRegData[r][taxIdx]);
                     if(v && amt > 0 && !v.toLowerCase().includes('total')) listReg.push({vendor: v, inv: i, normInv: normalizeInvoice(i), amt: amt, matched: false});
                 }
@@ -971,8 +985,8 @@
                 let match = listReg.find(rowReg => 
                     !rowReg.matched && 
                     fuzzyMatch(row2b.vendor, rowReg.vendor) && 
-                    (row2b.normInv === rowReg.normInv || fuzzyMatch(row2b.inv, rowReg.inv)) &&
-                    Math.abs(row2b.amt - rowReg.amt) <= 1.5 // Allow max ₹1.5 rounding diff
+                    (row2b.normInv === rowReg.normInv || (row2b.normInv && rowReg.normInv && (row2b.normInv.includes(rowReg.normInv) || rowReg.normInv.includes(row2b.normInv)))) &&
+                    Math.abs(row2b.amt - rowReg.amt) <= 1.5
                 );
 
                 if(match) {
@@ -993,6 +1007,25 @@
         };
 
         // File/Copy handling triggers
+        function handleFile(file, type) {
+            if (!file) return;
+            let originalName = file.name ? file.name.replace(/\.[^/.]+$/, "") + ".xlsx" : "Pasted_Data.xlsx";
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {header: 1, defval: ""});
+                runProcess(type, json, originalName);
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function runProcess(type, json, name) {
+            if (type === 'sales') { salesFileName = name; processSales(json); updateDashboardSums(); addToHistory(name, 'Sales', salesData); }
+            else if (type === 'purchase') { purchaseFileName = name; processPurchase(json); updateDashboardSums(); addToHistory(name, 'Purchase', purchaseData); }
+            else if (type === 'bank') { bankFileName = name; processBank(json); addToHistory(name, 'Bank Statement', bankData); }
+        }
+
         document.getElementById('sales-upload').onchange = e => handleFile(e.target.files[0], 'sales');
         document.getElementById('purchase-upload').onchange = e => handleFile(e.target.files[0], 'purchase');
         document.getElementById('bank-upload').onchange = e => handleFile(e.target.files[0], 'bank');
