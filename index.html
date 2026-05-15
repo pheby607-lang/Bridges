@@ -613,19 +613,6 @@
             color: #111827;
         }
 
-        td[contenteditable="true"]:hover {
-            background: #f8fafc;
-            cursor: text;
-            outline: 1px solid var(--accent-blue);
-            border-radius: 4px;
-        }
-
-        td[contenteditable="true"]:focus {
-            background: #ffffff;
-            outline: 2px solid var(--accent-blue);
-            border-radius: 4px;
-        }
-
         .dl-btn-small {
             background: #f5f7fb;
             color: #111827;
@@ -1084,7 +1071,7 @@
                 <div id="recon-results-container" style="display: none; margin-top: 20px;">
                     <div class="ui-card">
                         <div class="card-title-bar">
-                            <div class="ui-card-header">Match Results (Editable)</div>
+                            <div class="ui-card-header">Match Results</div>
                             <button id="recon-dl" class="dl-btn-small" style="background:var(--accent-blue);color:#fff;border:none;padding:8px 16px;">Download Report</button>
                         </div>
                         
@@ -1508,8 +1495,11 @@
             const status = document.getElementById('purchase-status');
             let hIdx = -1;
             
-            for(let i=0; i<Math.min(20, data.length); i++) {
-                if(data[i].some(c => String(c).toLowerCase().includes('taxable value'))) {
+            // INCREASED SCAN LIMIT: Bypasses the "Abstract" table at the top of 2B
+            for(let i=0; i<Math.min(50, data.length); i++) {
+                let rowStr = data[i].map(c => String(c).toLowerCase()).join('|');
+                // REQUIRES both "taxable" and "invoice" to confirm it is the main table
+                if(rowStr.includes('taxable') && (rowStr.includes('invoice') || rowStr.includes('document'))) {
                     hIdx = i;
                     break;
                 }
@@ -1523,7 +1513,7 @@
             const h = data[hIdx].map(v => String(v).toLowerCase().trim());
             const pIdx = h.findIndex(v => v.includes('trade/legal'));
             const invIdx = h.findIndex(v => v.includes('invoice') || v.includes('document'));
-            const taxValIdx = h.findIndex(v => v.includes('taxable value'));
+            const taxValIdx = h.findIndex(v => v.includes('taxable value') || v.includes('taxable'));
             const igstIdx = h.findIndex(v => v.includes('integrated tax'));
             const cgstIdx = h.findIndex(v => v.includes('central tax'));
             const sgstIdx = h.findIndex(v => v.includes('state/ut tax'));
@@ -1602,7 +1592,7 @@
 
 
         // ==========================================
-        // RECONCILIATION WITH EDITABLE HTML & DOWNLOAD
+        // RECONCILIATION
         // ==========================================
 
         const normalizeInvoice = str => String(str).replace(/[^a-zA-Z0-9]/g, '').toLowerCase().replace(/cn/gi, '');
@@ -1713,22 +1703,22 @@
                     match.matched = true;
                     resultsHTML += `<tr>
                         <td><span class="status-badge status-good">Matched</span></td>
-                        <td contenteditable="true">${row2b.vendor}</td>
-                        <td contenteditable="true">${row2b.inv}</td>
-                        <td contenteditable="true">${row2b.amt}</td>
-                        <td contenteditable="true">${match.vendor}</td>
-                        <td contenteditable="true">${match.inv}</td>
-                        <td contenteditable="true">${match.amt}</td>
+                        <td>${row2b.vendor}</td>
+                        <td>${row2b.inv}</td>
+                        <td>${row2b.amt}</td>
+                        <td>${match.vendor}</td>
+                        <td>${match.inv}</td>
+                        <td>${match.amt}</td>
                     </tr>`;
                 } else {
                     resultsHTML += `<tr>
                         <td><span class="status-badge status-bad">Missing in Reg</span></td>
-                        <td contenteditable="true">${row2b.vendor}</td>
-                        <td contenteditable="true">${row2b.inv}</td>
-                        <td contenteditable="true">${row2b.amt}</td>
-                        <td contenteditable="true">-</td>
-                        <td contenteditable="true">-</td>
-                        <td contenteditable="true">-</td>
+                        <td>${row2b.vendor}</td>
+                        <td>${row2b.inv}</td>
+                        <td>${row2b.amt}</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
                     </tr>`;
                 }
             });
@@ -1736,12 +1726,12 @@
             listReg.filter(r => !r.matched).forEach(rowReg => {
                 resultsHTML += `<tr>
                     <td><span class="status-badge status-bad">Missing in 2B</span></td>
-                    <td contenteditable="true">-</td>
-                    <td contenteditable="true">-</td>
-                    <td contenteditable="true">-</td>
-                    <td contenteditable="true">${rowReg.vendor}</td>
-                    <td contenteditable="true">${rowReg.inv}</td>
-                    <td contenteditable="true">${rowReg.amt}</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>${rowReg.vendor}</td>
+                    <td>${rowReg.inv}</td>
+                    <td>${rowReg.amt}</td>
                 </tr>`;
             });
 
