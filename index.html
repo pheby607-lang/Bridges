@@ -110,8 +110,7 @@
             flex: 1;
         }
 
-        .nav-item,
-        .nav-folder {
+        .nav-item {
             height: 50px;
             padding: 0 18px;
             display: flex;
@@ -126,7 +125,6 @@
         }
 
         .nav-item:hover,
-        .nav-folder:hover,
         .nav-item.active {
             background: var(--bg-sidebar-active);
         }
@@ -812,8 +810,8 @@
             body { overflow: auto; }
             .sidebar { width: 78px; }
             .logo-area { justify-content: center; padding: 0; }
-            .logo-area span, .nav-item span:last-child, .nav-folder span:last-child, .sidebar-version { display: none; }
-            .nav-item, .nav-folder { justify-content: center; padding: 0; }
+            .logo-area span, .nav-item span:last-child, .sidebar-version { display: none; }
+            .nav-item { justify-content: center; padding: 0; }
             .dashboard-top-grid { grid-template-columns: 1fr; }
             .recon-grid { grid-template-columns: 1fr; }
             .top-nav { padding: 0 16px; }
@@ -1347,8 +1345,9 @@
         }
 
         // ==========================================
-        // UNTOUCHED CORE PROCESSING
+        // RESTORED CORE PROCESSING ENGINES
         // ==========================================
+        
         const parseNum = val => {
             if (!val) return 0;
             if (typeof val === 'number') return val;
@@ -1362,27 +1361,8 @@
             return `${String(nd.getDate()).padStart(2, '0')}-${String(nd.getMonth() + 1).padStart(2, '0')}-${nd.getFullYear()}`;
         };
         
-        const fuzzyMatch = (input, target) => {
-            let s = String(input).toLowerCase().replace(/[^a-z]/g, '');
-            let t = String(target).toLowerCase().replace(/[^a-z]/g, '');
-            if (!s || !t) return false;
-            if (s.includes(t) || t.includes(s)) return true;
-            
-            let m = s.length, n = t.length;
-            if (Math.abs(m - n) > 2) return false;
-            
-            let d = [];
-            for (let i = 0; i <= m; i++) d[i] = [i];
-            for (let j = 0; j <= n; j++) d[0][j] = j;
-            
-            for (let i = 1; i <= m; i++) {
-                for (let j = 1; j <= n; j++) {
-                    d[i][j] = Math.min(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1] + (s[i-1] === t[j-1] ? 0 : 1));
-                }
-            }
-            return d[m][n] <= (t.length > 5 ? 2 : 1);
-        };
 
+        // --- 1. RESTORED BANK STATEMENT ---
         function processBank(data) {
             const status = document.getElementById('bank-status');
             let hIdx = -1;
@@ -1411,7 +1391,9 @@
                 if(!data[r] || data[r].length === 0) continue;
                 
                 let tDate = String(data[r][tDateIdx] || "").trim();
-                if(!tDate || tDate.toLowerCase().includes('opening') || tDate.toLowerCase().includes('closing')) continue;
+                
+                // FIXED: Restored 'legend' safeguard
+                if(!tDate || tDate.toLowerCase().includes('opening') || tDate.toLowerCase().includes('closing') || tDate.toLowerCase().includes('legend')) continue;
                 
                 let vDate = String(data[r][vDateIdx] || "").trim();
                 let part = String(data[r][partIdx] || "").trim();
@@ -1423,9 +1405,10 @@
                 let num4 = parseFloat(col4.replace(/[^\d.-]/g, ''));
                 let num5 = parseFloat(col5.replace(/[^\d.-]/g, ''));
                 
-                if (col5.toUpperCase() === 'DR') {
+                // FIXED: Restored strict 'DEBIT' and 'CREDIT' safeguards
+                if (col5.toUpperCase() === 'DR' || col5.toUpperCase() === 'DEBIT') {
                     if (!isNaN(num4)) dr = num4;
-                } else if (col5.toUpperCase() === 'CR') {
+                } else if (col5.toUpperCase() === 'CR' || col5.toUpperCase() === 'CREDIT') {
                     if (!isNaN(num4)) cr = num4;
                 } else {
                     if (!isNaN(num4) && num4 !== 0) dr = num4;
@@ -1445,6 +1428,7 @@
             document.getElementById('bank-dl').style.display = "block";
         }
 
+        // --- 2. RESTORED SALES ENGINE ---
         function processSales(data) {
             const date = getISTDate();
             const h1 = data[0];
@@ -1460,7 +1444,21 @@
             const stores = headers.map((h, i) => ({n: h, id: i})).filter(h => h.id > bIdx && h.n && !h.n.includes("total"));
             salesData = [["SL", "voucher no", "voucher date", "Party name", "Product", "Qty", "GST %", "Rate per Qty excl.GST", "Cgst", "SGST", "IGST", "Total"]];
             
-            const localKeywords = ["chikmagalur", "frazer town", "hal", "hesaraghatta", "hoskote", "jeevan bima nagar", "kammanahalli", "kannamangala", "kempapura", "k r puram", "nelamangala", "new bel road", "sahakaranagar", "t c palya", "kalyan nagar", "vidyaranyapura"];
+            // FIXED: Expanded robust keywords to catch spelling errors without breaking on extra text like 'Qty'
+            const localKeywords = [
+                "chikmagalur", "chikkamagalur", "chikmangalur",
+                "frazer", "hal", "hesaraghatta", "hessaraghatta",
+                "hoskote", "hoskot",
+                "jeevan bima", "jeevanbima",
+                "kammanahalli", "kammanhalli",
+                "kannamangala", "kannamangla",
+                "kempapura", "kr puram", "k r puram", "k.r. puram",
+                "nelamangala", "new bel", "bel road",
+                "sahakaranagar", "sahakarnagar",
+                "t c palya", "tc palya",
+                "kalyan nagar", "kalyannagar",
+                "vidyaranyapura"
+            ];
             
             stores.forEach((s, sIdx) => {
                 for (let r = 2; r < data.length; r++) {
@@ -1475,7 +1473,12 @@
                         let rate = parseFloat((billRate / (1 + (g/100))).toFixed(2));
                         let taxable = rate * q;
                         
-                        let isLocal = localKeywords.some(kw => fuzzyMatch(s.n, kw));
+                        // FIXED: Replaced faulty fuzzyMatch with bulletproof clean substring check
+                        let s_clean = s.n.toLowerCase().replace(/[^a-z]/g, '');
+                        let isLocal = localKeywords.some(kw => {
+                            let t = kw.toLowerCase().replace(/[^a-z]/g, '');
+                            return s_clean.includes(t);
+                        });
                         
                         let tax = taxable * (g/100);
                         let c = isLocal ? parseFloat((tax/2).toFixed(2)) : 0;
@@ -1491,14 +1494,15 @@
             document.getElementById('sales-dl').style.display = "block";
         }
 
+
+        // --- 3. RESTORED PURCHASE ENGINE ---
         function processPurchase(data) {
             const status = document.getElementById('purchase-status');
             let hIdx = -1;
             
-            // INCREASED SCAN LIMIT: Bypasses the "Abstract" table at the top of 2B
+            // KEPT AT 50: This is strictly required to bypass the new 2B "Abstract" block
             for(let i=0; i<Math.min(50, data.length); i++) {
                 let rowStr = data[i].map(c => String(c).toLowerCase()).join('|');
-                // REQUIRES both "taxable" and "invoice" to confirm it is the main table
                 if(rowStr.includes('taxable') && (rowStr.includes('invoice') || rowStr.includes('document'))) {
                     hIdx = i;
                     break;
@@ -1511,12 +1515,14 @@
             }
             
             const h = data[hIdx].map(v => String(v).toLowerCase().trim());
-            const pIdx = h.findIndex(v => v.includes('trade/legal'));
+            
+            // FIXED: Restored all missing '||' fallbacks
+            const pIdx = h.findIndex(v => v.includes('trade/legal') || v.includes('name') || v.includes('party'));
             const invIdx = h.findIndex(v => v.includes('invoice') || v.includes('document'));
             const taxValIdx = h.findIndex(v => v.includes('taxable value') || v.includes('taxable'));
-            const igstIdx = h.findIndex(v => v.includes('integrated tax'));
-            const cgstIdx = h.findIndex(v => v.includes('central tax'));
-            const sgstIdx = h.findIndex(v => v.includes('state/ut tax'));
+            const igstIdx = h.findIndex(v => v.includes('integrated tax') || v.includes('igst'));
+            const cgstIdx = h.findIndex(v => v.includes('central tax') || v.includes('cgst'));
+            const sgstIdx = h.findIndex(v => v.includes('state/ut tax') || v.includes('sgst'));
             const invDateIdx = h.findIndex(v => (v.includes('invoice') || v.includes('document')) && v.includes('date'));
             
             purchaseData = [["Date", "Voucher Type", "Party Name (Cr)", "Invoice Number", "Invoice Date", "Narration", "Dr Ledger 1", "Amount 1 (Taxable)", "Dr Ledger 2", "Amount 2", "Dr Ledger 3", "Amount 3", "Total Invoice Value"]];
@@ -1592,7 +1598,7 @@
 
 
         // ==========================================
-        // RECONCILIATION
+        // 2B MATCHER RECONCILIATION ENGINE
         // ==========================================
 
         const normalizeInvoice = str => String(str).replace(/[^a-zA-Z0-9]/g, '').toLowerCase().replace(/cn/gi, '');
@@ -1606,10 +1612,10 @@
                 
                 if(type === '2b') {
                     raw2bData = json;
-                    document.getElementById('lbl-2b').innerHTML = `<p style="color:var(--accent-blue);">✓ Loaded</p>`;
+                    document.getElementById('lbl-2b').innerHTML = `<p style="color:var(--accent-blue);">✓ Loaded: ${file.name}</p>`;
                 } else {
                     rawRegData = json;
-                    document.getElementById('lbl-reg').innerHTML = `<p style="color:var(--accent-green);">✓ Loaded</p>`;
+                    document.getElementById('lbl-reg').innerHTML = `<p style="color:var(--accent-green);">✓ Loaded: ${file.name}</p>`;
                 }
                 
                 if(raw2bData && rawRegData) {
@@ -1690,10 +1696,17 @@
 
             let resultsHTML = "";
             
+            // Temporary simple fuzzy match for reconciliation names only
+            const reconFuzzy = (s1, s2) => {
+                let a = String(s1).toLowerCase().replace(/[^a-z]/g, '');
+                let b = String(s2).toLowerCase().replace(/[^a-z]/g, '');
+                return (a.includes(b) || b.includes(a));
+            };
+
             list2B.forEach(row2b => {
                 let match = listReg.find(rowReg => 
                     !rowReg.matched && 
-                    fuzzyMatch(row2b.vendor, rowReg.vendor) && 
+                    reconFuzzy(row2b.vendor, rowReg.vendor) && 
                     (row2b.normInv === rowReg.normInv || (row2b.normInv && rowReg.normInv && (row2b.normInv.includes(rowReg.normInv) || rowReg.normInv.includes(row2b.normInv)))) && 
                     Math.abs(row2b.amt - rowReg.amt) <= 1.5
                 );
@@ -1705,17 +1718,17 @@
                         <td><span class="status-badge status-good">Matched</span></td>
                         <td>${row2b.vendor}</td>
                         <td>${row2b.inv}</td>
-                        <td>${row2b.amt}</td>
+                        <td>₹${row2b.amt}</td>
                         <td>${match.vendor}</td>
                         <td>${match.inv}</td>
-                        <td>${match.amt}</td>
+                        <td>₹${match.amt}</td>
                     </tr>`;
                 } else {
                     resultsHTML += `<tr>
                         <td><span class="status-badge status-bad">Missing in Reg</span></td>
                         <td>${row2b.vendor}</td>
                         <td>${row2b.inv}</td>
-                        <td>${row2b.amt}</td>
+                        <td>₹${row2b.amt}</td>
                         <td>-</td>
                         <td>-</td>
                         <td>-</td>
@@ -1731,7 +1744,7 @@
                     <td>-</td>
                     <td>${rowReg.vendor}</td>
                     <td>${rowReg.inv}</td>
-                    <td>${rowReg.amt}</td>
+                    <td>₹${rowReg.amt}</td>
                 </tr>`;
             });
 
