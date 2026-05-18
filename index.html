@@ -110,7 +110,8 @@
             flex: 1;
         }
 
-        .nav-item {
+        .nav-item,
+        .nav-folder {
             height: 50px;
             padding: 0 18px;
             display: flex;
@@ -125,6 +126,7 @@
         }
 
         .nav-item:hover,
+        .nav-folder:hover,
         .nav-item.active {
             background: var(--bg-sidebar-active);
         }
@@ -696,127 +698,14 @@
             display: none;
         }
 
-        /* RECONCILIATION PAGE SPECIFICS */
-        #view-recon {
-            max-width: 1100px;
-        }
+        /* NEW 2B MATCHER STYLES */
+        #view-recon { max-width: 1100px; }
+        .recon-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .recon-label { min-height: 140px; }
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+        .status-good { background: #e6f4ea; color: #1e8e3e; }
+        .status-bad { background: #fce8e6; color: #d93025; }
 
-        .recon-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .recon-label {
-            min-height: 140px;
-        }
-
-        .status-badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .status-good {
-            background: #e6f4ea;
-            color: #1e8e3e;
-        }
-
-        .status-bad {
-            background: #fce8e6;
-            color: #d93025;
-        }
-
-        /* CUSTOM AUTH MODAL (Canva Style) */
-        .auth-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.65);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
-
-        .auth-modal {
-            background: #212327; 
-            color: #ffffff;
-            width: 420px;
-            border-radius: 12px;
-            padding: 36px 32px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-            font-family: inherit;
-        }
-
-        .auth-modal h2 {
-            font-size: 26px;
-            margin-bottom: 12px;
-            font-weight: 700;
-            line-height: 1.2;
-        }
-
-        .auth-subtitle {
-            color: #b5b9c1;
-            font-size: 15px;
-            margin-bottom: 28px;
-            line-height: 1.5;
-        }
-
-        .auth-btn {
-            background: transparent;
-            border: 1px solid #4a4d55;
-            color: #ffffff;
-            width: 100%;
-            padding: 12px 16px;
-            border-radius: 6px;
-            margin-bottom: 14px;
-            font-size: 15px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .auth-btn:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: #656972;
-        }
-
-        .auth-icon {
-            position: absolute;
-            left: 16px;
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-        }
-
-        .auth-alt-link {
-            text-align: center;
-            font-weight: 700;
-            font-size: 15px;
-            margin: 24px 0;
-            cursor: pointer;
-        }
-
-        .auth-alt-link:hover {
-            text-decoration: underline;
-        }
-
-        @media (max-width: 980px) {
-            body { overflow: auto; }
-            .sidebar { width: 78px; }
-            .logo-area { justify-content: center; padding: 0; }
-            .logo-area span, .nav-item span:last-child, .sidebar-version { display: none; }
-            .nav-item { justify-content: center; padding: 0; }
-            .dashboard-top-grid { grid-template-columns: 1fr; }
-            .recon-grid { grid-template-columns: 1fr; }
-            .top-nav { padding: 0 16px; }
-            .search-container input { width: 180px; }
-        }
     </style>
 </head>
 <body>
@@ -1037,28 +926,17 @@
             </div>
 
             <div id="view-recon" class="view-section upload-page">
-                <div class="page-heading-row">
-                    <h1 class="page-title">2B VS REGISTER MATCHER</h1>
-                </div>
+                <div class="page-heading-row"><h1 class="page-title">2B VS REGISTER MATCHER</h1></div>
                 <div class="ui-card upload-card">
-                    <div class="card-title-bar">
-                        <div>
-                            <div class="ui-card-header">Reconciliation Engine</div>
-                            <div class="ui-card-subtitle">Upload GSTR-2B and Purchase Register to match vendors, invoices, and amounts.</div>
-                        </div>
-                    </div>
+                    <div class="card-title-bar"><div><div class="ui-card-header">Reconciliation Engine</div><div class="ui-card-subtitle">Upload GSTR-2B and Purchase Register to match vendors, invoices, and amounts.</div></div></div>
                     <div class="upload-content">
                         <div class="recon-grid">
                             <div>
-                                <label class="upload-label recon-label" for="recon-2b-upload" id="lbl-2b">
-                                    <p>📄 Upload GSTR-2B Excel</p>
-                                </label>
+                                <label class="upload-label recon-label" for="recon-2b-upload" id="lbl-2b"><p>📄 Upload GSTR-2B Excel</p></label>
                                 <input id="recon-2b-upload" type="file" accept=".xlsx, .csv" />
                             </div>
                             <div>
-                                <label class="upload-label recon-label" for="recon-reg-upload" id="lbl-reg" style="border-color: var(--accent-green);">
-                                    <p style="color: var(--accent-green);">📦 Upload Purchase Register</p>
-                                </label>
+                                <label class="upload-label recon-label" for="recon-reg-upload" id="lbl-reg" style="border-color: var(--accent-green);"><p style="color: var(--accent-green);">📦 Upload Purchase Register</p></label>
                                 <input id="recon-reg-upload" type="file" accept=".xlsx, .csv" />
                             </div>
                         </div>
@@ -1072,7 +950,6 @@
                             <div class="ui-card-header">Match Results</div>
                             <button id="recon-dl" class="dl-btn-small" style="background:var(--accent-blue);color:#fff;border:none;padding:8px 16px;">Download Report</button>
                         </div>
-                        
                         <div style="overflow-x: auto; overflow-y: auto; max-height: 500px; width: 100%;">
                             <table id="recon-table" style="width: 100%; white-space: nowrap; margin: 0;">
                                 <thead style="position: sticky; top: 0; z-index: 10;">
@@ -1087,7 +964,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="recon-results-body">
-                                    </tbody>
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -1096,34 +973,6 @@
 
         </section>
     </main>
-
-    <div class="auth-overlay" id="auth-overlay">
-        <div class="auth-modal">
-            <div id="auth-main-view">
-                <h2>Log in or sign up in seconds</h2>
-                <p class="auth-subtitle">Use your email or another service to continue with Finflo!</p>
-                <button class="auth-btn" onclick="alert('Phone auth requires backend setup.')">
-                    <span class="auth-icon">📱</span> <span>Continue with phone number</span>
-                </button>
-                <button class="auth-btn" onclick="handleGoogleAuth()">
-                    <span class="auth-icon">G</span> <span>Continue with Google</span>
-                </button>
-                <button class="auth-btn" onclick="showEmailAuth()">
-                    <span class="auth-icon">✉️</span> <span>Continue with email</span>
-                </button>
-                <div class="auth-alt-link" onclick="document.getElementById('auth-overlay').style.display='none'">Cancel</div>
-            </div>
-            
-            <div id="auth-email-view" style="display: none; flex-direction: column; gap: 12px;">
-                <h2>Email Sign In</h2>
-                <input type="email" id="auth-email" placeholder="Email address" style="padding: 14px; border-radius: 6px; border: 1px solid #4a4d55; background: transparent; color: white; font-size: 15px; outline: none;">
-                <input type="password" id="auth-pass" placeholder="Password" style="padding: 14px; border-radius: 6px; border: 1px solid #4a4d55; background: transparent; color: white; font-size: 15px; outline: none;">
-                <button class="auth-btn" style="background: #4e5edb; border-color: #4e5edb; margin-top: 8px;" onclick="handleEmailAuth()">Log In / Sign Up</button>
-                <div class="auth-alt-link" style="margin: 10px 0; color: #8a8d93;" onclick="showAuthMain()">Back</div>
-                <div id="auth-error" style="color: #d57b83; font-size: 13px; text-align: center;"></div>
-            </div>
-        </div>
-    </div>
 
     <script>
         // ==========================================
@@ -1137,10 +986,6 @@
         let bankFileName = "Bank Statement.xlsx";
         let globalTotalSales = 0;
         let globalTotalPurchase = 0;
-
-        // MATCHER GLOBALS
-        let raw2bData = null;
-        let rawRegData = null;
 
         // ==========================================
         // CALENDAR WIDGET LOGIC
@@ -1204,90 +1049,15 @@
         };
 
         // ==========================================
-        // AUTH LOGIC
-        // ==========================================
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedUser = localStorage.getItem('finfloUserInitials');
-            if (savedUser) {
-                document.getElementById('login-btn').style.display = 'none';
-                let av = document.getElementById('user-avatar');
-                av.innerText = savedUser;
-                av.style.display = 'flex';
-            }
-        });
-        
-        document.getElementById('login-btn').onclick = () => {
-            document.getElementById('auth-overlay').style.display = 'flex';
-        };
-        
-        document.getElementById('auth-overlay').onclick = function(e) {
-            if (e.target === this) {
-                this.style.display = 'none';
-                setTimeout(() => showAuthMain(), 300);
-            }
-        };
-        
-        function showEmailAuth() {
-            document.getElementById('auth-main-view').style.display = 'none';
-            document.getElementById('auth-email-view').style.display = 'flex';
-            document.getElementById('auth-error').innerText = '';
-        }
-        
-        function showAuthMain() {
-            document.getElementById('auth-email-view').style.display = 'none';
-            document.getElementById('auth-main-view').style.display = 'block';
-        }
-        
-        function handleEmailAuth() {
-            let email = document.getElementById('auth-email').value.trim();
-            let pass = document.getElementById('auth-pass').value.trim();
-            let errorEl = document.getElementById('auth-error');
-            
-            if(!email || !pass) {
-                errorEl.innerText = 'Please enter both.';
-                return;
-            }
-            
-            let users = JSON.parse(localStorage.getItem('finfloUsers') || '{}');
-            
-            if(users[email]) {
-                if(users[email] === pass) {
-                    completeLogin(email);
-                } else {
-                    errorEl.innerText = 'Incorrect password.';
-                }
-            } else {
-                users[email] = pass;
-                localStorage.setItem('finfloUsers', JSON.stringify(users));
-                completeLogin(email);
-            }
-        }
-        
-        function handleGoogleAuth() {
-            completeLogin("Google User");
-        }
-        
-        function completeLogin(id) {
-            let initials = id.substring(0,2).toUpperCase();
-            localStorage.setItem('finfloUserInitials', initials);
-            document.getElementById('auth-overlay').style.display = 'none';
-            document.getElementById('login-btn').style.display = 'none';
-            let av = document.getElementById('user-avatar');
-            av.innerText = initials;
-            av.style.display = 'flex';
-            showAuthMain();
-        }
-
-        // ==========================================
         // NAV & DASHBOARD LOGIC
         // ==========================================
         document.getElementById('top-search').addEventListener('input', function(e) {
-            let v = e.target.value.toLowerCase();
-            if(v.includes('sale')) switchView('sales');
-            else if(v.includes('purch')) switchView('purchase');
-            else if(v.includes('bank')) switchView('bank');
-            else if(v.includes('recon')||v.includes('match')) switchView('recon');
-            else if(v.includes('dash')) switchView('dashboard');
+            let val = e.target.value.toLowerCase();
+            if(val.includes('recon') || val.includes('match')) switchView('recon');
+            else if(val.includes('sale')) switchView('sales');
+            else if(val.includes('purch')) switchView('purchase');
+            else if(val.includes('bank') || val.includes('stat')) switchView('bank');
+            else if(val.includes('dash') || val.includes('home')) switchView('dashboard');
         });
         
         function switchView(view) {
@@ -1345,9 +1115,8 @@
         }
 
         // ==========================================
-        // RESTORED CORE PROCESSING ENGINES
+        // DATA PROCESSING UTILS
         // ==========================================
-        
         const parseNum = val => {
             if (!val) return 0;
             if (typeof val === 'number') return val;
@@ -1361,8 +1130,30 @@
             return `${String(nd.getDate()).padStart(2, '0')}-${String(nd.getMonth() + 1).padStart(2, '0')}-${nd.getFullYear()}`;
         };
         
+        const fuzzyMatch = (input, target) => {
+            let s = String(input).toLowerCase().replace(/[^a-z]/g, '');
+            let t = String(target).toLowerCase().replace(/[^a-z]/g, '');
+            if (!s || !t) return false;
+            if (s.includes(t) || t.includes(s)) return true;
+            
+            let m = s.length, n = t.length;
+            if (Math.abs(m - n) > 2) return false;
+            
+            let d = [];
+            for (let i = 0; i <= m; i++) d[i] = [i];
+            for (let j = 0; j <= n; j++) d[0][j] = j;
+            
+            for (let i = 1; i <= m; i++) {
+                for (let j = 1; j <= n; j++) {
+                    d[i][j] = Math.min(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1] + (s[i-1] === t[j-1] ? 0 : 1));
+                }
+            }
+            return d[m][n] <= (t.length > 5 ? 2 : 1);
+        };
 
-        // --- 1. RESTORED BANK STATEMENT ---
+        // ==========================================
+        // BANK STATEMENT PROCESSING
+        // ==========================================
         function processBank(data) {
             const status = document.getElementById('bank-status');
             let hIdx = -1;
@@ -1391,8 +1182,6 @@
                 if(!data[r] || data[r].length === 0) continue;
                 
                 let tDate = String(data[r][tDateIdx] || "").trim();
-                
-                // FIXED: Restored 'legend' safeguard
                 if(!tDate || tDate.toLowerCase().includes('opening') || tDate.toLowerCase().includes('closing') || tDate.toLowerCase().includes('legend')) continue;
                 
                 let vDate = String(data[r][vDateIdx] || "").trim();
@@ -1405,7 +1194,6 @@
                 let num4 = parseFloat(col4.replace(/[^\d.-]/g, ''));
                 let num5 = parseFloat(col5.replace(/[^\d.-]/g, ''));
                 
-                // FIXED: Restored strict 'DEBIT' and 'CREDIT' safeguards
                 if (col5.toUpperCase() === 'DR' || col5.toUpperCase() === 'DEBIT') {
                     if (!isNaN(num4)) dr = num4;
                 } else if (col5.toUpperCase() === 'CR' || col5.toUpperCase() === 'CREDIT') {
@@ -1424,86 +1212,74 @@
                 bankData.push([tDate, vDate, part, dr, cr, bal]);
             }
             
-            status.innerText = `✓ Processed (${bankData.length - 1} rows)`;
+            status.innerText = `✓ Bank Processed (${bankData.length - 1} rows)`;
             document.getElementById('bank-dl').style.display = "block";
         }
 
-        // --- 2. RESTORED SALES ENGINE ---
+        // ==========================================
+        // SALES PROCESSING (FIXED ROUNDING ERROR)
+        // ==========================================
         function processSales(data) {
             const date = getISTDate();
-            const h1 = data[0];
-            const h2 = data[1];
-            
+            const h1 = data[0], h2 = data[1];
             if(!h1 || !h2) return;
-            
             const headers = h1.map((v, i) => `${String(v).trim()} ${String(h2[i]||'').trim()}`.toLowerCase());
             const pIdx = headers.findIndex(h => h.includes("product") || h.includes("system")) || 1;
             const gIdx = headers.findIndex(h => h.includes("gst")) || 2;
             const bIdx = headers.findIndex(h => h.includes("billing")) || 3;
-            
             const stores = headers.map((h, i) => ({n: h, id: i})).filter(h => h.id > bIdx && h.n && !h.n.includes("total"));
             salesData = [["SL", "voucher no", "voucher date", "Party name", "Product", "Qty", "GST %", "Rate per Qty excl.GST", "Cgst", "SGST", "IGST", "Total"]];
             
-            // FIXED: Expanded robust keywords to catch spelling errors without breaking on extra text like 'Qty'
             const localKeywords = [
-                "chikmagalur", "chikkamagalur", "chikmangalur",
-                "frazer", "hal", "hesaraghatta", "hessaraghatta",
-                "hoskote", "hoskot",
-                "jeevan bima", "jeevanbima",
-                "kammanahalli", "kammanhalli",
-                "kannamangala", "kannamangla",
-                "kempapura", "kr puram", "k r puram", "k.r. puram",
-                "nelamangala", "new bel", "bel road",
-                "sahakaranagar", "sahakarnagar",
-                "t c palya", "tc palya",
-                "kalyan nagar", "kalyannagar",
-                "vidyaranyapura"
+                "chikmagalur", "frazer town", "hal", "hesaraghatta", "hoskote", 
+                "jeevan bima nagar", "kammanahalli", "kannamangala", "kempapura", 
+                "k r puram", "nelamangala", "new bel road", "sahakaranagar", 
+                "t c palya", "kalyan nagar", "vidyaranyapura"
             ];
-            
+
             stores.forEach((s, sIdx) => {
                 for (let r = 2; r < data.length; r++) {
                     if(!data[r][pIdx]) continue;
-                    
                     let q = parseNum(data[r][s.id]);
                     if(q > 0) {
                         let gRaw = parseNum(data[r][gIdx]);
                         let g = Math.round(gRaw < 1 ? gRaw * 100 : gRaw);
-                        
                         let billRate = parseNum(data[r][bIdx]);
-                        let rate = parseFloat((billRate / (1 + (g/100))).toFixed(2));
-                        let taxable = rate * q;
                         
-                        // FIXED: Replaced faulty fuzzyMatch with bulletproof clean substring check
-                        let s_clean = s.n.toLowerCase().replace(/[^a-z]/g, '');
-                        let isLocal = localKeywords.some(kw => {
-                            let t = kw.toLowerCase().replace(/[^a-z]/g, '');
-                            return s_clean.includes(t);
-                        });
+                        // NEW FIX: Calculate total incl GST first, so we don't multiply rounded decimals by QTY
+                        let totalInclGst = billRate * q;
                         
-                        let tax = taxable * (g/100);
+                        let taxable = parseFloat((totalInclGst / (1 + (g/100))).toFixed(2));
+                        let tax = parseFloat((totalInclGst - taxable).toFixed(2));
+                        
+                        let rate = parseFloat((taxable / q).toFixed(2)); // Rate per Qty excl.GST
+                        
+                        let isLocal = localKeywords.some(kw => fuzzyMatch(s.n, kw));
+                        
+                        // Safely split tax so c + st perfectly equals total tax
                         let c = isLocal ? parseFloat((tax/2).toFixed(2)) : 0;
-                        let st = isLocal ? parseFloat((tax/2).toFixed(2)) : 0;
-                        let ig = isLocal ? 0 : parseFloat(tax.toFixed(2));
+                        let st = isLocal ? parseFloat((tax - c).toFixed(2)) : 0;
+                        let ig = isLocal ? 0 : tax;
                         
-                        salesData.push([salesData.length, sIdx+1, date, s.n, data[r][pIdx], q, g, rate, c, st, ig, parseFloat((taxable + c + st + ig).toFixed(2))]);
+                        let computedTotal = parseFloat((taxable + c + st + ig).toFixed(2));
+                        
+                        salesData.push([salesData.length, sIdx+1, date, s.n, data[r][pIdx], q, g, rate, c, st, ig, computedTotal]);
                     }
                 }
             });
-            
-            document.getElementById('sales-status').innerText = `✓ Processed`;
+            document.getElementById('sales-status').innerText = `✓ Sales Processed Store-Wise (Date: ${date})`;
             document.getElementById('sales-dl').style.display = "block";
         }
 
-
-        // --- 3. RESTORED PURCHASE ENGINE ---
+        // ==========================================
+        // PURCHASE PROCESSING
+        // ==========================================
         function processPurchase(data) {
             const status = document.getElementById('purchase-status');
             let hIdx = -1;
             
-            // KEPT AT 50: This is strictly required to bypass the new 2B "Abstract" block
-            for(let i=0; i<Math.min(50, data.length); i++) {
-                let rowStr = data[i].map(c => String(c).toLowerCase()).join('|');
-                if(rowStr.includes('taxable') && (rowStr.includes('invoice') || rowStr.includes('document'))) {
+            for(let i=0; i<Math.min(20, data.length); i++) {
+                if(data[i].some(c => String(c).toLowerCase().includes('taxable value'))) {
                     hIdx = i;
                     break;
                 }
@@ -1515,11 +1291,9 @@
             }
             
             const h = data[hIdx].map(v => String(v).toLowerCase().trim());
-            
-            // FIXED: Restored all missing '||' fallbacks
-            const pIdx = h.findIndex(v => v.includes('trade/legal') || v.includes('name') || v.includes('party'));
+            const pIdx = h.findIndex(v => v.includes('trade/legal') || v.includes('party'));
             const invIdx = h.findIndex(v => v.includes('invoice') || v.includes('document'));
-            const taxValIdx = h.findIndex(v => v.includes('taxable value') || v.includes('taxable'));
+            const taxValIdx = h.findIndex(v => v.includes('taxable value'));
             const igstIdx = h.findIndex(v => v.includes('integrated tax') || v.includes('igst'));
             const cgstIdx = h.findIndex(v => v.includes('central tax') || v.includes('cgst'));
             const sgstIdx = h.findIndex(v => v.includes('state/ut tax') || v.includes('sgst'));
@@ -1592,15 +1366,16 @@
                 });
             }
             
-            status.innerText = "✓ Processed";
+            status.innerText = "✓ Purchase Processed (5% - 40% Range)";
             document.getElementById('purchase-dl').style.display = "block";
         }
 
 
         // ==========================================
-        // 2B MATCHER RECONCILIATION ENGINE
+        // NEW FEATURE: 2B VS REGISTER RECONCILIATION
         // ==========================================
 
+        let raw2bData = null, rawRegData = null;
         const normalizeInvoice = str => String(str).replace(/[^a-zA-Z0-9]/g, '').toLowerCase().replace(/cn/gi, '');
 
         function handleReconFile(file, type) {
@@ -1610,38 +1385,30 @@
                 const workbook = XLSX.read(data, {type: 'array'});
                 const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {header: 1, defval: ""});
                 
-                if(type === '2b') {
-                    raw2bData = json;
-                    document.getElementById('lbl-2b').innerHTML = `<p style="color:var(--accent-blue);">✓ Loaded: ${file.name}</p>`;
-                } else {
-                    rawRegData = json;
-                    document.getElementById('lbl-reg').innerHTML = `<p style="color:var(--accent-green);">✓ Loaded: ${file.name}</p>`;
+                if(type === '2b') { 
+                    raw2bData = json; 
+                    document.getElementById('lbl-2b').innerHTML = `<p style="color:var(--accent-blue);">✓ Loaded</p>`; 
+                } else { 
+                    rawRegData = json; 
+                    document.getElementById('lbl-reg').innerHTML = `<p style="color:var(--accent-green);">✓ Loaded</p>`; 
                 }
-                
-                if(raw2bData && rawRegData) {
-                    document.getElementById('run-recon-btn').style.display = "block";
-                }
+                if(raw2bData && rawRegData) { document.getElementById('run-recon-btn').style.display = "block"; }
             };
             reader.readAsArrayBuffer(file);
         }
 
-        document.getElementById('recon-2b-upload').onchange = e => handleReconFile(e.target.files[0], '2b');
-        document.getElementById('recon-reg-upload').onchange = e => handleReconFile(e.target.files[0], 'reg');
+        document.getElementById('recon-2b-upload').addEventListener('change', e => handleReconFile(e.target.files[0], '2b'));
+        document.getElementById('recon-reg-upload').addEventListener('change', e => handleReconFile(e.target.files[0], 'reg'));
 
         document.getElementById('run-recon-btn').onclick = () => {
             if(!raw2bData || !rawRegData) return;
 
-            let list2B = [];
-            let hIdx2b = -1;
-            
-            for(let i=0; i<Math.min(50, raw2bData.length); i++) {
+            let list2B = [], hIdx2b = -1;
+            for(let i=0; i<Math.min(50, raw2bData.length); i++) { 
+                if(!raw2bData[i]) continue;
                 let rowStr = raw2bData[i].map(c => String(c).toLowerCase()).join('|');
-                if(rowStr.includes('taxable') && (rowStr.includes('invoice') || rowStr.includes('document'))) {
-                    hIdx2b = i;
-                    break;
-                }
+                if(rowStr.includes('taxable') && (rowStr.includes('invoice') || rowStr.includes('document'))) { hIdx2b = i; break; } 
             }
-            
             if(hIdx2b !== -1) {
                 const h2b = raw2bData[hIdx2b].map(v => String(v).toLowerCase().trim());
                 const pIdx = h2b.findIndex(v => v.includes('trade/legal') || v.includes('name') || v.includes('party'));
@@ -1650,56 +1417,35 @@
                 
                 for(let r = hIdx2b + 1; r < raw2bData.length; r++) {
                     if(!raw2bData[r] || raw2bData[r].length === 0) continue;
-                    let v = String(raw2bData[r][pIdx]||"").trim();
-                    let i = String(raw2bData[r][invIdx]||"").trim();
-                    let amt = parseNum(raw2bData[r][taxIdx]);
-                    
-                    if(v && amt > 0 && !v.toLowerCase().includes('total')) {
-                        list2B.push({vendor: v, inv: i, normInv: normalizeInvoice(i), amt: amt, matched: false});
-                    }
+                    let v = String(raw2bData[r][pIdx]||"").trim(), i = String(raw2bData[r][invIdx]||"").trim(), amt = parseNum(raw2bData[r][taxIdx]);
+                    if(v && amt > 0 && !v.toLowerCase().includes('total')) list2B.push({vendor: v, inv: i, normInv: normalizeInvoice(i), amt: amt, matched: false});
                 }
             }
 
-            let listReg = [];
-            let hIdxReg = -1;
-            
-            for(let i=0; i<Math.min(50, rawRegData.length); i++) {
+            let listReg = [], hIdxReg = -1;
+            for(let i=0; i<Math.min(50, rawRegData.length); i++) { 
+                if(!rawRegData[i]) continue;
                 let rowStr = rawRegData[i].map(c => String(c).toLowerCase()).join('|');
-                if(rowStr.includes('particulars') && (rowStr.includes('voucher') || rowStr.includes('invoice'))) {
-                    hIdxReg = i;
-                    break;
-                }
+                if(rowStr.includes('particulars') && (rowStr.includes('voucher') || rowStr.includes('invoice'))) { hIdxReg = i; break; } 
             }
-            
             if(hIdxReg !== -1) {
                 const hReg = rawRegData[hIdxReg].map(v => String(v).toLowerCase().trim());
                 const pIdx = hReg.findIndex(v => v.includes('particulars') || v.includes('party') || v.includes('vendor') || v.includes('name'));
                 let invIdx = hReg.findIndex(v => v.includes('supplier invoice'));
-                
-                if(invIdx === -1) {
-                    invIdx = hReg.findIndex(v => v.includes('invoice') || v.includes('doc') || v.includes('vouch'));
-                }
-                
+                if(invIdx === -1) invIdx = hReg.findIndex(v => v.includes('invoice') || v.includes('doc') || v.includes('vouch'));
                 const taxIdx = hReg.findIndex(v => v.includes('value') || v.includes('taxable') || v.includes('amount'));
                 
                 for(let r = hIdxReg + 1; r < rawRegData.length; r++) {
                     if(!rawRegData[r] || rawRegData[r].length === 0) continue;
-                    let v = String(rawRegData[r][pIdx]||"").trim();
-                    let i = String(rawRegData[r][invIdx]||"").trim();
-                    let amt = parseNum(rawRegData[r][taxIdx]);
-                    
-                    if(v && amt > 0 && !v.toLowerCase().includes('total')) {
-                        listReg.push({vendor: v, inv: i, normInv: normalizeInvoice(i), amt: amt, matched: false});
-                    }
+                    let v = String(rawRegData[r][pIdx]||"").trim(), i = String(rawRegData[r][invIdx]||"").trim(), amt = parseNum(rawRegData[r][taxIdx]);
+                    if(v && amt > 0 && !v.toLowerCase().includes('total')) listReg.push({vendor: v, inv: i, normInv: normalizeInvoice(i), amt: amt, matched: false});
                 }
             }
 
             let resultsHTML = "";
-            
-            // Temporary simple fuzzy match for reconciliation names only
             const reconFuzzy = (s1, s2) => {
-                let a = String(s1).toLowerCase().replace(/[^a-z]/g, '');
-                let b = String(s2).toLowerCase().replace(/[^a-z]/g, '');
+                let a = String(s1).toLowerCase().replace(/[^a-z]/g, ''), b = String(s2).toLowerCase().replace(/[^a-z]/g, '');
+                if (!a || !b) return false;
                 return (a.includes(b) || b.includes(a));
             };
 
@@ -1707,52 +1453,26 @@
                 let match = listReg.find(rowReg => 
                     !rowReg.matched && 
                     reconFuzzy(row2b.vendor, rowReg.vendor) && 
-                    (row2b.normInv === rowReg.normInv || (row2b.normInv && rowReg.normInv && (row2b.normInv.includes(rowReg.normInv) || rowReg.normInv.includes(row2b.normInv)))) && 
-                    Math.abs(row2b.amt - rowReg.amt) <= 1.5
+                    (row2b.normInv === rowReg.normInv || (row2b.normInv && rowReg.normInv && (row2b.normInv.includes(rowReg.normInv) || rowReg.normInv.includes(row2b.normInv)))) &&
+                    Math.abs(row2b.amt - rowReg.amt) <= 1.5 
                 );
-                
+
                 if(match) {
-                    row2b.matched = true;
-                    match.matched = true;
-                    resultsHTML += `<tr>
-                        <td><span class="status-badge status-good">Matched</span></td>
-                        <td>${row2b.vendor}</td>
-                        <td>${row2b.inv}</td>
-                        <td>₹${row2b.amt}</td>
-                        <td>${match.vendor}</td>
-                        <td>${match.inv}</td>
-                        <td>₹${match.amt}</td>
-                    </tr>`;
+                    row2b.matched = true; match.matched = true;
+                    resultsHTML += `<tr><td><span class="status-badge status-good">Matched</span></td><td>${row2b.vendor}</td><td>${row2b.inv}</td><td>₹${row2b.amt}</td><td>${match.vendor}</td><td>${match.inv}</td><td>₹${match.amt}</td></tr>`;
                 } else {
-                    resultsHTML += `<tr>
-                        <td><span class="status-badge status-bad">Missing in Reg</span></td>
-                        <td>${row2b.vendor}</td>
-                        <td>${row2b.inv}</td>
-                        <td>₹${row2b.amt}</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                    </tr>`;
+                    resultsHTML += `<tr><td><span class="status-badge status-bad">Missing in Reg</span></td><td>${row2b.vendor}</td><td>${row2b.inv}</td><td>₹${row2b.amt}</td><td>-</td><td>-</td><td>-</td></tr>`;
                 }
             });
 
             listReg.filter(r => !r.matched).forEach(rowReg => {
-                resultsHTML += `<tr>
-                    <td><span class="status-badge status-bad">Missing in 2B</span></td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>${rowReg.vendor}</td>
-                    <td>${rowReg.inv}</td>
-                    <td>₹${rowReg.amt}</td>
-                </tr>`;
+                resultsHTML += `<tr><td><span class="status-badge status-bad">Missing in 2B</span></td><td>-</td><td>-</td><td>-</td><td>${rowReg.vendor}</td><td>${rowReg.inv}</td><td>₹${rowReg.amt}</td></tr>`;
             });
 
             document.getElementById('recon-results-body').innerHTML = resultsHTML;
             document.getElementById('recon-results-container').style.display = "block";
         };
 
-        // EXPORT RECONCILIATION TABLE TO EXCEL
         document.getElementById('recon-dl').onclick = () => {
             const table = document.getElementById('recon-table');
             const ws = XLSX.utils.table_to_sheet(table);
@@ -1762,8 +1482,9 @@
         };
 
         // ==========================================
-        // FILE & DRAG HANDLERS
+        // DRAG AND DROP & DOWNLOAD HANDLERS
         // ==========================================
+
         function handleFile(file, type) {
             if (!file) return;
             let originalName = file.name ? file.name.replace(/\.[^/.]+$/, "") + ".xlsx" : "Pasted_Data.xlsx";
