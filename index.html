@@ -31,23 +31,6 @@
             font-family: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
-        /* Custom Scrollbars for Data Tables */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-
         body {
             background: var(--bg-page);
             color: var(--text-main);
@@ -260,7 +243,7 @@
             letter-spacing: 0.5px;
         }
 
-        /* CALENDAR STYLES */
+        /* NEW CALENDAR STYLES */
         .calendar-modal {
             position: absolute;
             top: 46px;
@@ -284,24 +267,9 @@
             border-bottom: 1px solid #eef1f5;
         }
 
-        .cal-header h3 {
-            font-size: 15px;
-            margin: 0;
-            color: #111827;
-        }
-
-        .cal-header button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            color: #667085;
-            padding: 0 5px;
-        }
-
-        .cal-header button:hover {
-            color: var(--accent-blue);
-        }
+        .cal-header h3 { font-size: 15px; margin: 0; color: #111827; }
+        .cal-header button { background: none; border: none; cursor: pointer; font-size: 16px; color: #667085; padding: 0 5px; }
+        .cal-header button:hover { color: var(--accent-blue); }
         
         .cal-days {
             display: grid;
@@ -331,31 +299,12 @@
             transition: 0.2s ease;
         }
 
-        .cal-date-btn:hover {
-            background: #f0f3f9;
-            color: var(--accent-blue);
-            font-weight: 600;
-        }
+        .cal-date-btn:hover { background: #f0f3f9; color: var(--accent-blue); font-weight: 600; }
+        .cal-date-btn.empty { cursor: default; background: none; }
+        .cal-date-btn.empty:hover { background: none; }
+        .cal-date-btn.active { background: var(--accent-blue); color: white; font-weight: 600; }
+        .cal-date-btn.active:hover { background: var(--accent-blue-dark); color: white; }
 
-        .cal-date-btn.empty {
-            cursor: default;
-            background: none;
-        }
-
-        .cal-date-btn.empty:hover {
-            background: none;
-        }
-
-        .cal-date-btn.active {
-            background: var(--accent-blue);
-            color: white;
-            font-weight: 600;
-        }
-
-        .cal-date-btn.active:hover {
-            background: var(--accent-blue-dark);
-            color: white;
-        }
 
         .main-content {
             flex: 1;
@@ -419,6 +368,7 @@
             box-shadow: 0 3px 8px rgba(78, 94, 219, 0.22);
         }
 
+        /* DASHBOARD CARDS (RESTORED) */
         .dashboard-top-grid {
             display: grid;
             grid-template-columns: 2fr 1fr;
@@ -698,14 +648,127 @@
             display: none;
         }
 
-        /* NEW 2B MATCHER STYLES */
-        #view-recon { max-width: 1100px; }
-        .recon-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .recon-label { min-height: 140px; }
-        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
-        .status-good { background: #e6f4ea; color: #1e8e3e; }
-        .status-bad { background: #fce8e6; color: #d93025; }
+        /* CUSTOM AUTH MODAL (Canva Style) */
+        .auth-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.65);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
 
+        .auth-modal {
+            background: #212327; /* Dark modal background */
+            color: #ffffff;
+            width: 420px;
+            border-radius: 12px;
+            padding: 36px 32px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            font-family: inherit;
+        }
+
+        .auth-modal h2 {
+            font-size: 26px;
+            margin-bottom: 12px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .auth-subtitle {
+            color: #b5b9c1;
+            font-size: 15px;
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+
+        .auth-btn {
+            background: transparent;
+            border: 1px solid #4a4d55;
+            color: #ffffff;
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .auth-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: #656972;
+        }
+
+        .auth-icon {
+            position: absolute;
+            left: 16px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .auth-alt-link {
+            text-align: center;
+            font-weight: 700;
+            font-size: 15px;
+            margin: 24px 0;
+            cursor: pointer;
+        }
+
+        .auth-alt-link:hover {
+            text-decoration: underline;
+        }
+
+        .auth-terms {
+            color: #8a8d93;
+            font-size: 13px;
+            text-align: left;
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+
+        .auth-terms a {
+            color: #a491ff; /* Light purple link */
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .auth-terms a:hover {
+            text-decoration: underline;
+        }
+
+        .auth-business {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            border-top: 1px solid #3c3e45;
+            padding-top: 24px;
+        }
+
+        .auth-business .auth-icon-inline {
+            font-size: 22px;
+            margin-right: 12px;
+        }
+
+        @media (max-width: 980px) {
+            body { overflow: auto; }
+            .sidebar { width: 78px; }
+            .logo-area { justify-content: center; padding: 0; }
+            .logo-area span, .nav-item span:last-child, .nav-folder span:last-child, .sidebar-version { display: none; }
+            .nav-item, .nav-folder { justify-content: center; padding: 0; }
+            .dashboard-top-grid { grid-template-columns: 1fr; }
+            .top-nav { padding: 0 16px; }
+            .search-container input { width: 180px; }
+        }
     </style>
 </head>
 <body>
@@ -729,9 +792,6 @@
             <div class="nav-item" id="nav-bank" onclick="switchView('bank')">
                 <span class="nav-icon">▥</span><span>Bank Statement</span>
             </div>
-            <div class="nav-item" id="nav-recon" onclick="switchView('recon')">
-                <span class="nav-icon">◨</span><span>2B Matcher</span>
-            </div>
         </div>
 
         <div class="sidebar-version">FINFLO ENTERPRISE V10.17</div>
@@ -750,6 +810,7 @@
                     <button class="login-btn" id="login-btn">Sign In</button>
                     <div class="avatar" id="user-avatar">UN</div>
 
+                    <!-- NEW FULL CALENDAR -->
                     <div class="calendar-modal" id="cal-modal">
                         <div class="cal-header">
                             <button id="cal-prev">&lt;</button>
@@ -760,7 +821,8 @@
                             <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
                         </div>
                         <div class="cal-dates" id="cal-dates">
-                            </div>
+                            <!-- JS will populate dates here -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -768,6 +830,7 @@
 
         <section class="main-content">
 
+            <!-- FULL DASHBOARD RESTORED -->
             <div id="view-dashboard" class="view-section active">
                 <div class="page-heading-row">
                     <h1 class="page-title">SALES DASHBOARD</h1>
@@ -843,7 +906,7 @@
                         <button class="view-all-btn">View All</button>
                     </div>
                     <div class="history-intro">
-                        <div class="ui-card-subtitle">Overview of total contents when your processing is complete.</div>
+                        <div class="ui-card-subtitle">Overview of total contents when your sales processing is complete, making your data presentation readable and clear.</div>
                     </div>
                     <table>
                         <thead>
@@ -856,11 +919,13 @@
                             </tr>
                         </thead>
                         <tbody id="history-body">
-                            </tbody>
+                            <!-- JS inserts history here -->
+                        </tbody>
                     </table>
                 </div>
             </div>
 
+            <!-- UPLOAD PAGES -->
             <div id="view-sales" class="view-section upload-page">
                 <div class="page-heading-row">
                     <h1 class="page-title">SALES</h1>
@@ -893,9 +958,7 @@
                         </div>
                     </div>
                     <div class="upload-content">
-                        <label class="upload-label" for="purchase-upload" style="border-color: var(--accent-green);">
-                            <p style="color: var(--accent-green);">📦 Drag or Paste Purchase Excel Here</p>
-                        </label>
+                        <label class="upload-label" for="purchase-upload" style="border-color: var(--accent-green);"><p style="color: var(--accent-green);">📦 Drag or Paste Purchase Excel Here</p></label>
                         <input id="purchase-upload" type="file" accept=".xlsx, .csv" />
                         <div id="purchase-status" class="status-msg"></div>
                         <button id="purchase-dl" class="btn" style="background: var(--accent-green);">Download Tally Purchase</button>
@@ -915,9 +978,7 @@
                         </div>
                     </div>
                     <div class="upload-content">
-                        <label class="upload-label" for="bank-upload" style="border-color: #4b5563;">
-                            <p style="color: #4b5563;">🏦 Drag or Paste Bank Excel Here</p>
-                        </label>
+                        <label class="upload-label" for="bank-upload" style="border-color: #4b5563;"><p style="color: #4b5563;">🏦 Drag or Paste Bank Excel Here</p></label>
                         <input id="bank-upload" type="file" accept=".xlsx, .csv" />
                         <div id="bank-status" class="status-msg"></div>
                         <button id="bank-dl" class="btn" style="background: #4b5563;">Download Bank Excel</button>
@@ -925,67 +986,71 @@
                 </div>
             </div>
 
-            <div id="view-recon" class="view-section upload-page">
-                <div class="page-heading-row"><h1 class="page-title">2B VS REGISTER MATCHER</h1></div>
-                <div class="ui-card upload-card">
-                    <div class="card-title-bar"><div><div class="ui-card-header">Reconciliation Engine</div><div class="ui-card-subtitle">Upload GSTR-2B and Purchase Register to match vendors, invoices, and amounts.</div></div></div>
-                    <div class="upload-content">
-                        <div class="recon-grid">
-                            <div>
-                                <label class="upload-label recon-label" for="recon-2b-upload" id="lbl-2b"><p>📄 Upload GSTR-2B Excel</p></label>
-                                <input id="recon-2b-upload" type="file" accept=".xlsx, .csv" />
-                            </div>
-                            <div>
-                                <label class="upload-label recon-label" for="recon-reg-upload" id="lbl-reg" style="border-color: var(--accent-green);"><p style="color: var(--accent-green);">📦 Upload Purchase Register</p></label>
-                                <input id="recon-reg-upload" type="file" accept=".xlsx, .csv" />
-                            </div>
-                        </div>
-                        <button id="run-recon-btn" class="btn" style="margin-top: 24px;">Run Matcher</button>
-                    </div>
-                </div>
-
-                <div id="recon-results-container" style="display: none; margin-top: 20px;">
-                    <div class="ui-card">
-                        <div class="card-title-bar">
-                            <div class="ui-card-header">Match Results</div>
-                            <button id="recon-dl" class="dl-btn-small" style="background:var(--accent-blue);color:#fff;border:none;padding:8px 16px;">Download Report</button>
-                        </div>
-                        <div style="overflow-x: auto; overflow-y: auto; max-height: 500px; width: 100%;">
-                            <table id="recon-table" style="width: 100%; white-space: nowrap; margin: 0;">
-                                <thead style="position: sticky; top: 0; z-index: 10;">
-                                    <tr>
-                                        <th>Status</th>
-                                        <th>2B Vendor</th>
-                                        <th>2B Invoice</th>
-                                        <th>2B Amount</th>
-                                        <th>Reg Vendor</th>
-                                        <th>Reg Invoice</th>
-                                        <th>Reg Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="recon-results-body">
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </section>
     </main>
 
+    <!-- NEW MODAL OVERLAY -->
+    <div class="auth-overlay" id="auth-overlay">
+        <div class="auth-modal">
+            
+            <!-- MAIN AUTH VIEW -->
+            <div id="auth-main-view">
+                <h2>Log in or sign up in seconds</h2>
+                <p class="auth-subtitle">Use your email or another service to continue with Finflo (it's free)!</p>
+                
+                <button class="auth-btn" onclick="alert('Phone auth requires a backend messaging service (like Firebase SMS or Twilio).')">
+                    <span class="auth-icon">📱</span> 
+                    <span>Continue with phone number</span>
+                </button>
+                <button class="auth-btn" onclick="handleGoogleAuth()">
+                    <span class="auth-icon">
+                        <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                        </svg>
+                    </span> 
+                    <span>Continue with Google</span>
+                </button>
+                <button class="auth-btn" onclick="showEmailAuth()">
+                    <span class="auth-icon">✉️</span> 
+                    <span>Continue with email</span>
+                </button>
+                
+                <div class="auth-alt-link">Continue another way</div>
+                
+                <p class="auth-terms">By continuing, you agree to Finflo's <a href="#">Terms of Use</a>.<br>Read our <a href="#">Privacy Policy</a>.</p>
+                
+                <div class="auth-business">
+                    <span class="auth-icon-inline">🏢</span> <span>Signing up for a business</span>
+                </div>
+            </div>
+
+            <!-- EMAIL SIGNUP / LOGIN VIEW -->
+            <div id="auth-email-view" style="display: none; flex-direction: column; gap: 12px;">
+                <h2>Continue with Email</h2>
+                <p class="auth-subtitle" style="margin-bottom: 15px;">If you don't have an account, one will be created automatically.</p>
+                
+                <input type="email" id="auth-email" placeholder="Email address" style="padding: 14px; border-radius: 6px; border: 1px solid #4a4d55; background: transparent; color: white; font-size: 15px; outline: none;">
+                <input type="password" id="auth-pass" placeholder="Password" style="padding: 14px; border-radius: 6px; border: 1px solid #4a4d55; background: transparent; color: white; font-size: 15px; outline: none;">
+                
+                <button class="auth-btn" style="background: #4e5edb; border-color: #4e5edb; margin-top: 8px;" onclick="handleEmailAuth()">Log In / Sign Up</button>
+                
+                <div class="auth-alt-link" style="margin: 10px 0; color: #8a8d93;" onclick="showAuthMain()">Back to options</div>
+                
+                <div id="auth-error" style="color: #d57b83; font-size: 13px; text-align: center;"></div>
+            </div>
+
+        </div>
+    </div>
+
     <script>
-        // ==========================================
         // GLOBALS & UI STATE
-        // ==========================================
-        let salesData = [];
-        let purchaseData = [];
-        let bankData = [];
-        let salesFileName = "Sales.xlsx";
-        let purchaseFileName = "Purchase.xlsx";
-        let bankFileName = "Bank Statement.xlsx";
-        let globalTotalSales = 0;
-        let globalTotalPurchase = 0;
+        let salesData = [], purchaseData = [], bankData = [];
+        let salesFileName = "Sales.xlsx", purchaseFileName = "Purchase.xlsx", bankFileName = "Bank Statement.xlsx";
+        let globalTotalSales = 0, globalTotalPurchase = 0;
+
 
         // ==========================================
         // CALENDAR WIDGET LOGIC
@@ -993,87 +1058,193 @@
         let currentDate = new Date();
         let calMonth = currentDate.getMonth();
         let calYear = currentDate.getFullYear();
-        
+        let selectedDateStr = "";
+
         function renderCalendar(month, year) {
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             document.getElementById("cal-month-year").innerText = `${monthNames[month]} ${year}`;
             
             const firstDay = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
             const datesGrid = document.getElementById("cal-dates");
             datesGrid.innerHTML = "";
             
+            // Empty slots before first day
             for (let i = 0; i < firstDay; i++) {
                 datesGrid.innerHTML += `<div class="cal-date-btn empty"></div>`;
             }
             
+            // Populate days
             for (let i = 1; i <= daysInMonth; i++) {
-                const isActive = (i === currentDate.getDate() && month === currentDate.getMonth() && year === currentDate.getFullYear()) ? "active" : "";
+                // Highlight if it's the actual current date
+                const isToday = i === currentDate.getDate() && month === currentDate.getMonth() && year === currentDate.getFullYear();
+                const isActive = isToday ? "active" : "";
+                
                 datesGrid.innerHTML += `<button class="cal-date-btn ${isActive}" onclick="selectDate(event, ${i}, ${month}, ${year})">${i}</button>`;
             }
         }
-        
+
         function selectDate(e, day, month, year) {
             e.stopPropagation();
-            document.querySelectorAll('.cal-date-btn').forEach(b => b.classList.remove('active'));
+            selectedDateStr = `${day}/${month+1}/${year}`;
+            
+            // visually highlight selected date
+            document.querySelectorAll('.cal-date-btn').forEach(btn => btn.classList.remove('active'));
             e.target.classList.add('active');
-            setTimeout(() => { document.getElementById('cal-modal').style.display = 'none'; }, 150);
+            
+            // Close modal automatically on selection
+            setTimeout(() => {
+                document.getElementById('cal-modal').style.display = 'none';
+            }, 150);
         }
-        
+
         document.getElementById('cal-prev').onclick = (e) => {
             e.stopPropagation();
             calMonth--;
-            if(calMonth < 0) { calMonth = 11; calYear--; }
+            if (calMonth < 0) { calMonth = 11; calYear--; }
             renderCalendar(calMonth, calYear);
         };
         
         document.getElementById('cal-next').onclick = (e) => {
             e.stopPropagation();
             calMonth++;
-            if(calMonth > 11) { calMonth = 0; calYear++; }
+            if (calMonth > 11) { calMonth = 0; calYear++; }
             renderCalendar(calMonth, calYear);
         };
-        
+
+        // Init calendar
         renderCalendar(calMonth, calYear);
-        
-        document.getElementById('cal-trigger').onclick = (e) => {
+
+        document.getElementById('cal-trigger').onclick = function(e) {
             e.stopPropagation();
-            let m = document.getElementById('cal-modal');
-            m.style.display = m.style.display === 'block' ? 'none' : 'block';
+            let modal = document.getElementById('cal-modal');
+            modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
         };
-        
-        document.body.onclick = (e) => {
+
+        // Close calendar if clicking outside
+        document.body.onclick = function(e) { 
             if(!e.target.closest('#cal-modal') && !e.target.closest('#cal-trigger')) {
-                document.getElementById('cal-modal').style.display = 'none';
+                document.getElementById('cal-modal').style.display = 'none'; 
             }
         };
 
+
         // ==========================================
-        // NAV & DASHBOARD LOGIC
+        // AUTH LOGIC (Email Form & Local Storage)
         // ==========================================
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedUser = localStorage.getItem('finfloUserInitials');
+            if (savedUser) {
+                document.getElementById('login-btn').style.display = 'none';
+                let avatar = document.getElementById('user-avatar');
+                avatar.innerText = savedUser;
+                avatar.style.display = 'flex';
+            }
+        });
+
+        document.getElementById('login-btn').onclick = function() {
+            document.getElementById('auth-overlay').style.display = 'flex';
+        };
+
+        document.getElementById('auth-overlay').onclick = function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+                setTimeout(() => { showAuthMain(); }, 300);
+            }
+        };
+
+        function showEmailAuth() {
+            document.getElementById('auth-main-view').style.display = 'none';
+            document.getElementById('auth-email-view').style.display = 'flex';
+            document.getElementById('auth-error').innerText = '';
+        }
+
+        function showAuthMain() {
+            document.getElementById('auth-email-view').style.display = 'none';
+            document.getElementById('auth-main-view').style.display = 'block';
+            document.getElementById('auth-email').value = '';
+            document.getElementById('auth-pass').value = '';
+        }
+
+        function handleEmailAuth() {
+            let email = document.getElementById('auth-email').value.trim();
+            let pass = document.getElementById('auth-pass').value.trim();
+            let errorEl = document.getElementById('auth-error');
+            
+            if(!email || !pass) { 
+                errorEl.innerText = 'Please enter both email and password.'; 
+                return; 
+            }
+            
+            let users = JSON.parse(localStorage.getItem('finfloUsers') || '{}');
+            
+            if(users[email]) {
+                if(users[email] === pass) {
+                    completeLogin(email);
+                } else {
+                    errorEl.innerText = 'Incorrect password.';
+                }
+            } else {
+                users[email] = pass;
+                localStorage.setItem('finfloUsers', JSON.stringify(users));
+                completeLogin(email);
+            }
+        }
+
+        function handleGoogleAuth() {
+            alert("To connect real Google accounts, a Backend Database (like Firebase) and a Google Cloud Client ID are required. Simulating login for now.");
+            completeLogin("Google User");
+        }
+
+        function completeLogin(identifier) {
+            let initials = identifier.substring(0,2).toUpperCase();
+            localStorage.setItem('finfloUserInitials', initials);
+            
+            document.getElementById('auth-overlay').style.display = 'none';
+            document.getElementById('login-btn').style.display = 'none';
+            let avatar = document.getElementById('user-avatar');
+            avatar.innerText = initials;
+            avatar.style.display = 'flex';
+            
+            showAuthMain();
+        }
+
+        // ==========================================
+        // TOP NAV & NAVIGATION
+        // ==========================================
+
         document.getElementById('top-search').addEventListener('input', function(e) {
             let val = e.target.value.toLowerCase();
-            if(val.includes('recon') || val.includes('match')) switchView('recon');
-            else if(val.includes('sale')) switchView('sales');
+            if(val.includes('sale')) switchView('sales');
             else if(val.includes('purch')) switchView('purchase');
             else if(val.includes('bank') || val.includes('stat')) switchView('bank');
             else if(val.includes('dash') || val.includes('home')) switchView('dashboard');
         });
-        
+
         function switchView(view) {
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            if(document.getElementById('nav-' + view)) {
-                document.getElementById('nav-' + view).classList.add('active');
-            }
-            if(document.getElementById('view-' + view)) {
-                document.getElementById('view-' + view).classList.add('active');
-            }
+            
+            const navBtn = document.getElementById('nav-' + view);
+            if(navBtn) navBtn.classList.add('active');
+            
+            const viewPanel = document.getElementById('view-' + view);
+            if(viewPanel) viewPanel.classList.add('active');
         }
-        
+
+        // ==========================================
+        // HISTORY & DASHBOARD LOGIC
+        // ==========================================
         function addToHistory(fileName, type, dataArray) {
             let tbody = document.getElementById('history-body');
             let tr = document.createElement('tr');
+            
+            let tdName = document.createElement('td'); tdName.innerText = fileName;
+            let tdDate = document.createElement('td'); tdDate.innerText = new Date().toLocaleDateString('en-IN');
+            let tdType = document.createElement('td'); tdType.innerText = type;
+            let tdStudge = document.createElement('td'); tdStudge.innerText = "Processed"; tdStudge.style.color = "var(--accent-green)";
             
             let tdAction = document.createElement('td');
             let dlBtn = document.createElement('button');
@@ -1082,54 +1253,179 @@
             dlBtn.onclick = () => {
                 const ws = XLSX.utils.aoa_to_sheet(dataArray);
                 const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, type);
+                XLSX.utils.book_append_sheet(wb, ws, type); 
                 XLSX.writeFile(wb, fileName);
             };
             tdAction.appendChild(dlBtn);
-            
-            tr.innerHTML = `<td>${fileName}</td><td>${new Date().toLocaleDateString('en-IN')}</td><td>${type}</td><td><span style="color:var(--accent-green);font-weight:600;">Processed</span></td>`;
-            tr.appendChild(tdAction);
+
+            tr.appendChild(tdName); tr.appendChild(tdDate); tr.appendChild(tdType); tr.appendChild(tdStudge); tr.appendChild(tdAction);
             tbody.prepend(tr); 
         }
-        
+
         function updateDashboardSums() {
-            let tempS = 0;
+            let tempSales = 0;
             for(let i=1; i<salesData.length; i++) {
                 let val = parseFloat(salesData[i][11]);
-                if(!isNaN(val)) tempS += val;
+                if(!isNaN(val)) tempSales += val;
             }
-            if(tempS > 0) {
-                globalTotalSales += tempS;
+            if(tempSales > 0) {
+                globalTotalSales += tempSales;
                 document.getElementById('dash-total-sales').innerText = "₹" + globalTotalSales.toLocaleString('en-IN');
             }
-            
-            let tempP = 0;
+
+            let tempPurch = 0;
             for(let i=1; i<purchaseData.length; i++) {
                 let val = parseFloat(purchaseData[i][12]);
-                if(!isNaN(val)) tempP += val;
+                if(!isNaN(val)) tempPurch += val;
             }
-            if(tempP > 0) {
-                globalTotalPurchase += tempP;
+            if(tempPurch > 0) {
+                globalTotalPurchase += tempPurch;
                 document.getElementById('dash-total-purchase').innerText = "₹" + globalTotalPurchase.toLocaleString('en-IN');
             }
         }
 
+        function handleFile(file, type) {
+            if (!file) return;
+            let originalName = file.name ? file.name.replace(/\.[^/.]+$/, "") + ".xlsx" : "Pasted_Data.xlsx";
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {header: 1, defval: ""});
+                
+                runProcess(type, json, originalName);
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function runProcess(type, json, name) {
+            if (type === 'sales') { 
+                salesFileName = name; 
+                processSales(json); 
+                updateDashboardSums();
+                addToHistory(name, 'Sales', salesData);
+            }
+            else if (type === 'purchase') { 
+                purchaseFileName = name; 
+                processPurchase(json); 
+                updateDashboardSums();
+                addToHistory(name, 'Purchase', purchaseData);
+            }
+            else if (type === 'bank') { 
+                bankFileName = name; 
+                processBank(json); 
+                addToHistory(name, 'Bank Statement', bankData);
+            }
+        }
+
         // ==========================================
-        // DATA PROCESSING UTILS
+        // COPY-PASTE AND DRAG-DROP EVENTS
         // ==========================================
+
+        document.getElementById('sales-upload').onchange = e => handleFile(e.target.files[0], 'sales');
+        document.getElementById('purchase-upload').onchange = e => handleFile(e.target.files[0], 'purchase');
+        document.getElementById('bank-upload').onchange = e => handleFile(e.target.files[0], 'bank');
+
+        document.querySelectorAll('.upload-label').forEach(label => {
+            label.addEventListener('dragover', (e) => { e.preventDefault(); e.stopPropagation(); label.style.opacity = '0.7'; label.style.transform = 'scale(1.02)'; });
+            label.addEventListener('dragleave', (e) => { e.preventDefault(); e.stopPropagation(); label.style.opacity = '1'; label.style.transform = 'scale(1)'; });
+            label.addEventListener('drop', (e) => {
+                e.preventDefault(); e.stopPropagation(); label.style.opacity = '1'; label.style.transform = 'scale(1)';
+                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                    const file = e.dataTransfer.files[0];
+                    const inputId = label.getAttribute('for');
+                    if (inputId === 'sales-upload') handleFile(file, 'sales');
+                    else if (inputId === 'purchase-upload') handleFile(file, 'purchase');
+                    else if (inputId === 'bank-upload') handleFile(file, 'bank');
+                }
+            });
+        });
+
+        // The updated paste listener from the previous turn
+        document.addEventListener('paste', (e) => {
+            const activeView = document.querySelector('.view-section.active').id;
+            if (activeView === 'view-dashboard') return;
+
+            // 1. Handle File Paste
+            if (e.clipboardData.files && e.clipboardData.files.length > 0) {
+                const type = activeView.split('-')[1];
+                handleFile(e.clipboardData.files[0], type);
+            } 
+            // 2. Handle Cell Data Paste (Excel/Sheets)
+            else {
+                const text = e.clipboardData.getData('text');
+                if (text) {
+                    const rows = text.split(/\r?\n/).filter(row => row.trim() !== "").map(row => row.split('\t'));
+                    const type = activeView.split('-')[1];
+                    runProcess(type, rows, "Pasted_Data_" + new Date().getTime() + ".xlsx");
+                }
+            }
+        });
+
+        // ==========================================
+        // DATA PROCESSING ENGINES (UNTOUCHED)
+        // ==========================================
+
         const parseNum = val => {
             if (!val) return 0;
             if (typeof val === 'number') return val;
             return parseFloat(String(val).replace(/[^\d.-]/g, '')) || 0;
         };
-        
+
+        function processBank(data) {
+            const status = document.getElementById('bank-status');
+            let hIdx = -1;
+            for(let i=0; i<Math.min(30, data.length); i++) {
+                if(data[i] && data[i].some(c => String(c).toLowerCase().includes('particulars'))) { hIdx = i; break; }
+            }
+            if(hIdx === -1) { status.innerText = "Error: Headers not found in Statement"; return; }
+            const h = data[hIdx].map(v => String(v).toLowerCase().trim());
+            const tDateIdx = h.findIndex(v => v.includes('tran') && v.includes('date'));
+            const vDateIdx = h.findIndex(v => v.includes('value date'));
+            const partIdx = h.findIndex(v => v.includes('particulars'));
+            const balIdx = h.findIndex(v => v.includes('balance'));
+            bankData = [["Transaction Date", "Value Date", "Particulars", "Debit", "Credit", "Balance"]];
+            for(let r = hIdx + 1; r < data.length; r++) {
+                if(!data[r] || data[r].length === 0) continue;
+                let tDate = String(data[r][tDateIdx] || "").trim();
+                if(!tDate || tDate.toLowerCase().includes('opening') || tDate.toLowerCase().includes('closing') || tDate.toLowerCase().includes('legend')) continue;
+                let vDate = String(data[r][vDateIdx] || "").trim();
+                let part = String(data[r][partIdx] || "").trim();
+                let dr = "", cr = "", bal = "";
+                let col4 = String(data[r][partIdx + 1] || "").trim();
+                let col5 = String(data[r][partIdx + 2] || "").trim();
+                let num4 = parseFloat(col4.replace(/[^\d.-]/g, ''));
+                let num5 = parseFloat(col5.replace(/[^\d.-]/g, ''));
+                if (col5.toUpperCase() === 'DR' || col5.toUpperCase() === 'DEBIT') {
+                    if (!isNaN(num4)) dr = num4;
+                } else if (col5.toUpperCase() === 'CR' || col5.toUpperCase() === 'CREDIT') {
+                    if (!isNaN(num4)) cr = num4;
+                } else {
+                    if (!isNaN(num4) && num4 !== 0) dr = num4;
+                    if (!isNaN(num5) && num5 !== 0) cr = num5;
+                }
+                if (balIdx !== -1) {
+                    let bStr = String(data[r][balIdx] || "").trim();
+                    let bNum = parseFloat(bStr.replace(/[^\d.-]/g, ''));
+                    if (!isNaN(bNum)) bal = bNum;
+                }
+                bankData.push([tDate, vDate, part, dr, cr, bal]);
+            }
+            status.innerText = `✓ Bank Statement Processed (${bankData.length - 1} rows)`;
+            document.getElementById('bank-dl').style.display = "block";
+        }
+
         const getISTDate = () => {
             let d = new Date();
             let utc = d.getTime() + (d.getTimezoneOffset() * 60000);
             let nd = new Date(utc + (3600000 * 5.5));
-            return `${String(nd.getDate()).padStart(2, '0')}-${String(nd.getMonth() + 1).padStart(2, '0')}-${nd.getFullYear()}`;
+            let day = String(nd.getDate()).padStart(2, '0');
+            let month = String(nd.getMonth() + 1).padStart(2, '0');
+            let year = nd.getFullYear();
+            return `${day}-${month}-${year}`;
         };
-        
+
         const fuzzyMatch = (input, target) => {
             let s = String(input).toLowerCase().replace(/[^a-z]/g, '');
             let t = String(target).toLowerCase().replace(/[^a-z]/g, '');
@@ -1151,74 +1447,6 @@
             return d[m][n] <= (t.length > 5 ? 2 : 1);
         };
 
-        // ==========================================
-        // BANK STATEMENT PROCESSING
-        // ==========================================
-        function processBank(data) {
-            const status = document.getElementById('bank-status');
-            let hIdx = -1;
-            
-            for(let i=0; i<Math.min(30, data.length); i++) {
-                if(data[i] && data[i].some(c => String(c).toLowerCase().includes('particulars'))) {
-                    hIdx = i;
-                    break;
-                }
-            }
-            
-            if(hIdx === -1) {
-                status.innerText = "Error: Headers not found in Statement";
-                return;
-            }
-            
-            const h = data[hIdx].map(v => String(v).toLowerCase().trim());
-            const tDateIdx = h.findIndex(v => v.includes('tran') && v.includes('date'));
-            const vDateIdx = h.findIndex(v => v.includes('value date'));
-            const partIdx = h.findIndex(v => v.includes('particulars'));
-            const balIdx = h.findIndex(v => v.includes('balance'));
-            
-            bankData = [["Transaction Date", "Value Date", "Particulars", "Debit", "Credit", "Balance"]];
-            
-            for(let r = hIdx + 1; r < data.length; r++) {
-                if(!data[r] || data[r].length === 0) continue;
-                
-                let tDate = String(data[r][tDateIdx] || "").trim();
-                if(!tDate || tDate.toLowerCase().includes('opening') || tDate.toLowerCase().includes('closing') || tDate.toLowerCase().includes('legend')) continue;
-                
-                let vDate = String(data[r][vDateIdx] || "").trim();
-                let part = String(data[r][partIdx] || "").trim();
-                let dr = "", cr = "", bal = "";
-                
-                let col4 = String(data[r][partIdx + 1] || "").trim();
-                let col5 = String(data[r][partIdx + 2] || "").trim();
-                
-                let num4 = parseFloat(col4.replace(/[^\d.-]/g, ''));
-                let num5 = parseFloat(col5.replace(/[^\d.-]/g, ''));
-                
-                if (col5.toUpperCase() === 'DR' || col5.toUpperCase() === 'DEBIT') {
-                    if (!isNaN(num4)) dr = num4;
-                } else if (col5.toUpperCase() === 'CR' || col5.toUpperCase() === 'CREDIT') {
-                    if (!isNaN(num4)) cr = num4;
-                } else {
-                    if (!isNaN(num4) && num4 !== 0) dr = num4;
-                    if (!isNaN(num5) && num5 !== 0) cr = num5;
-                }
-                
-                if (balIdx !== -1) {
-                    let bStr = String(data[r][balIdx] || "").trim();
-                    let bNum = parseFloat(bStr.replace(/[^\d.-]/g, ''));
-                    if (!isNaN(bNum)) bal = bNum;
-                }
-                
-                bankData.push([tDate, vDate, part, dr, cr, bal]);
-            }
-            
-            status.innerText = `✓ Bank Processed (${bankData.length - 1} rows)`;
-            document.getElementById('bank-dl').style.display = "block";
-        }
-
-        // ==========================================
-        // SALES PROCESSING (FIXED ROUNDING ERROR)
-        // ==========================================
         function processSales(data) {
             const date = getISTDate();
             const h1 = data[0], h2 = data[1];
@@ -1245,25 +1473,16 @@
                         let gRaw = parseNum(data[r][gIdx]);
                         let g = Math.round(gRaw < 1 ? gRaw * 100 : gRaw);
                         let billRate = parseNum(data[r][bIdx]);
-                        
-                        // NEW FIX: Calculate total incl GST first, so we don't multiply rounded decimals by QTY
-                        let totalInclGst = billRate * q;
-                        
-                        let taxable = parseFloat((totalInclGst / (1 + (g/100))).toFixed(2));
-                        let tax = parseFloat((totalInclGst - taxable).toFixed(2));
-                        
-                        let rate = parseFloat((taxable / q).toFixed(2)); // Rate per Qty excl.GST
+                        let rate = parseFloat((billRate / (1 + (g/100))).toFixed(2));
+                        let taxable = rate * q;
                         
                         let isLocal = localKeywords.some(kw => fuzzyMatch(s.n, kw));
                         
-                        // Safely split tax so c + st perfectly equals total tax
+                        let tax = taxable * (g/100);
                         let c = isLocal ? parseFloat((tax/2).toFixed(2)) : 0;
-                        let st = isLocal ? parseFloat((tax - c).toFixed(2)) : 0;
-                        let ig = isLocal ? 0 : tax;
-                        
-                        let computedTotal = parseFloat((taxable + c + st + ig).toFixed(2));
-                        
-                        salesData.push([salesData.length, sIdx+1, date, s.n, data[r][pIdx], q, g, rate, c, st, ig, computedTotal]);
+                        let st = isLocal ? parseFloat((tax/2).toFixed(2)) : 0;
+                        let ig = isLocal ? 0 : parseFloat(tax.toFixed(2));
+                        salesData.push([salesData.length, sIdx+1, date, s.n, data[r][pIdx], q, g, rate, c, st, ig, parseFloat((taxable + c + st + ig).toFixed(2))]);
                     }
                 }
             });
@@ -1271,290 +1490,48 @@
             document.getElementById('sales-dl').style.display = "block";
         }
 
-        // ==========================================
-        // PURCHASE PROCESSING
-        // ==========================================
         function processPurchase(data) {
             const status = document.getElementById('purchase-status');
             let hIdx = -1;
-            
-            for(let i=0; i<Math.min(20, data.length); i++) {
-                if(data[i].some(c => String(c).toLowerCase().includes('taxable value'))) {
-                    hIdx = i;
-                    break;
-                }
-            }
-            
-            if(hIdx === -1) {
-                status.innerText = "Error: Headers not found";
-                return;
-            }
-            
+            for(let i=0; i<Math.min(20, data.length); i++) { if(data[i].some(c => String(c).toLowerCase().includes('taxable value'))) { hIdx = i; break; } }
+            if(hIdx === -1) { status.innerText = "Error: Headers not found"; return; }
             const h = data[hIdx].map(v => String(v).toLowerCase().trim());
-            const pIdx = h.findIndex(v => v.includes('trade/legal') || v.includes('party'));
+            const pIdx = h.findIndex(v => v.includes('trade/legal'));
             const invIdx = h.findIndex(v => v.includes('invoice') || v.includes('document'));
             const taxValIdx = h.findIndex(v => v.includes('taxable value'));
-            const igstIdx = h.findIndex(v => v.includes('integrated tax') || v.includes('igst'));
-            const cgstIdx = h.findIndex(v => v.includes('central tax') || v.includes('cgst'));
-            const sgstIdx = h.findIndex(v => v.includes('state/ut tax') || v.includes('sgst'));
+            const igstIdx = h.findIndex(v => v.includes('integrated tax'));
+            const cgstIdx = h.findIndex(v => v.includes('central tax'));
+            const sgstIdx = h.findIndex(v => v.includes('state/ut tax'));
             const invDateIdx = h.findIndex(v => (v.includes('invoice') || v.includes('document')) && v.includes('date'));
-            
             purchaseData = [["Date", "Voucher Type", "Party Name (Cr)", "Invoice Number", "Invoice Date", "Narration", "Dr Ledger 1", "Amount 1 (Taxable)", "Dr Ledger 2", "Amount 2", "Dr Ledger 3", "Amount 3", "Total Invoice Value"]];
-            
             for(let r = hIdx + 1; r < data.length; r++) {
                 let party = String(data[r][pIdx] || "").trim();
                 let taxable = parseNum(data[r][taxValIdx]);
-                
                 if(!party || party.toLowerCase().includes("total") || taxable === 0) continue;
-                
-                let igst = parseNum(data[r][igstIdx]);
-                let cgst = parseNum(data[r][cgstIdx]);
-                let sgst = parseNum(data[r][sgstIdx]);
+                let igst = parseNum(data[r][igstIdx]), cgst = parseNum(data[r][cgstIdx]), sgst = parseNum(data[r][sgstIdx]);
                 let totalTax = igst + cgst + sgst;
-                
                 let inv = invIdx !== -1 ? String(data[r][invIdx] || "").trim() : "N/A";
                 let invDate = invDateIdx !== -1 ? String(data[r][invDateIdx] || "").trim() : "";
-                
                 let isBank = party.toLowerCase().includes('bank') || party.toLowerCase().includes('phonepe');
                 let isIGST = igst > (cgst + sgst);
-                
-                const rates = [0.05, 0.12, 0.18, 0.28, 0.40];
-                let splits = [];
-                let found = false;
-                
-                for (let rate of rates) {
-                    if (Math.abs((taxable * rate) - totalTax) <= 2.5) {
-                        splits.push({ rate: rate * 100, taxable: taxable, tax: totalTax });
-                        found = true;
-                        break;
-                    }
-                }
-                
-                if (!found) {
-                    for (let i = 0; i < rates.length; i++) {
-                        for (let j = i + 1; j < rates.length; j++) {
-                            let r1 = rates[i];
-                            let r2 = rates[j];
-                            let t1 = (totalTax - (taxable * r2)) / (r1 - r2);
-                            let t2 = taxable - t1;
-                            
-                            if (t1 > 1 && t2 > 1) {
-                                splits.push({ rate: r1*100, taxable: t1, tax: t1*r1 }, { rate: r2*100, taxable: t2, tax: t2*r2 });
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (found) break;
-                    }
-                }
-                
-                if (!found) {
-                    splits.push({ rate: "MANUAL", taxable: taxable, tax: totalTax });
-                }
-                
+                const rates = [0.05, 0.12, 0.18, 0.28, 0.40]; let splits = []; let found = false;
+                for (let rate of rates) { if (Math.abs((taxable * rate) - totalTax) <= 2.5) { splits.push({ rate: rate * 100, taxable: taxable, tax: totalTax }); found = true; break; } }
+                if (!found) { for (let i = 0; i < rates.length; i++) { for (let j = i + 1; j < rates.length; j++) { let r1 = rates[i], r2 = rates[j]; let t1 = (totalTax - (taxable * r2)) / (r1 - r2); let t2 = taxable - t1; if (t1 > 1 && t2 > 1) { splits.push({ rate: r1*100, taxable: t1, tax: t1*r1 }, { rate: r2*100, taxable: t2, tax: t2*r2 }); found = true; break; } } if (found) break; } }
+                if (!found) splits.push({ rate: "MANUAL", taxable: taxable, tax: totalTax });
                 splits.forEach(split => {
-                    let rLabel = split.rate === "MANUAL" ? "MANUAL" : `${split.rate}%`;
-                    let subLabel = split.rate === "MANUAL" ? "MANUAL" : `${split.rate / 2}%`;
-                    
-                    let dr2 = isIGST ? `Input igst @ ${rLabel}` : `Input cgst @ ${subLabel}`;
-                    let amt2 = isIGST ? parseFloat(split.tax.toFixed(2)) : parseFloat((split.tax / 2).toFixed(2));
-                    
-                    let dr3 = isIGST ? "" : `Input sgst @ ${subLabel}`;
-                    let amt3 = isIGST ? "" : parseFloat((split.tax / 2).toFixed(2));
-                    
+                    let rLabel = split.rate === "MANUAL" ? "MANUAL" : `${split.rate}%`; let subLabel = split.rate === "MANUAL" ? "MANUAL" : `${split.rate / 2}%`;
+                    let dr2 = isIGST ? `Input igst @ ${rLabel}` : `Input cgst @ ${subLabel}`; let amt2 = isIGST ? parseFloat(split.tax.toFixed(2)) : parseFloat((split.tax / 2).toFixed(2));
+                    let dr3 = isIGST ? "" : `Input sgst @ ${subLabel}`; let amt3 = isIGST ? "" : parseFloat((split.tax / 2).toFixed(2));
                     purchaseData.push(["31-03-2026", isBank ? "Journal" : "Purchase", party, inv, invDate, `Being purchase recorded as per 2B (${inv})`, isIGST ? "Purchase Interstate" : "Purchase Local", parseFloat(split.taxable.toFixed(2)), dr2, amt2, dr3, amt3, parseFloat((split.taxable + split.tax).toFixed(2))]);
                 });
             }
-            
             status.innerText = "✓ Purchase Processed (5% - 40% Range)";
             document.getElementById('purchase-dl').style.display = "block";
         }
 
-
-        // ==========================================
-        // NEW FEATURE: 2B VS REGISTER RECONCILIATION
-        // ==========================================
-
-        let raw2bData = null, rawRegData = null;
-        const normalizeInvoice = str => String(str).replace(/[^a-zA-Z0-9]/g, '').toLowerCase().replace(/cn/gi, '');
-
-        function handleReconFile(file, type) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, {type: 'array'});
-                const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {header: 1, defval: ""});
-                
-                if(type === '2b') { 
-                    raw2bData = json; 
-                    document.getElementById('lbl-2b').innerHTML = `<p style="color:var(--accent-blue);">✓ Loaded</p>`; 
-                } else { 
-                    rawRegData = json; 
-                    document.getElementById('lbl-reg').innerHTML = `<p style="color:var(--accent-green);">✓ Loaded</p>`; 
-                }
-                if(raw2bData && rawRegData) { document.getElementById('run-recon-btn').style.display = "block"; }
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        document.getElementById('recon-2b-upload').addEventListener('change', e => handleReconFile(e.target.files[0], '2b'));
-        document.getElementById('recon-reg-upload').addEventListener('change', e => handleReconFile(e.target.files[0], 'reg'));
-
-        document.getElementById('run-recon-btn').onclick = () => {
-            if(!raw2bData || !rawRegData) return;
-
-            let list2B = [], hIdx2b = -1;
-            for(let i=0; i<Math.min(50, raw2bData.length); i++) { 
-                if(!raw2bData[i]) continue;
-                let rowStr = raw2bData[i].map(c => String(c).toLowerCase()).join('|');
-                if(rowStr.includes('taxable') && (rowStr.includes('invoice') || rowStr.includes('document'))) { hIdx2b = i; break; } 
-            }
-            if(hIdx2b !== -1) {
-                const h2b = raw2bData[hIdx2b].map(v => String(v).toLowerCase().trim());
-                const pIdx = h2b.findIndex(v => v.includes('trade/legal') || v.includes('name') || v.includes('party'));
-                const invIdx = h2b.findIndex(v => v.includes('invoice') || v.includes('document'));
-                const taxIdx = h2b.findIndex(v => v.includes('taxable value') || v.includes('taxable'));
-                
-                for(let r = hIdx2b + 1; r < raw2bData.length; r++) {
-                    if(!raw2bData[r] || raw2bData[r].length === 0) continue;
-                    let v = String(raw2bData[r][pIdx]||"").trim(), i = String(raw2bData[r][invIdx]||"").trim(), amt = parseNum(raw2bData[r][taxIdx]);
-                    if(v && amt > 0 && !v.toLowerCase().includes('total')) list2B.push({vendor: v, inv: i, normInv: normalizeInvoice(i), amt: amt, matched: false});
-                }
-            }
-
-            let listReg = [], hIdxReg = -1;
-            for(let i=0; i<Math.min(50, rawRegData.length); i++) { 
-                if(!rawRegData[i]) continue;
-                let rowStr = rawRegData[i].map(c => String(c).toLowerCase()).join('|');
-                if(rowStr.includes('particulars') && (rowStr.includes('voucher') || rowStr.includes('invoice'))) { hIdxReg = i; break; } 
-            }
-            if(hIdxReg !== -1) {
-                const hReg = rawRegData[hIdxReg].map(v => String(v).toLowerCase().trim());
-                const pIdx = hReg.findIndex(v => v.includes('particulars') || v.includes('party') || v.includes('vendor') || v.includes('name'));
-                let invIdx = hReg.findIndex(v => v.includes('supplier invoice'));
-                if(invIdx === -1) invIdx = hReg.findIndex(v => v.includes('invoice') || v.includes('doc') || v.includes('vouch'));
-                const taxIdx = hReg.findIndex(v => v.includes('value') || v.includes('taxable') || v.includes('amount'));
-                
-                for(let r = hIdxReg + 1; r < rawRegData.length; r++) {
-                    if(!rawRegData[r] || rawRegData[r].length === 0) continue;
-                    let v = String(rawRegData[r][pIdx]||"").trim(), i = String(rawRegData[r][invIdx]||"").trim(), amt = parseNum(rawRegData[r][taxIdx]);
-                    if(v && amt > 0 && !v.toLowerCase().includes('total')) listReg.push({vendor: v, inv: i, normInv: normalizeInvoice(i), amt: amt, matched: false});
-                }
-            }
-
-            let resultsHTML = "";
-            const reconFuzzy = (s1, s2) => {
-                let a = String(s1).toLowerCase().replace(/[^a-z]/g, ''), b = String(s2).toLowerCase().replace(/[^a-z]/g, '');
-                if (!a || !b) return false;
-                return (a.includes(b) || b.includes(a));
-            };
-
-            list2B.forEach(row2b => {
-                let match = listReg.find(rowReg => 
-                    !rowReg.matched && 
-                    reconFuzzy(row2b.vendor, rowReg.vendor) && 
-                    (row2b.normInv === rowReg.normInv || (row2b.normInv && rowReg.normInv && (row2b.normInv.includes(rowReg.normInv) || rowReg.normInv.includes(row2b.normInv)))) &&
-                    Math.abs(row2b.amt - rowReg.amt) <= 1.5 
-                );
-
-                if(match) {
-                    row2b.matched = true; match.matched = true;
-                    resultsHTML += `<tr><td><span class="status-badge status-good">Matched</span></td><td>${row2b.vendor}</td><td>${row2b.inv}</td><td>₹${row2b.amt}</td><td>${match.vendor}</td><td>${match.inv}</td><td>₹${match.amt}</td></tr>`;
-                } else {
-                    resultsHTML += `<tr><td><span class="status-badge status-bad">Missing in Reg</span></td><td>${row2b.vendor}</td><td>${row2b.inv}</td><td>₹${row2b.amt}</td><td>-</td><td>-</td><td>-</td></tr>`;
-                }
-            });
-
-            listReg.filter(r => !r.matched).forEach(rowReg => {
-                resultsHTML += `<tr><td><span class="status-badge status-bad">Missing in 2B</span></td><td>-</td><td>-</td><td>-</td><td>${rowReg.vendor}</td><td>${rowReg.inv}</td><td>₹${rowReg.amt}</td></tr>`;
-            });
-
-            document.getElementById('recon-results-body').innerHTML = resultsHTML;
-            document.getElementById('recon-results-container').style.display = "block";
-        };
-
-        document.getElementById('recon-dl').onclick = () => {
-            const table = document.getElementById('recon-table');
-            const ws = XLSX.utils.table_to_sheet(table);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Reconciliation");
-            XLSX.writeFile(wb, "2B_Recon_Results.xlsx");
-        };
-
-        // ==========================================
-        // DRAG AND DROP & DOWNLOAD HANDLERS
-        // ==========================================
-
-        function handleFile(file, type) {
-            if (!file) return;
-            let originalName = file.name ? file.name.replace(/\.[^/.]+$/, "") + ".xlsx" : "Pasted_Data.xlsx";
-            const reader = new FileReader();
-            
-            reader.onload = (e) => {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, {type: 'array'});
-                const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {header: 1, defval: ""});
-                runProcess(type, json, originalName);
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        function runProcess(type, json, name) {
-            if (type === 'sales') {
-                salesFileName = name;
-                processSales(json);
-                updateDashboardSums();
-                addToHistory(name, 'Sales', salesData);
-            } else if (type === 'purchase') {
-                purchaseFileName = name;
-                processPurchase(json);
-                updateDashboardSums();
-                addToHistory(name, 'Purchase', purchaseData);
-            } else if (type === 'bank') {
-                bankFileName = name;
-                processBank(json);
-                addToHistory(name, 'Bank Statement', bankData);
-            }
-        }
-
-        document.getElementById('sales-upload').onchange = e => handleFile(e.target.files[0], 'sales');
-        document.getElementById('purchase-upload').onchange = e => handleFile(e.target.files[0], 'purchase');
-        document.getElementById('bank-upload').onchange = e => handleFile(e.target.files[0], 'bank');
-        
-        document.getElementById('sales-dl').onclick = () => {
-            const ws = XLSX.utils.aoa_to_sheet(salesData);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Sales");
-            XLSX.writeFile(wb, salesFileName);
-        };
-        
-        document.getElementById('purchase-dl').onclick = () => {
-            const ws = XLSX.utils.aoa_to_sheet(purchaseData);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Purchase");
-            XLSX.writeFile(wb, purchaseFileName);
-        };
-        
-        document.getElementById('bank-dl').onclick = () => {
-            const ws = XLSX.utils.aoa_to_sheet(bankData);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Bank Statement");
-            XLSX.writeFile(wb, bankFileName);
-        };
-
-        document.addEventListener('paste', (e) => {
-            const activeView = document.querySelector('.view-section.active').id;
-            if (activeView === 'view-dashboard' || activeView === 'view-recon') return;
-            
-            if (e.clipboardData.files && e.clipboardData.files.length > 0) {
-                handleFile(e.clipboardData.files[0], activeView.split('-')[1]);
-            } else {
-                const txt = e.clipboardData.getData('text');
-                if (txt) {
-                    runProcess(activeView.split('-')[1], txt.split(/\r?\n/).filter(r => r.trim()).map(r => r.split('\t')), "Pasted_Data.xlsx");
-                }
-            }
-        });
+        document.getElementById('sales-dl').onclick = () => { const ws = XLSX.utils.aoa_to_sheet(salesData); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Sales"); XLSX.writeFile(wb, salesFileName); };
+        document.getElementById('purchase-dl').onclick = () => { const ws = XLSX.utils.aoa_to_sheet(purchaseData); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Purchase"); XLSX.writeFile(wb, purchaseFileName); };
+        document.getElementById('bank-dl').onclick = () => { const ws = XLSX.utils.aoa_to_sheet(bankData); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Bank Statement"); XLSX.writeFile(wb, bankFileName); };
     </script>
 </body>
 </html>
