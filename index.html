@@ -1426,25 +1426,66 @@
             return `${day}-${month}-${year}`;
         };
 
-        const fuzzyMatch = (input, target) => {
-            let s = String(input).toLowerCase().replace(/[^a-z]/g, '');
-            let t = String(target).toLowerCase().replace(/[^a-z]/g, '');
-            if (!s || !t) return false;
-            if (s.includes(t) || t.includes(s)) return true;
-            
-            let m = s.length, n = t.length;
-            if (Math.abs(m - n) > 2) return false;
-            
+        const normalizePartyName = value => String(value || "")
+            .toLowerCase()
+            .replace(/&/g, " and ")
+            .replace(/[^a-z0-9]+/g, " ")
+            .replace(/\b(prime|traders|trader|super|food|foods|store|stores|branch|outlet|pvt|ltd|private|limited)\b/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+
+        const editDistance = (left, right) => {
+            let m = left.length, n = right.length;
             let d = [];
             for (let i = 0; i <= m; i++) d[i] = [i];
             for (let j = 0; j <= n; j++) d[0][j] = j;
-            
+
             for (let i = 1; i <= m; i++) {
                 for (let j = 1; j <= n; j++) {
-                    d[i][j] = Math.min(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1] + (s[i-1] === t[j-1] ? 0 : 1));
+                    d[i][j] = Math.min(
+                        d[i-1][j] + 1,
+                        d[i][j-1] + 1,
+                        d[i-1][j-1] + (left[i-1] === right[j-1] ? 0 : 1)
+                    );
                 }
             }
-            return d[m][n] <= (t.length > 5 ? 2 : 1);
+            return d[m][n];
+        };
+
+        const fuzzyMatch = (input, target) => {
+            const sourceText = normalizePartyName(input);
+            const targetText = normalizePartyName(target);
+            const source = sourceText.replace(/\s+/g, "");
+            const targetValue = targetText.replace(/\s+/g, "");
+
+            if (!source || !targetValue) return false;
+            if (source.includes(targetValue) || targetValue.includes(source)) return true;
+
+            const targetWords = targetText.split(" ").filter(Boolean);
+            const sourceWords = sourceText.split(" ").filter(Boolean);
+            const wordsMatched = targetWords.every(targetWord => {
+                return sourceWords.some(sourceWord => {
+                    if (sourceWord.includes(targetWord) || targetWord.includes(sourceWord)) return true;
+                    const allowed = targetWord.length <= 4 ? 0 : 1;
+                    return editDistance(sourceWord, targetWord) <= allowed;
+                });
+            });
+            if (wordsMatched) return true;
+
+            const allowedDistance = targetValue.length <= 6 ? 1 : targetValue.length <= 12 ? 2 : 3;
+            const minWindow = Math.max(1, targetValue.length - allowedDistance);
+            const maxWindow = targetValue.length + allowedDistance;
+
+            for (let start = 0; start < source.length; start++) {
+                for (let len = minWindow; len <= maxWindow && start + len <= source.length; len++) {
+                    if (editDistance(source.slice(start, start + len), targetValue) <= allowedDistance) {
+                        return true;
+                    }
+                }
+            }
+
+            return Math.abs(source.length - targetValue.length) <= allowedDistance &&
+                   editDistance(source, targetValue) <= allowedDistance;
         };
 
         function processSales(data) {
@@ -1582,7 +1623,9 @@
             salesData = [["SL", "voucher no", "voucher date", "Party name", "Product", "Qty", "GST %", "Rate per Qty excl.GST", "Cgst", "SGST", "IGST", "Total"]];
             
             const localKeywords = [
-                "chikmagalur", "frazer town", "hal", "hesaraghatta", "hoskote", 
+                "bangalore", "bengaluru", "bel road", "bell road", "new bel road",
+                "sahakar nagar", "sahakara nagar", "sahakaranagar", "sahakar nagr",
+                "chikmagalur", "chikkamagaluru", "frazer town", "hal", "hesaraghatta", "hoskote", 
                 "jeevan bima nagar", "kammanahalli", "kannamangala", "kempapura", 
                 "k r puram", "nelamangala", "new bel road", "sahakaranagar", 
                 "t c palya", "kalyan nagar", "vidyaranyapura"
