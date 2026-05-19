@@ -1639,16 +1639,16 @@
                         let gRaw = parseNum(data[r][gIdx]);
                         let g = Math.round(gRaw < 1 ? gRaw * 100 : gRaw);
                         let billRate = parseNum(data[r][bIdx]);
-                        let rate = parseFloat((billRate / (1 + (g/100))).toFixed(2));
+                        let rate = Math.round(billRate / (1 + (g/100)));
                         let taxable = rate * q;
                         
                         let isLocal = localKeywords.some(kw => fuzzyMatch(s.n, kw));
                         
                         let tax = taxable * (g/100);
-                        let c = isLocal ? parseFloat((tax/2).toFixed(2)) : 0;
-                        let st = isLocal ? parseFloat((tax/2).toFixed(2)) : 0;
-                        let ig = isLocal ? 0 : parseFloat(tax.toFixed(2));
-                        salesData.push([salesData.length, sIdx+1, date, s.n, data[r][pIdx], q, g, rate, c, st, ig, parseFloat((taxable + c + st + ig).toFixed(2))]);
+                        let c = isLocal ? Math.round(tax/2) : 0;
+                        let st = isLocal ? Math.round(tax/2) : 0;
+                        let ig = isLocal ? 0 : Math.round(tax);
+                        salesData.push([salesData.length, sIdx+1, date, s.n, data[r][pIdx], q, g, rate, c, st, ig, Math.round(taxable + c + st + ig)]);
                     }
                 }
             });
