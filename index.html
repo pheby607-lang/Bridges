@@ -1302,7 +1302,7 @@
         function runProcess(type, json, name) {
             if (type === 'sales') { 
                 salesFileName = name; 
-                processSales(json, name); 
+                processSales(json); 
                 updateDashboardSums();
                 addToHistory(name, 'Sales', salesData);
             }
@@ -1426,223 +1426,44 @@
             return `${day}-${month}-${year}`;
         };
 
-        const normalizePartyName = value => String(value || "")
-            .toLowerCase()
-            .replace(/&/g, " and ")
-            .replace(/[^a-z0-9]+/g, " ")
-            .replace(/\b(prime|traders|trader|super|food|foods|store|stores|branch|outlet|pvt|ltd|private|limited)\b/g, " ")
-            .replace(/\s+/g, " ")
-            .trim();
-
-        const editDistance = (left, right) => {
-            let m = left.length, n = right.length;
+        const fuzzyMatch = (input, target) => {
+            let s = String(input).toLowerCase().replace(/[^a-z]/g, '');
+            let t = String(target).toLowerCase().replace(/[^a-z]/g, '');
+            if (!s || !t) return false;
+            if (s.includes(t) || t.includes(s)) return true;
+            
+            let m = s.length, n = t.length;
+            if (Math.abs(m - n) > 2) return false;
+            
             let d = [];
             for (let i = 0; i <= m; i++) d[i] = [i];
             for (let j = 0; j <= n; j++) d[0][j] = j;
-
+            
             for (let i = 1; i <= m; i++) {
                 for (let j = 1; j <= n; j++) {
-                    d[i][j] = Math.min(
-                        d[i-1][j] + 1,
-                        d[i][j-1] + 1,
-                        d[i-1][j-1] + (left[i-1] === right[j-1] ? 0 : 1)
-                    );
+                    d[i][j] = Math.min(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1] + (s[i-1] === t[j-1] ? 0 : 1));
                 }
             }
-            return d[m][n];
+            return d[m][n] <= (t.length > 5 ? 2 : 1);
         };
 
-        const fuzzyMatch = (input, target) => {
-            const sourceText = normalizePartyName(input);
-            const targetText = normalizePartyName(target);
-            const source = sourceText.replace(/\s+/g, "");
-            const targetValue = targetText.replace(/\s+/g, "");
-
-            if (!source || !targetValue) return false;
-            if (source.includes(targetValue) || targetValue.includes(source)) return true;
-
-            const targetWords = targetText.split(" ").filter(Boolean);
-            const sourceWords = sourceText.split(" ").filter(Boolean);
-            const wordsMatched = targetWords.every(targetWord => {
-                return sourceWords.some(sourceWord => {
-                    if (sourceWord.includes(targetWord) || targetWord.includes(sourceWord)) return true;
-                    const allowed = targetWord.length <= 4 ? 0 : 1;
-                    return editDistance(sourceWord, targetWord) <= allowed;
-                });
-            });
-            if (wordsMatched) return true;
-
-            const allowedDistance = targetValue.length <= 6 ? 1 : targetValue.length <= 12 ? 2 : 3;
-            const minWindow = Math.max(1, targetValue.length - allowedDistance);
-            const maxWindow = targetValue.length + allowedDistance;
-
-            for (let start = 0; start < source.length; start++) {
-                for (let len = minWindow; len <= maxWindow && start + len <= source.length; len++) {
-                    if (editDistance(source.slice(start, start + len), targetValue) <= allowedDistance) {
-                        return true;
-                    }
-                }
-            }
-
-            return Math.abs(source.length - targetValue.length) <= allowedDistance &&
-                   editDistance(source, targetValue) <= allowedDistance;
-        };
-
-        function processSales(data, sourceName = "") {
+        function processSales(data) {
             const date = getISTDate();
-            const h1 = data[0] || [], h2 = data[1] || [];
+            const h1 = data[0], h2 = data[1];
             if(!h1 || !h2) return;
-
-            const cleanHeader = value => {
-                if (value === undefined || value === null) return "";
-                const text = String(value).replace(/\s+/g, " ").trim();
-                return text.toLowerCase() === "nan" ? "" : text;
-            };
-
-            const headerKey = value => cleanHeader(value)
-                .toLowerCase()
-                .replace(/[^a-z0-9%]+/g, " ")
-                .replace(/\s+/g, " ")
-                .trim();
-
-            const compactKey = value => headerKey(value).replace(/\s+/g, "");
-            const hasWord = (key, word) => new RegExp(`(^|\\s)${word}(\\s|$)`).test(key);
-            const colCount = Math.max(h1.length, h2.length);
-
-            const columns = [];
-            for (let i = 0; i < colCount; i++) {
-                const top = cleanHeader(h1[i]);
-                const label = cleanHeader(h2[i]);
-                const direct = label || top;
-                const combined = [top, label].filter(Boolean).join(" ").trim();
-                columns.push({
-                    index: i,
-                    directKey: headerKey(direct),
-                    directCompact: compactKey(direct),
-                    combinedKey: headerKey(combined),
-                    name: combined || direct || `Column ${i + 1}`
-                });
-            }
-
-            const isHsnColumn = col =>
-                hasWord(col.directKey, "hsn") ||
-                hasWord(col.directKey, "sac") ||
-                col.directCompact.includes("hsnsac");
-
-            const isGstColumn = col =>
-                !isHsnColumn(col) &&
-                (hasWord(col.directKey, "gst") ||
-                 col.directCompact === "gst" ||
-                 col.directCompact === "gst%");
-
-            const isProductColumn = col =>
-                (hasWord(col.directKey, "system") && hasWord(col.directKey, "name")) ||
-                hasWord(col.directKey, "product") ||
-                hasWord(col.directKey, "item") ||
-                hasWord(col.directKey, "description");
-
-            const isBillingColumn = col =>
-                hasWord(col.directKey, "billing") ||
-                hasWord(col.directKey, "bill") ||
-                col.directCompact.includes("billingprice");
-
-            const isTotalColumn = col =>
-                hasWord(col.directKey, "total") ||
-                hasWord(col.combinedKey, "total");
-
-            const isSerialColumn = col =>
-                col.directKey === "sl" ||
-                col.directCompact === "sno" ||
-                col.directCompact === "slno" ||
-                hasWord(col.directKey, "serial");
-
-            const isDescriptorColumn = col =>
-                hasWord(col.directKey, "name") ||
-                hasWord(col.directKey, "code") ||
-                hasWord(col.directKey, "date") ||
-                hasWord(col.directKey, "rate") ||
-                hasWord(col.directKey, "price") ||
-                hasWord(col.directKey, "mrp") ||
-                hasWord(col.directKey, "remark") ||
-                hasWord(col.directKey, "remarks") ||
-                hasWord(col.directKey, "note");
-
-            const findColumn = matchFn => {
-                const found = columns.find(matchFn);
-                return found ? found.index : -1;
-            };
-
-            const parsePlainNumber = value => {
-                if (typeof value === "number") return Number.isFinite(value) ? value : NaN;
-                if (value === undefined || value === null) return NaN;
-                const text = String(value).trim().replace(/,/g, "");
-                if (!/^[-+]?\d*\.?\d+%?$/.test(text)) return NaN;
-                return parseFloat(text);
-            };
-
-            const hasQuantityValues = index => {
-                for (let r = 2; r < data.length; r++) {
-                    const value = data[r] ? data[r][index] : "";
-                    if (value === "" || value === undefined || value === null) continue;
-                    if (!isNaN(parsePlainNumber(value))) return true;
-                }
-                return false;
-            };
-
-            const pIdx = findColumn(isProductColumn);
-            const gIdx = findColumn(isGstColumn);
-            const bIdx = findColumn(isBillingColumn);
-            const hsnIdx = findColumn(isHsnColumn);
-            const totalIdx = findColumn(isTotalColumn);
-            const serialIdx = findColumn(isSerialColumn);
-
-            const missingColumns = [];
-            if (pIdx === -1) missingColumns.push("System/Product");
-            if (gIdx === -1) missingColumns.push("GST %");
-            if (bIdx === -1) missingColumns.push("Billing Price");
-
-            if (missingColumns.length > 0) {
-                document.getElementById('sales-status').innerText = `Error: Missing column(s): ${missingColumns.join(", ")}`;
-                return;
-            }
-
-            const knownColumns = new Set([pIdx, gIdx, bIdx, hsnIdx, totalIdx, serialIdx].filter(i => i !== -1));
-            const rightBoundary = totalIdx === -1 ? columns.length : totalIdx;
-            const stores = columns
-                .filter(col => col.index > bIdx && col.index < rightBoundary)
-                .filter(col => !knownColumns.has(col.index))
-                .filter(col => !isDescriptorColumn(col))
-                .filter(col => col.name && hasQuantityValues(col.index))
-                .map(col => ({n: col.name, id: col.index}));
-
-            if (stores.length === 0) {
-                document.getElementById('sales-status').innerText = "Error: Store quantity columns not found";
-                return;
-            }
-
+            const headers = h1.map((v, i) => `${String(v).trim()} ${String(h2[i]||'').trim()}`.toLowerCase());
+            const pIdx = headers.findIndex(h => h.includes("product") || h.includes("system")) || 1;
+            const gIdx = headers.findIndex(h => h.includes("gst")) || 2;
+            const bIdx = headers.findIndex(h => h.includes("billing")) || 3;
+            const stores = headers.map((h, i) => ({n: h, id: i})).filter(h => h.id > bIdx && h.n && !h.n.includes("total"));
             salesData = [["SL", "voucher no", "voucher date", "Party name", "Product", "Qty", "GST %", "Rate per Qty excl.GST", "Cgst", "SGST", "IGST", "Total"]];
             
             const localKeywords = [
-                "bangalore", "bengaluru", "bel road", "bell road", "new bel road",
-                "sahakar nagar", "sahakara nagar", "sahakaranagar", "sahakar nagr",
-                "chikmagalur", "chikkamagaluru", "frazer town", "hal", "hesaraghatta", "hoskote", 
+                "chikmagalur", "frazer town", "hal", "hesaraghatta", "hoskote", 
                 "jeevan bima nagar", "kammanahalli", "kannamangala", "kempapura", 
                 "k r puram", "nelamangala", "new bel road", "sahakaranagar", 
                 "t c palya", "kalyan nagar", "vidyaranyapura"
             ];
-
-            const forceIgstKeywords = [
-                "punjab", "ludhiana", "amritsar", "jalandhar", "patiala", "mohali",
-                "bathinda", "pathankot", "hoshiarpur", "kapurthala", "firozpur",
-                "ferozepur", "moga", "barnala", "sangrur", "zirakpur", "chandigarh"
-            ];
-
-            const sheetContext = [
-                sourceName,
-                ...data.slice(0, 8).flat()
-            ].join(" ").toLowerCase();
-
-            const forceIgst = forceIgstKeywords.some(keyword => sheetContext.includes(keyword));
 
             stores.forEach((s, sIdx) => {
                 for (let r = 2; r < data.length; r++) {
@@ -1655,7 +1476,7 @@
                         let rate = parseFloat((billRate / (1 + (g/100))).toFixed(2));
                         let taxable = rate * q;
                         
-                        let isLocal = !forceIgst && localKeywords.some(kw => fuzzyMatch(s.n, kw));
+                        let isLocal = localKeywords.some(kw => fuzzyMatch(s.n, kw));
                         
                         let tax = taxable * (g/100);
                         let c = isLocal ? parseFloat((tax/2).toFixed(2)) : 0;
