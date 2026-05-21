@@ -243,7 +243,7 @@
             letter-spacing: 0.5px;
         }
 
-        /* NEW CALENDAR STYLES */
+        /* CALENDAR STYLES */
         .calendar-modal {
             position: absolute;
             top: 46px;
@@ -267,9 +267,24 @@
             border-bottom: 1px solid #eef1f5;
         }
 
-        .cal-header h3 { font-size: 15px; margin: 0; color: #111827; }
-        .cal-header button { background: none; border: none; cursor: pointer; font-size: 16px; color: #667085; padding: 0 5px; }
-        .cal-header button:hover { color: var(--accent-blue); }
+        .cal-header h3 {
+            font-size: 15px;
+            margin: 0;
+            color: #111827;
+        }
+
+        .cal-header button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #667085;
+            padding: 0 5px;
+        }
+
+        .cal-header button:hover {
+            color: var(--accent-blue);
+        }
         
         .cal-days {
             display: grid;
@@ -299,12 +314,31 @@
             transition: 0.2s ease;
         }
 
-        .cal-date-btn:hover { background: #f0f3f9; color: var(--accent-blue); font-weight: 600; }
-        .cal-date-btn.empty { cursor: default; background: none; }
-        .cal-date-btn.empty:hover { background: none; }
-        .cal-date-btn.active { background: var(--accent-blue); color: white; font-weight: 600; }
-        .cal-date-btn.active:hover { background: var(--accent-blue-dark); color: white; }
+        .cal-date-btn:hover {
+            background: #f0f3f9;
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
 
+        .cal-date-btn.empty {
+            cursor: default;
+            background: none;
+        }
+
+        .cal-date-btn.empty:hover {
+            background: none;
+        }
+
+        .cal-date-btn.active {
+            background: var(--accent-blue);
+            color: white;
+            font-weight: 600;
+        }
+
+        .cal-date-btn.active:hover {
+            background: var(--accent-blue-dark);
+            color: white;
+        }
 
         .main-content {
             flex: 1;
@@ -368,7 +402,6 @@
             box-shadow: 0 3px 8px rgba(78, 94, 219, 0.22);
         }
 
-        /* DASHBOARD CARDS (RESTORED) */
         .dashboard-top-grid {
             display: grid;
             grid-template-columns: 2fr 1fr;
@@ -660,7 +693,7 @@
         }
 
         .auth-modal {
-            background: #212327; /* Dark modal background */
+            background: #212327; 
             color: #ffffff;
             width: 420px;
             border-radius: 12px;
@@ -735,11 +768,11 @@
         }
 
         .auth-terms a {
-            color: #a491ff; /* Light purple link */
+            color: #a491ff;
             text-decoration: none;
             font-weight: 500;
         }
-        
+
         .auth-terms a:hover {
             text-decoration: underline;
         }
@@ -783,12 +816,15 @@
             <div class="nav-item active" id="nav-dashboard" onclick="switchView('dashboard')">
                 <span class="nav-icon">▦</span><span>Data Processing</span>
             </div>
+            
             <div class="nav-item" id="nav-sales" onclick="switchView('sales')">
                 <span class="nav-icon">⌁</span><span>Sales</span>
             </div>
+            
             <div class="nav-item" id="nav-purchase" onclick="switchView('purchase')">
                 <span class="nav-icon">▤</span><span>Purchase</span>
             </div>
+            
             <div class="nav-item" id="nav-bank" onclick="switchView('bank')">
                 <span class="nav-icon">▥</span><span>Bank Statement</span>
             </div>
@@ -810,7 +846,6 @@
                     <button class="login-btn" id="login-btn">Sign In</button>
                     <div class="avatar" id="user-avatar">UN</div>
 
-                    <!-- NEW FULL CALENDAR -->
                     <div class="calendar-modal" id="cal-modal">
                         <div class="cal-header">
                             <button id="cal-prev">&lt;</button>
@@ -821,8 +856,7 @@
                             <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
                         </div>
                         <div class="cal-dates" id="cal-dates">
-                            <!-- JS will populate dates here -->
-                        </div>
+                            </div>
                     </div>
                 </div>
             </div>
@@ -830,7 +864,6 @@
 
         <section class="main-content">
 
-            <!-- FULL DASHBOARD RESTORED -->
             <div id="view-dashboard" class="view-section active">
                 <div class="page-heading-row">
                     <h1 class="page-title">SALES DASHBOARD</h1>
@@ -906,7 +939,7 @@
                         <button class="view-all-btn">View All</button>
                     </div>
                     <div class="history-intro">
-                        <div class="ui-card-subtitle">Overview of total contents when your sales processing is complete, making your data presentation readable and clear.</div>
+                        <div class="ui-card-subtitle">Overview of total contents when your processing is complete.</div>
                     </div>
                     <table>
                         <thead>
@@ -919,13 +952,11 @@
                             </tr>
                         </thead>
                         <tbody id="history-body">
-                            <!-- JS inserts history here -->
-                        </tbody>
+                            </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- UPLOAD PAGES -->
             <div id="view-sales" class="view-section upload-page">
                 <div class="page-heading-row">
                     <h1 class="page-title">SALES</h1>
@@ -958,7 +989,9 @@
                         </div>
                     </div>
                     <div class="upload-content">
-                        <label class="upload-label" for="purchase-upload" style="border-color: var(--accent-green);"><p style="color: var(--accent-green);">📦 Drag or Paste Purchase Excel Here</p></label>
+                        <label class="upload-label" for="purchase-upload" style="border-color: var(--accent-green);">
+                            <p style="color: var(--accent-green);">📦 Drag or Paste Purchase Excel Here</p>
+                        </label>
                         <input id="purchase-upload" type="file" accept=".xlsx, .csv" />
                         <div id="purchase-status" class="status-msg"></div>
                         <button id="purchase-dl" class="btn" style="background: var(--accent-green);">Download Tally Purchase</button>
@@ -978,7 +1011,9 @@
                         </div>
                     </div>
                     <div class="upload-content">
-                        <label class="upload-label" for="bank-upload" style="border-color: #4b5563;"><p style="color: #4b5563;">🏦 Drag or Paste Bank Excel Here</p></label>
+                        <label class="upload-label" for="bank-upload" style="border-color: #4b5563;">
+                            <p style="color: #4b5563;">🏦 Drag or Paste Bank Excel Here</p>
+                        </label>
                         <input id="bank-upload" type="file" accept=".xlsx, .csv" />
                         <div id="bank-status" class="status-msg"></div>
                         <button id="bank-dl" class="btn" style="background: #4b5563;">Download Bank Excel</button>
@@ -989,68 +1024,60 @@
         </section>
     </main>
 
-    <!-- NEW MODAL OVERLAY -->
     <div class="auth-overlay" id="auth-overlay">
         <div class="auth-modal">
-            
-            <!-- MAIN AUTH VIEW -->
             <div id="auth-main-view">
                 <h2>Log in or sign up in seconds</h2>
-                <p class="auth-subtitle">Use your email or another service to continue with Finflo (it's free)!</p>
+                <p class="auth-subtitle">Use your email or another service to continue with Finflo!</p>
                 
-                <button class="auth-btn" onclick="alert('Phone auth requires a backend messaging service (like Firebase SMS or Twilio).')">
-                    <span class="auth-icon">📱</span> 
-                    <span>Continue with phone number</span>
+                <button class="auth-btn" onclick="alert('Phone auth requires backend setup.')">
+                    <span class="auth-icon">📱</span> <span>Continue with phone number</span>
                 </button>
+
                 <button class="auth-btn" onclick="handleGoogleAuth()">
-                    <span class="auth-icon">
-                        <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                        </svg>
-                    </span> 
-                    <span>Continue with Google</span>
+                    <span class="auth-icon">G</span> <span>Continue with Google</span>
                 </button>
+
                 <button class="auth-btn" onclick="showEmailAuth()">
-                    <span class="auth-icon">✉️</span> 
-                    <span>Continue with email</span>
+                    <span class="auth-icon">✉️</span> <span>Continue with email</span>
                 </button>
-                
-                <div class="auth-alt-link">Continue another way</div>
-                
-                <p class="auth-terms">By continuing, you agree to Finflo's <a href="#">Terms of Use</a>.<br>Read our <a href="#">Privacy Policy</a>.</p>
-                
+
+                <div class="auth-alt-link" onclick="document.getElementById('auth-overlay').style.display='none'">
+                    Cancel
+                </div>
+
+                <div class="auth-terms">
+                    By continuing, you agree to Finflo's <a href="#">Terms of Use</a>. Read our <a href="#">Privacy Policy</a>.
+                </div>
+
                 <div class="auth-business">
-                    <span class="auth-icon-inline">🏢</span> <span>Signing up for a business</span>
+                    <span class="auth-icon-inline">💼</span> Sign in to your work account
                 </div>
             </div>
-
-            <!-- EMAIL SIGNUP / LOGIN VIEW -->
+            
             <div id="auth-email-view" style="display: none; flex-direction: column; gap: 12px;">
-                <h2>Continue with Email</h2>
-                <p class="auth-subtitle" style="margin-bottom: 15px;">If you don't have an account, one will be created automatically.</p>
-                
+                <h2>Email Sign In</h2>
                 <input type="email" id="auth-email" placeholder="Email address" style="padding: 14px; border-radius: 6px; border: 1px solid #4a4d55; background: transparent; color: white; font-size: 15px; outline: none;">
                 <input type="password" id="auth-pass" placeholder="Password" style="padding: 14px; border-radius: 6px; border: 1px solid #4a4d55; background: transparent; color: white; font-size: 15px; outline: none;">
-                
                 <button class="auth-btn" style="background: #4e5edb; border-color: #4e5edb; margin-top: 8px;" onclick="handleEmailAuth()">Log In / Sign Up</button>
-                
-                <div class="auth-alt-link" style="margin: 10px 0; color: #8a8d93;" onclick="showAuthMain()">Back to options</div>
-                
+                <div class="auth-alt-link" style="margin: 10px 0; color: #8a8d93;" onclick="showAuthMain()">Back</div>
                 <div id="auth-error" style="color: #d57b83; font-size: 13px; text-align: center;"></div>
             </div>
-
         </div>
     </div>
 
     <script>
+        // ==========================================
         // GLOBALS & UI STATE
-        let salesData = [], purchaseData = [], bankData = [];
-        let salesFileName = "Sales.xlsx", purchaseFileName = "Purchase.xlsx", bankFileName = "Bank Statement.xlsx";
-        let globalTotalSales = 0, globalTotalPurchase = 0;
-
+        // ==========================================
+        let salesData = [];
+        let purchaseData = [];
+        let bankData = [];
+        let salesFileName = "Sales.xlsx";
+        let purchaseFileName = "Purchase.xlsx";
+        let bankFileName = "Bank Statement.xlsx";
+        let globalTotalSales = 0;
+        let globalTotalPurchase = 0;
 
         // ==========================================
         // CALENDAR WIDGET LOGIC
@@ -1058,126 +1085,116 @@
         let currentDate = new Date();
         let calMonth = currentDate.getMonth();
         let calYear = currentDate.getFullYear();
-        let selectedDateStr = "";
-
+        
         function renderCalendar(month, year) {
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             document.getElementById("cal-month-year").innerText = `${monthNames[month]} ${year}`;
             
             const firstDay = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
-            
             const datesGrid = document.getElementById("cal-dates");
             datesGrid.innerHTML = "";
             
-            // Empty slots before first day
             for (let i = 0; i < firstDay; i++) {
                 datesGrid.innerHTML += `<div class="cal-date-btn empty"></div>`;
             }
             
-            // Populate days
             for (let i = 1; i <= daysInMonth; i++) {
-                // Highlight if it's the actual current date
-                const isToday = i === currentDate.getDate() && month === currentDate.getMonth() && year === currentDate.getFullYear();
-                const isActive = isToday ? "active" : "";
-                
+                const isActive = (i === currentDate.getDate() && month === currentDate.getMonth() && year === currentDate.getFullYear()) ? "active" : "";
                 datesGrid.innerHTML += `<button class="cal-date-btn ${isActive}" onclick="selectDate(event, ${i}, ${month}, ${year})">${i}</button>`;
             }
         }
-
+        
         function selectDate(e, day, month, year) {
             e.stopPropagation();
-            selectedDateStr = `${day}/${month+1}/${year}`;
-            
-            // visually highlight selected date
-            document.querySelectorAll('.cal-date-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.cal-date-btn').forEach(b => b.classList.remove('active'));
             e.target.classList.add('active');
             
-            // Close modal automatically on selection
             setTimeout(() => {
                 document.getElementById('cal-modal').style.display = 'none';
             }, 150);
         }
-
+        
         document.getElementById('cal-prev').onclick = (e) => {
             e.stopPropagation();
             calMonth--;
-            if (calMonth < 0) { calMonth = 11; calYear--; }
+            if(calMonth < 0) {
+                calMonth = 11;
+                calYear--;
+            }
             renderCalendar(calMonth, calYear);
         };
         
         document.getElementById('cal-next').onclick = (e) => {
             e.stopPropagation();
             calMonth++;
-            if (calMonth > 11) { calMonth = 0; calYear++; }
+            if(calMonth > 11) {
+                calMonth = 0;
+                calYear++;
+            }
             renderCalendar(calMonth, calYear);
         };
-
-        // Init calendar
+        
         renderCalendar(calMonth, calYear);
-
-        document.getElementById('cal-trigger').onclick = function(e) {
+        
+        document.getElementById('cal-trigger').onclick = (e) => {
             e.stopPropagation();
-            let modal = document.getElementById('cal-modal');
-            modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+            let m = document.getElementById('cal-modal');
+            m.style.display = m.style.display === 'block' ? 'none' : 'block';
         };
-
-        // Close calendar if clicking outside
-        document.body.onclick = function(e) { 
+        
+        document.body.onclick = (e) => {
             if(!e.target.closest('#cal-modal') && !e.target.closest('#cal-trigger')) {
-                document.getElementById('cal-modal').style.display = 'none'; 
+                document.getElementById('cal-modal').style.display = 'none';
             }
         };
 
-
         // ==========================================
-        // AUTH LOGIC (Email Form & Local Storage)
+        // AUTH LOGIC (Local Storage Demo)
         // ==========================================
-        
         window.addEventListener('DOMContentLoaded', () => {
             const savedUser = localStorage.getItem('finfloUserInitials');
             if (savedUser) {
                 document.getElementById('login-btn').style.display = 'none';
-                let avatar = document.getElementById('user-avatar');
-                avatar.innerText = savedUser;
-                avatar.style.display = 'flex';
+                let av = document.getElementById('user-avatar');
+                av.innerText = savedUser;
+                av.style.display = 'flex';
             }
         });
-
-        document.getElementById('login-btn').onclick = function() {
+        
+        document.getElementById('login-btn').onclick = () => {
             document.getElementById('auth-overlay').style.display = 'flex';
         };
-
+        
         document.getElementById('auth-overlay').onclick = function(e) {
             if (e.target === this) {
                 this.style.display = 'none';
-                setTimeout(() => { showAuthMain(); }, 300);
+                setTimeout(() => showAuthMain(), 300);
             }
         };
-
+        
         function showEmailAuth() {
             document.getElementById('auth-main-view').style.display = 'none';
             document.getElementById('auth-email-view').style.display = 'flex';
             document.getElementById('auth-error').innerText = '';
         }
-
+        
         function showAuthMain() {
             document.getElementById('auth-email-view').style.display = 'none';
             document.getElementById('auth-main-view').style.display = 'block';
-            document.getElementById('auth-email').value = '';
-            document.getElementById('auth-pass').value = '';
         }
-
+        
         function handleEmailAuth() {
             let email = document.getElementById('auth-email').value.trim();
             let pass = document.getElementById('auth-pass').value.trim();
             let errorEl = document.getElementById('auth-error');
             
-            if(!email || !pass) { 
-                errorEl.innerText = 'Please enter both email and password.'; 
-                return; 
+            if(!email || !pass) {
+                errorEl.innerText = 'Please enter both.';
+                return;
             }
             
+            // Simple mock DB
             let users = JSON.parse(localStorage.getItem('finfloUsers') || '{}');
             
             if(users[email]) {
@@ -1192,29 +1209,28 @@
                 completeLogin(email);
             }
         }
-
+        
         function handleGoogleAuth() {
-            alert("To connect real Google accounts, a Backend Database (like Firebase) and a Google Cloud Client ID are required. Simulating login for now.");
             completeLogin("Google User");
         }
-
-        function completeLogin(identifier) {
-            let initials = identifier.substring(0,2).toUpperCase();
+        
+        function completeLogin(id) {
+            let initials = id.substring(0,2).toUpperCase();
             localStorage.setItem('finfloUserInitials', initials);
             
             document.getElementById('auth-overlay').style.display = 'none';
             document.getElementById('login-btn').style.display = 'none';
-            let avatar = document.getElementById('user-avatar');
-            avatar.innerText = initials;
-            avatar.style.display = 'flex';
+            
+            let av = document.getElementById('user-avatar');
+            av.innerText = initials;
+            av.style.display = 'flex';
             
             showAuthMain();
         }
 
         // ==========================================
-        // TOP NAV & NAVIGATION
+        // NAV & DASHBOARD LOGIC
         // ==========================================
-
         document.getElementById('top-search').addEventListener('input', function(e) {
             let val = e.target.value.toLowerCase();
             if(val.includes('sale')) switchView('sales');
@@ -1222,29 +1238,22 @@
             else if(val.includes('bank') || val.includes('stat')) switchView('bank');
             else if(val.includes('dash') || val.includes('home')) switchView('dashboard');
         });
-
+        
         function switchView(view) {
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             
-            const navBtn = document.getElementById('nav-' + view);
-            if(navBtn) navBtn.classList.add('active');
-            
-            const viewPanel = document.getElementById('view-' + view);
-            if(viewPanel) viewPanel.classList.add('active');
+            if(document.getElementById('nav-' + view)) {
+                document.getElementById('nav-' + view).classList.add('active');
+            }
+            if(document.getElementById('view-' + view)) {
+                document.getElementById('view-' + view).classList.add('active');
+            }
         }
-
-        // ==========================================
-        // HISTORY & DASHBOARD LOGIC
-        // ==========================================
+        
         function addToHistory(fileName, type, dataArray) {
             let tbody = document.getElementById('history-body');
             let tr = document.createElement('tr');
-            
-            let tdName = document.createElement('td'); tdName.innerText = fileName;
-            let tdDate = document.createElement('td'); tdDate.innerText = new Date().toLocaleDateString('en-IN');
-            let tdType = document.createElement('td'); tdType.innerText = type;
-            let tdStudge = document.createElement('td'); tdStudge.innerText = "Processed"; tdStudge.style.color = "var(--accent-green)";
             
             let tdAction = document.createElement('td');
             let dlBtn = document.createElement('button');
@@ -1253,126 +1262,79 @@
             dlBtn.onclick = () => {
                 const ws = XLSX.utils.aoa_to_sheet(dataArray);
                 const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, type); 
+                XLSX.utils.book_append_sheet(wb, ws, type);
                 XLSX.writeFile(wb, fileName);
             };
             tdAction.appendChild(dlBtn);
-
-            tr.appendChild(tdName); tr.appendChild(tdDate); tr.appendChild(tdType); tr.appendChild(tdStudge); tr.appendChild(tdAction);
+            
+            tr.innerHTML = `<td>${fileName}</td><td>${new Date().toLocaleDateString('en-IN')}</td><td>${type}</td><td><span style="color:var(--accent-green);font-weight:600;">Processed</span></td>`;
+            tr.appendChild(tdAction);
             tbody.prepend(tr); 
         }
-
+        
         function updateDashboardSums() {
-            let tempSales = 0;
+            let tempS = 0;
             for(let i=1; i<salesData.length; i++) {
                 let val = parseFloat(salesData[i][11]);
-                if(!isNaN(val)) tempSales += val;
+                if(!isNaN(val)) tempS += val;
             }
-            if(tempSales > 0) {
-                globalTotalSales += tempSales;
+            if(tempS > 0) {
+                globalTotalSales += tempS;
                 document.getElementById('dash-total-sales').innerText = "₹" + globalTotalSales.toLocaleString('en-IN');
             }
-
-            let tempPurch = 0;
+            
+            let tempP = 0;
             for(let i=1; i<purchaseData.length; i++) {
                 let val = parseFloat(purchaseData[i][12]);
-                if(!isNaN(val)) tempPurch += val;
+                if(!isNaN(val)) tempP += val;
             }
-            if(tempPurch > 0) {
-                globalTotalPurchase += tempPurch;
+            if(tempP > 0) {
+                globalTotalPurchase += tempP;
                 document.getElementById('dash-total-purchase').innerText = "₹" + globalTotalPurchase.toLocaleString('en-IN');
             }
         }
 
-        function handleFile(file, type) {
-            if (!file) return;
-            let originalName = file.name ? file.name.replace(/\.[^/.]+$/, "") + ".xlsx" : "Pasted_Data.xlsx";
-
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, {type: 'array'});
-                const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {header: 1, defval: ""});
-                
-                runProcess(type, json, originalName);
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        function runProcess(type, json, name) {
-            if (type === 'sales') { 
-                salesFileName = name; 
-                processSales(json); 
-                updateDashboardSums();
-                addToHistory(name, 'Sales', salesData);
-            }
-            else if (type === 'purchase') { 
-                purchaseFileName = name; 
-                processPurchase(json); 
-                updateDashboardSums();
-                addToHistory(name, 'Purchase', purchaseData);
-            }
-            else if (type === 'bank') { 
-                bankFileName = name; 
-                processBank(json); 
-                addToHistory(name, 'Bank Statement', bankData);
-            }
-        }
-
         // ==========================================
-        // COPY-PASTE AND DRAG-DROP EVENTS
+        // DATA PROCESSING UTILS
         // ==========================================
-
-        document.getElementById('sales-upload').onchange = e => handleFile(e.target.files[0], 'sales');
-        document.getElementById('purchase-upload').onchange = e => handleFile(e.target.files[0], 'purchase');
-        document.getElementById('bank-upload').onchange = e => handleFile(e.target.files[0], 'bank');
-
-        document.querySelectorAll('.upload-label').forEach(label => {
-            label.addEventListener('dragover', (e) => { e.preventDefault(); e.stopPropagation(); label.style.opacity = '0.7'; label.style.transform = 'scale(1.02)'; });
-            label.addEventListener('dragleave', (e) => { e.preventDefault(); e.stopPropagation(); label.style.opacity = '1'; label.style.transform = 'scale(1)'; });
-            label.addEventListener('drop', (e) => {
-                e.preventDefault(); e.stopPropagation(); label.style.opacity = '1'; label.style.transform = 'scale(1)';
-                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                    const file = e.dataTransfer.files[0];
-                    const inputId = label.getAttribute('for');
-                    if (inputId === 'sales-upload') handleFile(file, 'sales');
-                    else if (inputId === 'purchase-upload') handleFile(file, 'purchase');
-                    else if (inputId === 'bank-upload') handleFile(file, 'bank');
-                }
-            });
-        });
-
-        // The updated paste listener from the previous turn
-        document.addEventListener('paste', (e) => {
-            const activeView = document.querySelector('.view-section.active').id;
-            if (activeView === 'view-dashboard') return;
-
-            // 1. Handle File Paste
-            if (e.clipboardData.files && e.clipboardData.files.length > 0) {
-                const type = activeView.split('-')[1];
-                handleFile(e.clipboardData.files[0], type);
-            } 
-            // 2. Handle Cell Data Paste (Excel/Sheets)
-            else {
-                const text = e.clipboardData.getData('text');
-                if (text) {
-                    const rows = text.split(/\r?\n/).filter(row => row.trim() !== "").map(row => row.split('\t'));
-                    const type = activeView.split('-')[1];
-                    runProcess(type, rows, "Pasted_Data_" + new Date().getTime() + ".xlsx");
-                }
-            }
-        });
-
-        // ==========================================
-        // DATA PROCESSING ENGINES (UNTOUCHED)
-        // ==========================================
-
         const parseNum = val => {
             if (!val) return 0;
             if (typeof val === 'number') return val;
             return parseFloat(String(val).replace(/[^\d.-]/g, '')) || 0;
         };
+        
+        const getISTDate = () => {
+            let d = new Date();
+            let utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+            let nd = new Date(utc + (3600000 * 5.5));
+            return `${String(nd.getDate()).padStart(2, '0')}-${String(nd.getMonth() + 1).padStart(2, '0')}-${nd.getFullYear()}`;
+        };
+        
+        const fuzzyMatch = (input, target) => {
+            let s = String(input).toLowerCase().replace(/[^a-z]/g, '');
+            let t = String(target).toLowerCase().replace(/[^a-z]/g, '');
+            if (!s || !t) return false;
+            if (s.includes(t) || t.includes(s)) return true;
+            
+            let m = s.length, n = t.length;
+            if (Math.abs(m - n) > 2) return false;
+            
+            let d = [];
+            for (let i = 0; i <= m; i++) d[i] = [i];
+            for (let j = 0; j <= n; j++) d[0][j] = j;
+            
+            for (let i = 1; i <= m; i++) {
+                for (let j = 1; j <= n; j++) {
+                    d[i][j] = Math.min(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1] + (s[i-1] === t[j-1] ? 0 : 1));
+                }
+            }
+            return d[m][n] <= (t.length > 5 ? 2 : 1);
+        };
 
+        // ==========================================
+        // DATA PROCESSING ENGINES
+        // ==========================================
+        
         function processBank(data) {
             const status = document.getElementById('bank-status');
             let hIdx = -1;
@@ -1416,37 +1378,6 @@
             document.getElementById('bank-dl').style.display = "block";
         }
 
-        const getISTDate = () => {
-            let d = new Date();
-            let utc = d.getTime() + (d.getTimezoneOffset() * 60000);
-            let nd = new Date(utc + (3600000 * 5.5));
-            let day = String(nd.getDate()).padStart(2, '0');
-            let month = String(nd.getMonth() + 1).padStart(2, '0');
-            let year = nd.getFullYear();
-            return `${day}-${month}-${year}`;
-        };
-
-        const fuzzyMatch = (input, target) => {
-            let s = String(input).toLowerCase().replace(/[^a-z]/g, '');
-            let t = String(target).toLowerCase().replace(/[^a-z]/g, '');
-            if (!s || !t) return false;
-            if (s.includes(t) || t.includes(s)) return true;
-            
-            let m = s.length, n = t.length;
-            if (Math.abs(m - n) > 2) return false;
-            
-            let d = [];
-            for (let i = 0; i <= m; i++) d[i] = [i];
-            for (let j = 0; j <= n; j++) d[0][j] = j;
-            
-            for (let i = 1; i <= m; i++) {
-                for (let j = 1; j <= n; j++) {
-                    d[i][j] = Math.min(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1] + (s[i-1] === t[j-1] ? 0 : 1));
-                }
-            }
-            return d[m][n] <= (t.length > 5 ? 2 : 1);
-        };
-
         function processSales(data) {
             const date = getISTDate();
             const h1 = data[0], h2 = data[1];
@@ -1472,18 +1403,19 @@
                     if(q > 0) {
                         let gRaw = parseNum(data[r][gIdx]);
                         let g = Math.round(gRaw < 1 ? gRaw * 100 : gRaw);
+                        
                         let billRate = parseNum(data[r][bIdx]);
-                        let rowTotal = billRate * q;
+                        let rowTotal = billRate * q; 
                         let taxable = parseFloat((rowTotal / (1 + (g/100))).toFixed(2));
                         let tax = parseFloat((rowTotal - taxable).toFixed(2));
                         let rate = parseFloat((taxable / q).toFixed(2));
                         
                         let isLocal = localKeywords.some(kw => fuzzyMatch(s.n, kw));
                         
-                        let tax = taxable * (g/100);
                         let c = isLocal ? parseFloat((tax/2).toFixed(2)) : 0;
-                        let st = isLocal ? parseFloat((tax/2).toFixed(2)) : 0;
-                        let ig = isLocal ? 0 : parseFloat(tax.toFixed(2));
+                        let st = isLocal ? parseFloat((tax - c).toFixed(2)) : 0;
+                        let ig = isLocal ? 0 : tax;
+                        
                         salesData.push([salesData.length, sIdx+1, date, s.n, data[r][pIdx], q, g, rate, c, st, ig, parseFloat((taxable + c + st + ig).toFixed(2))]);
                     }
                 }
@@ -1498,12 +1430,12 @@
             for(let i=0; i<Math.min(20, data.length); i++) { if(data[i].some(c => String(c).toLowerCase().includes('taxable value'))) { hIdx = i; break; } }
             if(hIdx === -1) { status.innerText = "Error: Headers not found"; return; }
             const h = data[hIdx].map(v => String(v).toLowerCase().trim());
-            const pIdx = h.findIndex(v => v.includes('trade/legal'));
+            const pIdx = h.findIndex(v => v.includes('trade/legal') || v.includes('name') || v.includes('party'));
             const invIdx = h.findIndex(v => v.includes('invoice') || v.includes('document'));
             const taxValIdx = h.findIndex(v => v.includes('taxable value'));
-            const igstIdx = h.findIndex(v => v.includes('integrated tax'));
-            const cgstIdx = h.findIndex(v => v.includes('central tax'));
-            const sgstIdx = h.findIndex(v => v.includes('state/ut tax'));
+            const igstIdx = h.findIndex(v => v.includes('integrated tax') || v.includes('igst'));
+            const cgstIdx = h.findIndex(v => v.includes('central tax') || v.includes('cgst'));
+            const sgstIdx = h.findIndex(v => v.includes('state/ut tax') || v.includes('sgst'));
             const invDateIdx = h.findIndex(v => (v.includes('invoice') || v.includes('document')) && v.includes('date'));
             purchaseData = [["Date", "Voucher Type", "Party Name (Cr)", "Invoice Number", "Invoice Date", "Narration", "Dr Ledger 1", "Amount 1 (Taxable)", "Dr Ledger 2", "Amount 2", "Dr Ledger 3", "Amount 3", "Total Invoice Value"]];
             for(let r = hIdx + 1; r < data.length; r++) {
@@ -1534,6 +1466,74 @@
         document.getElementById('sales-dl').onclick = () => { const ws = XLSX.utils.aoa_to_sheet(salesData); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Sales"); XLSX.writeFile(wb, salesFileName); };
         document.getElementById('purchase-dl').onclick = () => { const ws = XLSX.utils.aoa_to_sheet(purchaseData); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Purchase"); XLSX.writeFile(wb, purchaseFileName); };
         document.getElementById('bank-dl').onclick = () => { const ws = XLSX.utils.aoa_to_sheet(bankData); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Bank Statement"); XLSX.writeFile(wb, bankFileName); };
+        
+        function handleFile(file, type) {
+            if (!file) return;
+            let originalName = file.name ? file.name.replace(/\.[^/.]+$/, "") + ".xlsx" : "Pasted_Data.xlsx";
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {header: 1, defval: ""});
+                
+                if (type === 'sales') {
+                    salesFileName = originalName;
+                    processSales(json);
+                    updateDashboardSums();
+                    addToHistory(originalName, 'Sales', salesData);
+                } else if (type === 'purchase') {
+                    purchaseFileName = originalName;
+                    processPurchase(json);
+                    updateDashboardSums();
+                    addToHistory(originalName, 'Purchase', purchaseData);
+                } else if (type === 'bank') {
+                    bankFileName = originalName;
+                    processBank(json);
+                    addToHistory(originalName, 'Bank Statement', bankData);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        document.getElementById('sales-upload').addEventListener('change', (e) => handleFile(e.target.files[0], 'sales'));
+        document.getElementById('purchase-upload').addEventListener('change', (e) => handleFile(e.target.files[0], 'purchase'));
+        document.getElementById('bank-upload').addEventListener('change', (e) => handleFile(e.target.files[0], 'bank'));
+
+        // Handle Paste Events
+        document.addEventListener('paste', (e) => {
+            const activeView = document.querySelector('.view-section.active').id;
+            if (activeView === 'view-dashboard') return;
+            
+            let type = '';
+            if (activeView === 'view-sales') type = 'sales';
+            else if (activeView === 'view-purchase') type = 'purchase';
+            else if (activeView === 'view-bank') type = 'bank';
+            else return;
+
+            if (e.clipboardData.files && e.clipboardData.files.length > 0) {
+                handleFile(e.clipboardData.files[0], type);
+            } else {
+                const text = e.clipboardData.getData('text');
+                if (text) {
+                    const rows = text.split(/\r?\n/).filter(r => r.trim()).map(r => r.split('\t'));
+                    if (type === 'sales') {
+                        salesFileName = "Pasted_Data.xlsx";
+                        processSales(rows);
+                        updateDashboardSums();
+                        addToHistory("Pasted_Data.xlsx", 'Sales', salesData);
+                    } else if (type === 'purchase') {
+                        purchaseFileName = "Pasted_Data.xlsx";
+                        processPurchase(rows);
+                        updateDashboardSums();
+                        addToHistory("Pasted_Data.xlsx", 'Purchase', purchaseData);
+                    } else if (type === 'bank') {
+                        bankFileName = "Pasted_Data.xlsx";
+                        processBank(rows);
+                        addToHistory("Pasted_Data.xlsx", 'Bank Statement', bankData);
+                    }
+                }
+            }
+        });
     </script>
 </body>
 </html>
