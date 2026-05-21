@@ -1651,10 +1651,16 @@
                     if(q > 0) {
                         let gRaw = parseNum(data[r][gIdx]);
                         let g = Math.round(gRaw < 1 ? gRaw * 100 : gRaw);
-                        let billRate = parseNum(data[r][bIdx]);
-                        let rate = parseFloat((billRate / (1 + (g/100))).toFixed(2));
-                        let taxable = rate * q;
-                        
+                       let billRate = parseNum(data[r][bIdx]);
+
+let exactRate = billRate / (1 + (g / 100));
+let taxable = exactRate * q;
+
+// round only after calculation
+let rate = parseFloat(exactRate.toFixed(2));
+taxable = parseFloat(taxable.toFixed(2));
+
+let isLocal = localKeywords.some(kw => fuzzyMatch(s.n, kw));
                         let isLocal = !forceIgst && localKeywords.some(kw => fuzzyMatch(s.n, kw));
                         
                         let tax = taxable * (g/100);
