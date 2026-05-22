@@ -6,6 +6,9 @@
     <title>Finflo | Enterprise</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+
     <style>
         :root {
             --bg-page: #f4f6fa;
@@ -841,7 +844,7 @@
                     <input type="text" id="top-search" placeholder="Search...">
                 </div>
                 <div class="nav-actions">
-                    <div class="icon-btn" id="cal-trigger">▣</div>
+                    <div class="icon-btn" id="cal-trigger" style="display:flex; align-items:center; justify-content:center; padding:0 5px;">▣</div>
                     <div class="icon-btn">♢</div>
                     <button class="login-btn" id="login-btn">Sign In</button>
                     <div class="avatar" id="user-avatar">UN</div>
@@ -1068,6 +1071,21 @@
 
     <script>
         // ==========================================
+        // FIREBASE INITIALIZATION
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyCHqQEv3QSSzHhes_0cV10oi4RvG4vXWXo",
+            authDomain: "finflo-68dbe.firebaseapp.com",
+            projectId: "finflo-68dbe",
+            storageBucket: "finflo-68dbe.firebasestorage.app",
+            messagingSenderId: "1028954702962",
+            appId: "1:1028954702962:web:be40711e2e4b7df5b46eeb",
+            measurementId: "G-25T4XBR75H"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        
+        // ==========================================
         // GLOBALS & UI STATE
         // ==========================================
         let salesData = [];
@@ -1078,6 +1096,7 @@
         let bankFileName = "Bank Statement.xlsx";
         let globalTotalSales = 0;
         let globalTotalPurchase = 0;
+        let globalSelectedDate = null; // New global for Calendar Fix
 
         // ==========================================
         // CALENDAR WIDGET LOGIC
@@ -1109,6 +1128,12 @@
             e.stopPropagation();
             document.querySelectorAll('.cal-date-btn').forEach(b => b.classList.remove('active'));
             e.target.classList.add('active');
+            
+            // Fix: Store the date globally so engines can read it, formatted nicely
+            globalSelectedDate = `${String(day).padStart(2, '0')}-${String(month + 1).padStart(2, '0')}-${year}`;
+            
+            // Update UI
+            document.getElementById('cal-trigger').innerHTML = `<span style="font-size:12px; font-weight:bold; color:var(--accent-blue);">${globalSelectedDate}</span>`;
             
             setTimeout(() => {
                 document.getElementById('cal-modal').style.display = 'none';
@@ -1150,7 +1175,7 @@
         };
 
         // ==========================================
-        // AUTH LOGIC (Local Storage Demo)
+        // AUTH LOGIC
         // ==========================================
         window.addEventListener('DOMContentLoaded', () => {
             const savedUser = localStorage.getItem('finfloUserInitials');
@@ -1194,24 +1219,35 @@
                 return;
             }
             
-            // Simple mock DB
-            let users = JSON.parse(localStorage.getItem('finfloUsers') || '{}');
-            
-            if(users[email]) {
-                if(users[email] === pass) {
-                    completeLogin(email);
-                } else {
-                    errorEl.innerText = 'Incorrect password.';
-                }
-            } else {
-                users[email] = pass;
-                localStorage.setItem('finfloUsers', JSON.stringify(users));
-                completeLogin(email);
-            }
+            // Using Firebase Auth for Email
+            firebase.auth().signInWithEmailAndPassword(email, pass)
+                .then((userCredential) => {
+                    completeLogin(userCredential.user.email);
+                })
+                .catch((error) => {
+                    // If account doesn't exist, try creating it
+                    if(error.code === 'auth/user-not-found') {
+                        firebase.auth().createUserWithEmailAndPassword(email, pass)
+                            .then((userCredential) => completeLogin(userCredential.user.email))
+                            .catch(err => errorEl.innerText = err.message);
+                    } else {
+                        errorEl.innerText = error.message;
+                    }
+                });
         }
         
         function handleGoogleAuth() {
-            completeLogin("Google User");
+            const provider = new firebase.auth.GoogleAuthProvider();
+            firebase.auth().signInWithPopup(provider)
+                .then((result) => {
+                    const user = result.user;
+                    console.log("Logged in as:", user.displayName);
+                    completeLogin(user.displayName || user.email);
+                })
+                .catch((error) => {
+                    console.error("Error during Google Login:", error.message);
+                    alert("Google Sign-In Error: " + error.message);
+                });
         }
         
         function completeLogin(id) {
