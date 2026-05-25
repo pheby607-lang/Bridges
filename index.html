@@ -6,9 +6,6 @@
     <title>Finflo | Enterprise</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
-
     <style>
         :root {
             --bg-page: #f4f6fa;
@@ -844,7 +841,7 @@
                     <input type="text" id="top-search" placeholder="Search...">
                 </div>
                 <div class="nav-actions">
-                    <div class="icon-btn" id="cal-trigger" style="display:flex; align-items:center; justify-content:center; padding:0 5px;">▣</div>
+                    <div class="icon-btn" id="cal-trigger">▣</div>
                     <div class="icon-btn">♢</div>
                     <button class="login-btn" id="login-btn">Sign In</button>
                     <div class="avatar" id="user-avatar">UN</div>
@@ -1071,21 +1068,6 @@
 
     <script>
         // ==========================================
-        // FIREBASE INITIALIZATION
-        // ==========================================
-        const firebaseConfig = {
-            apiKey: "AIzaSyCHqQEv3QSSzHhes_0cV10oi4RvG4vXWXo",
-            authDomain: "finflo-68dbe.firebaseapp.com",
-            projectId: "finflo-68dbe",
-            storageBucket: "finflo-68dbe.firebasestorage.app",
-            messagingSenderId: "1028954702962",
-            appId: "1:1028954702962:web:be40711e2e4b7df5b46eeb",
-            measurementId: "G-25T4XBR75H"
-        };
-        
-        firebase.initializeApp(firebaseConfig);
-        
-        // ==========================================
         // GLOBALS & UI STATE
         // ==========================================
         let salesData = [];
@@ -1096,7 +1078,6 @@
         let bankFileName = "Bank Statement.xlsx";
         let globalTotalSales = 0;
         let globalTotalPurchase = 0;
-        let globalSelectedDate = null; // New global for Calendar Fix
 
         // ==========================================
         // CALENDAR WIDGET LOGIC
@@ -1128,12 +1109,6 @@
             e.stopPropagation();
             document.querySelectorAll('.cal-date-btn').forEach(b => b.classList.remove('active'));
             e.target.classList.add('active');
-            
-            // Fix: Store the date globally so engines can read it, formatted nicely
-            globalSelectedDate = `${String(day).padStart(2, '0')}-${String(month + 1).padStart(2, '0')}-${year}`;
-            
-            // Update UI
-            document.getElementById('cal-trigger').innerHTML = `<span style="font-size:12px; font-weight:bold; color:var(--accent-blue);">${globalSelectedDate}</span>`;
             
             setTimeout(() => {
                 document.getElementById('cal-modal').style.display = 'none';
@@ -1175,7 +1150,7 @@
         };
 
         // ==========================================
-        // AUTH LOGIC
+        // AUTH LOGIC (Local Storage Demo)
         // ==========================================
         window.addEventListener('DOMContentLoaded', () => {
             const savedUser = localStorage.getItem('finfloUserInitials');
@@ -1219,35 +1194,24 @@
                 return;
             }
             
-            // Using Firebase Auth for Email
-            firebase.auth().signInWithEmailAndPassword(email, pass)
-                .then((userCredential) => {
-                    completeLogin(userCredential.user.email);
-                })
-                .catch((error) => {
-                    // If account doesn't exist, try creating it
-                    if(error.code === 'auth/user-not-found') {
-                        firebase.auth().createUserWithEmailAndPassword(email, pass)
-                            .then((userCredential) => completeLogin(userCredential.user.email))
-                            .catch(err => errorEl.innerText = err.message);
-                    } else {
-                        errorEl.innerText = error.message;
-                    }
-                });
+            // Simple mock DB
+            let users = JSON.parse(localStorage.getItem('finfloUsers') || '{}');
+            
+            if(users[email]) {
+                if(users[email] === pass) {
+                    completeLogin(email);
+                } else {
+                    errorEl.innerText = 'Incorrect password.';
+                }
+            } else {
+                users[email] = pass;
+                localStorage.setItem('finfloUsers', JSON.stringify(users));
+                completeLogin(email);
+            }
         }
         
         function handleGoogleAuth() {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            firebase.auth().signInWithPopup(provider)
-                .then((result) => {
-                    const user = result.user;
-                    console.log("Logged in as:", user.displayName);
-                    completeLogin(user.displayName || user.email);
-                })
-                .catch((error) => {
-                    console.error("Error during Google Login:", error.message);
-                    alert("Google Sign-In Error: " + error.message);
-                });
+            completeLogin("Google User");
         }
         
         function completeLogin(id) {
@@ -1414,6 +1378,52 @@
             document.getElementById('bank-dl').style.display = "block";
         }
 
+        function processSales(data) {
+            const date = getISTDate();
+            const h1 = data[0], h2 = data[1];
+            if(!h1 || !h2) return;
+            const headers = h1.map((v, i) => `${String(v).trim()} ${String(h2[i]||'').trim()}`.toLowerCase());
+            const pIdx = headers.findIndex(h => h.includes("product") || h.includes("system")) || 1;
+            const gIdx = headers.findIndex(h => h.includes("gst")) || 2;
+            const bIdx = headers.findIndex(h => h.includes("billing")) || 3;
+            const stores = headers.map((h, i) => ({n: h, id: i})).filter(h => h.id > bIdx && h.n && !h.n.includes("total"));
+            salesData = [["SL", "voucher no", "voucher date", "Party name", "Product", "Qty", "GST %", "Rate per Qty excl.GST", "Cgst", "SGST", "IGST", "Total"]];
+            
+            const localKeywords = [
+                "chikmagalur", "frazer town", "hal", "hesaraghatta", "hoskote", 
+                "jeevan bima nagar", "kammanahalli", "kannamangala", "kempapura", 
+                "k r puram", "nelamangala", "new bel road", "sahakaranagar", 
+                "t c palya", "kalyan nagar", "vidyaranyapura"
+            ];
+
+            stores.forEach((s, sIdx) => {
+                for (let r = 2; r < data.length; r++) {
+                    if(!data[r][pIdx]) continue;
+                    let q = parseNum(data[r][s.id]);
+                    if(q > 0) {
+                        let gRaw = parseNum(data[r][gIdx]);
+                        let g = Math.round(gRaw < 1 ? gRaw * 100 : gRaw);
+                        
+                        let billRate = parseNum(data[r][bIdx]);
+                        let rowTotal = billRate * q; 
+                        let taxable = parseFloat((rowTotal / (1 + (g/100))).toFixed(2));
+                        let tax = parseFloat((rowTotal - taxable).toFixed(2));
+                        let rate = parseFloat((taxable / q).toFixed(2));
+                        
+                        let isLocal = localKeywords.some(kw => fuzzyMatch(s.n, kw));
+                        
+                        let c = isLocal ? parseFloat((tax/2).toFixed(2)) : 0;
+                        let st = isLocal ? parseFloat((tax - c).toFixed(2)) : 0;
+                        let ig = isLocal ? 0 : tax;
+                        
+                        salesData.push([salesData.length, sIdx+1, date, s.n, data[r][pIdx], q, g, rate, c, st, ig, parseFloat((taxable + c + st + ig).toFixed(2))]);
+                    }
+                }
+            });
+            document.getElementById('sales-status').innerText = `✓ Sales Processed Store-Wise (Date: ${date})`;
+            document.getElementById('sales-dl').style.display = "block";
+        }
+
         function processPurchase(data) {
             const status = document.getElementById('purchase-status');
             let hIdx = -1;
@@ -1525,7 +1535,5 @@
             }
         });
     </script>
-    
-    <script src="sales_engine.js"></script>
 </body>
 </html>
