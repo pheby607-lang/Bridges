@@ -1405,10 +1405,10 @@
                         let g = Math.round(gRaw < 1 ? gRaw * 100 : gRaw);
                         
                         let billRate = parseNum(data[r][bIdx]);
-                        let rowTotal = parseFloat((billRate * q).toFixed(2));
+                        let rowTotal = billRate * q; 
                         let taxable = parseFloat((rowTotal / (1 + (g/100))).toFixed(2));
                         let tax = parseFloat((rowTotal - taxable).toFixed(2));
-                        let rate = parseFloat((taxable / q).toFixed(4));
+                        let rate = parseFloat((taxable / q).toFixed(2));
                         
                         let isLocal = localKeywords.some(kw => fuzzyMatch(s.n, kw));
                         
@@ -1416,7 +1416,7 @@
                         let st = isLocal ? parseFloat((tax - c).toFixed(2)) : 0;
                         let ig = isLocal ? 0 : tax;
                         
-                        salesData.push([salesData.length, sIdx+1, date, s.n, data[r][pIdx], q, g, rate, c, st, ig, rowTotal]);
+                        salesData.push([salesData.length, sIdx+1, date, s.n, data[r][pIdx], q, g, rate, c, st, ig, parseFloat((taxable + c + st + ig).toFixed(2))]);
                     }
                 }
             });
