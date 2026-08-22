@@ -1495,7 +1495,25 @@
             reader.onload = (e) => {
                 const data = new Uint8Array(e.target.result);
                 const workbook = XLSX.read(data, {type: 'array'});
-                const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {header: 1, defval: ""});
+
+                // A workbook can contain multiple tabs (older drafts, other
+                // formats, etc). For sales uploads, don't blindly grab the
+                // first tab - pick the sheet that actually has the "GST %"
+                // and "Billing Price" columns the parser needs. Without this,
+                // an older/differently-structured tab sitting first in the
+                // file silently gets parsed instead of the real data, and
+                // store columns get misread as GST%/Billing columns.
+                let targetSheetName = workbook.SheetNames[0];
+                if (type === 'sales') {
+                    const structuredSheet = workbook.SheetNames.find(name => {
+                        const preview = XLSX.utils.sheet_to_json(workbook.Sheets[name], {header: 1, defval: ""}).slice(0, 3);
+                        const text = preview.flat().join(' ').toLowerCase();
+                        return text.includes('gst') && text.includes('billing');
+                    });
+                    if (structuredSheet) targetSheetName = structuredSheet;
+                }
+
+                const json = XLSX.utils.sheet_to_json(workbook.Sheets[targetSheetName], {header: 1, defval: ""});
                 
                 if (type === 'sales') {
                     salesFileName = originalName;
