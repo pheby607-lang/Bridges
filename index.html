@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finflo | Enterprise</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/12.15.0/firebase-app-compat.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/12.15.0/firebase-auth-compat.js"></script>
 
     <style>
         :root {
@@ -243,7 +241,6 @@
             font-size: 12px;
             font-weight: 700;
             letter-spacing: 0.5px;
-            cursor: pointer;
         }
 
         /* CALENDAR STYLES */
@@ -833,7 +830,7 @@
             </div>
         </div>
 
-        <div class="sidebar-version">FINFLO ENTERPRISE V1.0</div>
+        <div class="sidebar-version">FINFLO ENTERPRISE V10.17</div>
     </aside>
 
     <main class="content-wrapper">
@@ -847,7 +844,7 @@
                     <div class="icon-btn" id="cal-trigger">▣</div>
                     <div class="icon-btn">♢</div>
                     <button class="login-btn" id="login-btn">Sign In</button>
-                    <div class="avatar" id="user-avatar" title="Sign out">UN</div>
+                    <div class="avatar" id="user-avatar">UN</div>
 
                     <div class="calendar-modal" id="cal-modal">
                         <div class="cal-header">
@@ -1083,21 +1080,6 @@
         let globalTotalPurchase = 0;
 
         // ==========================================
-        // FIREBASE INIT
-        // ==========================================
-        const firebaseConfig = {
-            apiKey: "AIzaSyCHqQEv3QSSzHhes_0cV10oi4RvG4vXWXo",
-            authDomain: "finflo-68dbe.firebaseapp.com",
-            projectId: "finflo-68dbe",
-            storageBucket: "finflo-68dbe.firebasestorage.app",
-            messagingSenderId: "1028954702962",
-            appId: "1:1028954702962:web:be40711e2e4b7df5b46eeb",
-            measurementId: "G-25T4XBR75H"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-
-        // ==========================================
         // CALENDAR WIDGET LOGIC
         // ==========================================
         let currentDate = new Date();
@@ -1168,27 +1150,17 @@
         };
 
         // ==========================================
-        // AUTH LOGIC (Firebase Authentication)
+        // AUTH LOGIC (Local Storage Demo)
         // ==========================================
-        // Single source of truth: Firebase tracks the session (it persists
-        // across reloads on its own), so the UI just reacts to it here.
-        auth.onAuthStateChanged((user) => {
-            let loginBtn = document.getElementById('login-btn');
-            let av = document.getElementById('user-avatar');
-            if (user) {
-                loginBtn.style.display = 'none';
-                av.innerText = getInitials(user);
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedUser = localStorage.getItem('finfloUserInitials');
+            if (savedUser) {
+                document.getElementById('login-btn').style.display = 'none';
+                let av = document.getElementById('user-avatar');
+                av.innerText = savedUser;
                 av.style.display = 'flex';
-            } else {
-                loginBtn.style.display = '';
-                av.style.display = 'none';
             }
         });
-
-        function getInitials(user) {
-            let source = (user.displayName || user.email || "U").trim();
-            return source.substring(0, 2).toUpperCase();
-        }
         
         document.getElementById('login-btn').onclick = () => {
             document.getElementById('auth-overlay').style.display = 'flex';
@@ -1216,53 +1188,45 @@
             let email = document.getElementById('auth-email').value.trim();
             let pass = document.getElementById('auth-pass').value.trim();
             let errorEl = document.getElementById('auth-error');
-            errorEl.innerText = '';
             
             if(!email || !pass) {
                 errorEl.innerText = 'Please enter both.';
                 return;
             }
-
-            // Try logging in first; if there's no account yet, create one.
-            // This keeps the single "Log In / Sign Up" button from the design.
-            auth.signInWithEmailAndPassword(email, pass)
-                .then((result) => completeLogin(result.user))
-                .catch((error) => {
-                    if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
-                        auth.createUserWithEmailAndPassword(email, pass)
-                            .then((result) => completeLogin(result.user))
-                            .catch((err2) => errorEl.innerText = err2.message);
-                    } else if (error.code === 'auth/wrong-password') {
-                        errorEl.innerText = 'Incorrect password.';
-                    } else if (error.code === 'auth/weak-password') {
-                        errorEl.innerText = 'Password should be at least 6 characters.';
-                    } else if (error.code === 'auth/invalid-email') {
-                        errorEl.innerText = 'Please enter a valid email address.';
-                    } else {
-                        errorEl.innerText = error.message;
-                    }
-                });
+            
+            // Simple mock DB
+            let users = JSON.parse(localStorage.getItem('finfloUsers') || '{}');
+            
+            if(users[email]) {
+                if(users[email] === pass) {
+                    completeLogin(email);
+                } else {
+                    errorEl.innerText = 'Incorrect password.';
+                }
+            } else {
+                users[email] = pass;
+                localStorage.setItem('finfloUsers', JSON.stringify(users));
+                completeLogin(email);
+            }
         }
         
         function handleGoogleAuth() {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            auth.signInWithPopup(provider)
-                .then((result) => completeLogin(result.user))
-                .catch((error) => {
-                    document.getElementById('auth-error').innerText = error.message;
-                });
+            completeLogin("Google User");
         }
         
-        function completeLogin(user) {
-            // onAuthStateChanged handles the avatar/login-button swap;
-            // this just closes the modal.
+        function completeLogin(id) {
+            let initials = id.substring(0,2).toUpperCase();
+            localStorage.setItem('finfloUserInitials', initials);
+            
             document.getElementById('auth-overlay').style.display = 'none';
+            document.getElementById('login-btn').style.display = 'none';
+            
+            let av = document.getElementById('user-avatar');
+            av.innerText = initials;
+            av.style.display = 'flex';
+            
             showAuthMain();
         }
-
-        document.getElementById('user-avatar').onclick = () => {
-            if (confirm('Sign out of Finflo?')) auth.signOut();
-        };
 
         // ==========================================
         // NAV & DASHBOARD LOGIC
@@ -1308,11 +1272,6 @@
             tbody.prepend(tr); 
         }
         
-        // Total Sales / Total Purchase on the dashboard are the running sum of
-        // the "Total" / "Total Invoice Value" column from the converted Tally
-        // sheets (salesData / purchaseData) — i.e. exactly what's in the
-        // downloadable file, not a separate figure. Each newly processed file
-        // adds to the running total, so multiple uploads accumulate.
         function updateDashboardSums() {
             let tempS = 0;
             for(let i=1; i<salesData.length; i++) {
@@ -1424,12 +1383,9 @@
             const h1 = data[0], h2 = data[1];
             if(!h1 || !h2) return;
             const headers = h1.map((v, i) => `${String(v).trim()} ${String(h2[i]||'').trim()}`.toLowerCase());
-            let pIdx = headers.findIndex(h => h.includes("product") || h.includes("system"));
-            if (pIdx === -1) pIdx = 1;
-            let gIdx = headers.findIndex(h => h.includes("gst"));
-            if (gIdx === -1) gIdx = 2;
-            let bIdx = headers.findIndex(h => h.includes("billing"));
-            if (bIdx === -1) bIdx = 3;
+            const pIdx = headers.findIndex(h => h.includes("product") || h.includes("system")) || 1;
+            const gIdx = headers.findIndex(h => h.includes("gst")) || 2;
+            const bIdx = headers.findIndex(h => h.includes("billing")) || 3;
             const stores = headers.map((h, i) => ({n: h, id: i})).filter(h => h.id > bIdx && h.n && !h.n.includes("total"));
             salesData = [["SL", "voucher no", "voucher date", "Party name", "Product", "Qty", "GST %", "Rate per Qty excl.GST", "Cgst", "SGST", "IGST", "Total"]];
             
@@ -1449,10 +1405,10 @@
                         let g = Math.round(gRaw < 1 ? gRaw * 100 : gRaw);
                         
                         let billRate = parseNum(data[r][bIdx]);
-                        let rowTotal = parseFloat((billRate * q).toFixed(2));
+                        let rowTotal = billRate * q; 
                         let taxable = parseFloat((rowTotal / (1 + (g/100))).toFixed(2));
                         let tax = parseFloat((rowTotal - taxable).toFixed(2));
-                        let rate = parseFloat((taxable / q).toFixed(4));
+                        let rate = parseFloat((taxable / q).toFixed(2));
                         
                         let isLocal = localKeywords.some(kw => fuzzyMatch(s.n, kw));
                         
@@ -1460,7 +1416,7 @@
                         let st = isLocal ? parseFloat((tax - c).toFixed(2)) : 0;
                         let ig = isLocal ? 0 : tax;
                         
-                        salesData.push([salesData.length, sIdx+1, date, s.n, data[r][pIdx], q, g, rate, c, st, ig, rowTotal]);
+                        salesData.push([salesData.length, sIdx+1, date, s.n, data[r][pIdx], q, g, rate, c, st, ig, parseFloat((taxable + c + st + ig).toFixed(2))]);
                     }
                 }
             });
