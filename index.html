@@ -1387,7 +1387,7 @@
             document.getElementById('bank-dl').style.display = "block";
         }
 
-        function processSales(data) {
+        function processSales(data, sheetName) {
             const date = getISTDate();
             const h1 = data[0], h2 = data[1];
             if(!h1 || !h2) return;
@@ -1409,13 +1409,48 @@
                 return { n: label, matchName: storeName, id: i };
             }).filter(s => s.id > bIdx && s.matchName && !s.matchName.toLowerCase().includes("total"));
             salesData = [["SL", "voucher no", "voucher date", "Party name", "Product", "Qty", "GST %", "Rate per Qty excl.GST", "Cgst", "SGST", "IGST", "Total"]];
-            
+
+            // ==========================================
+            // LOCAL vs INTERSTATE (CGST+SGST vs IGST)
+            // ==========================================
+            // One monthly order sheet = one city = one state, so Local/Interstate
+            // is decided ONCE for the whole sheet (from its title/tab name), not
+            // guessed per store. This keeps working correctly no matter what new
+            // stores get added later - matching individual store names against a
+            // fixed keyword list doesn't scale (a new "Koramangala" or "Jayanagar"
+            // store would silently be misclassified). Per-store name matching is
+            // kept only as a last-resort fallback if the sheet's state can't be
+            // read from its title, and is flagged clearly when it's used.
+            const SELLER_STATE = "karnataka"; // seller's own GST registration state
+            const STATE_KEYWORDS = {
+                "karnataka": ["karnataka", "bangalore", "bengaluru", "blr", "mysore", "mysuru", "mangalore", "mangaluru", "hubli", "belgaum", "belagavi", "gulbarga", "kalaburagi", "davangere", "shimoga", "shivamogga", "tumkur", "tumakuru", "udupi"],
+                "telangana": ["telangana", "hyderabad", "hyd", "warangal", "nizamabad", "karimnagar", "khammam", "sangareddy"],
+                "andhra pradesh": ["andhra", "guntur", "vijayawada", "visakhapatnam", "vizag", "tirupati", "nellore"],
+                "tamil nadu": ["tamil nadu", "chennai", "coimbatore", "madurai", "trichy", "salem"],
+                "maharashtra": ["maharashtra", "mumbai", "pune", "nagpur", "nashik"],
+                "delhi": ["delhi", "new delhi", "ncr"],
+                "west bengal": ["west bengal", "kolkata", "calcutta"]
+            };
+            const detectState = (text) => {
+                const t = String(text || '').toLowerCase();
+                for (const [state, kws] of Object.entries(STATE_KEYWORDS)) {
+                    if (kws.some(kw => new RegExp(`(^|[^a-z])${kw}([^a-z]|$)`).test(t))) return state;
+                }
+                return null;
+            };
+            const sheetState = detectState(`${h1[0] || ''} ${sheetName || ''}`);
+
+            // Fallback keyword list (per-store) - only used if sheetState is null.
             const localKeywords = [
                 "chikmagalur", "frazer town", "hal", "hesaraghatta", "hoskote", 
                 "jeevan bima nagar", "kammanahalli", "kannamangala", "kempapura", 
                 "k r puram", "nelamangala", "new bel road", "sahakaranagar", 
-                "t c palya", "kalyan nagar", "vidyaranyapura"
+                "t c palya", "kalyan nagar", "vidyaranyapura", "koramangala",
+                "indiranagar", "whitefield", "jayanagar", "jp nagar", "hsr layout",
+                "electronic city", "marathahalli", "yelahanka", "rajajinagar",
+                "malleshwaram", "basavanagudi", "banashankari"
             ];
+            const usedFallback = sheetState === null;
 
             stores.forEach((s, sIdx) => {
                 for (let r = 2; r < data.length; r++) {
@@ -1431,7 +1466,9 @@
                         let tax = parseFloat((rowTotal - taxable).toFixed(2));
                         let rate = parseFloat((taxable / q).toFixed(4));
                         
-                        let isLocal = localKeywords.some(kw => fuzzyMatch(s.matchName, kw));
+                        let isLocal = usedFallback
+                            ? localKeywords.some(kw => fuzzyMatch(s.matchName, kw))
+                            : (sheetState === SELLER_STATE);
                         
                         let c = isLocal ? parseFloat((tax/2).toFixed(2)) : 0;
                         let st = isLocal ? parseFloat((tax - c).toFixed(2)) : 0;
@@ -1441,7 +1478,9 @@
                     }
                 }
             });
-            document.getElementById('sales-status').innerText = `✓ Sales Processed Store-Wise (Date: ${date})`;
+            document.getElementById('sales-status').innerText = usedFallback
+                ? `⚠ Sales Processed (Date: ${date}) — couldn't detect the sheet's state from its title/tab name, used per-store name matching as a fallback. Please double-check the CGST/SGST/IGST codes.`
+                : `✓ Sales Processed Store-Wise (Date: ${date}) — detected sheet state: ${sheetState[0].toUpperCase()}${sheetState.slice(1)} (${sheetState === SELLER_STATE ? 'Local' : 'Interstate'})`;
             document.getElementById('sales-dl').style.display = "block";
         }
 
@@ -1517,7 +1556,7 @@
                 
                 if (type === 'sales') {
                     salesFileName = originalName;
-                    processSales(json);
+                    processSales(json, targetSheetName);
                     updateDashboardSums();
                     addToHistory(originalName, 'Sales', salesData);
                 } else if (type === 'purchase') {
