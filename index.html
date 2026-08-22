@@ -1311,11 +1311,20 @@
         };
         
         const fuzzyMatch = (input, target) => {
-            let s = String(input).toLowerCase().replace(/[^a-z]/g, '');
-            let t = String(target).toLowerCase().replace(/[^a-z]/g, '');
+            let sRaw = String(input).toLowerCase();
+            let tRaw = String(target).toLowerCase();
+
+            // Word-boundary substring check first: e.g. "hal" should match the
+            // standalone word "HAL" but NOT the middle of "Vanasthalipuram".
+            let tEsc = tRaw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            let boundaryRe = new RegExp(`(^|[^a-z])${tEsc}([^a-z]|$)`);
+            if (boundaryRe.test(sRaw)) return true;
+
+            let s = sRaw.replace(/[^a-z]/g, '');
+            let t = tRaw.replace(/[^a-z]/g, '');
             if (!s || !t) return false;
-            if (s.includes(t) || t.includes(s)) return true;
-            
+            if (t.includes(s)) return true;
+
             let m = s.length, n = t.length;
             if (Math.abs(m - n) > 2) return false;
             
@@ -1383,10 +1392,22 @@
             const h1 = data[0], h2 = data[1];
             if(!h1 || !h2) return;
             const headers = h1.map((v, i) => `${String(v).trim()} ${String(h2[i]||'').trim()}`.toLowerCase());
-            const pIdx = headers.findIndex(h => h.includes("product") || h.includes("system")) || 1;
-            const gIdx = headers.findIndex(h => h.includes("gst")) || 2;
-            const bIdx = headers.findIndex(h => h.includes("billing")) || 3;
-            const stores = headers.map((h, i) => ({n: h, id: i})).filter(h => h.id > bIdx && h.n && !h.n.includes("total"));
+            const pIdxFound = headers.findIndex(h => h.includes("product") || h.includes("system"));
+            const gIdxFound = headers.findIndex(h => h.includes("gst"));
+            const bIdxFound = headers.findIndex(h => h.includes("billing"));
+            const pIdx = pIdxFound === -1 ? 1 : pIdxFound;
+            const gIdx = gIdxFound === -1 ? 2 : gIdxFound;
+            const bIdx = bIdxFound === -1 ? 3 : bIdxFound;
+            // Row 1 (h1) holds the entity/brand code (WORLDWIDE, NUTRI FOOD, GOODLIFE...),
+            // Row 2 (h2) holds the actual store name. Build a clean, properly-cased
+            // "StoreName (ENTITYCODE)" label instead of the lowercased concatenation
+            // used for header-matching above.
+            const stores = h1.map((v, i) => {
+                const code = String(v || '').trim();
+                const storeName = String(h2[i] || '').trim();
+                const label = code ? `${storeName} (${code.toUpperCase()})` : storeName;
+                return { n: label, matchName: storeName, id: i };
+            }).filter(s => s.id > bIdx && s.matchName && !s.matchName.toLowerCase().includes("total"));
             salesData = [["SL", "voucher no", "voucher date", "Party name", "Product", "Qty", "GST %", "Rate per Qty excl.GST", "Cgst", "SGST", "IGST", "Total"]];
             
             const localKeywords = [
@@ -1405,18 +1426,18 @@
                         let g = Math.round(gRaw < 1 ? gRaw * 100 : gRaw);
                         
                         let billRate = parseNum(data[r][bIdx]);
-                        let rowTotal = billRate * q; 
+                        let rowTotal = parseFloat((billRate * q).toFixed(2));
                         let taxable = parseFloat((rowTotal / (1 + (g/100))).toFixed(2));
                         let tax = parseFloat((rowTotal - taxable).toFixed(2));
-                        let rate = parseFloat((taxable / q).toFixed(2));
+                        let rate = parseFloat((taxable / q).toFixed(4));
                         
-                        let isLocal = localKeywords.some(kw => fuzzyMatch(s.n, kw));
+                        let isLocal = localKeywords.some(kw => fuzzyMatch(s.matchName, kw));
                         
                         let c = isLocal ? parseFloat((tax/2).toFixed(2)) : 0;
                         let st = isLocal ? parseFloat((tax - c).toFixed(2)) : 0;
                         let ig = isLocal ? 0 : tax;
                         
-                        salesData.push([salesData.length, sIdx+1, date, s.n, data[r][pIdx], q, g, rate, c, st, ig, parseFloat((taxable + c + st + ig).toFixed(2))]);
+                        salesData.push([salesData.length, sIdx+1, date, s.n, data[r][pIdx], q, g, rate, c, st, ig, rowTotal]);
                     }
                 }
             });
