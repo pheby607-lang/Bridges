@@ -972,6 +972,14 @@
                         <label class="upload-label" for="sales-upload"><p>📄 Drag or Paste Sales Excel Here</p></label>
                         <input id="sales-upload" type="file" accept=".xlsx, .csv" />
                         <div id="sales-status" class="status-msg"></div>
+                        <div style="margin:10px 0;font-size:13px;">
+                            Tax type:
+                            <select id="sales-tax-mode" style="padding:6px 8px;border-radius:6px;margin-left:6px;">
+                                <option value="auto">Auto-detect from sheet title</option>
+                                <option value="local">Local &ndash; CGST + SGST</option>
+                                <option value="interstate">Interstate &ndash; IGST</option>
+                            </select>
+                        </div>
                         <button id="sales-dl" class="btn">Download Tally Sales</button>
                     </div>
                 </div>
@@ -1423,34 +1431,78 @@
             // read from its title, and is flagged clearly when it's used.
             const SELLER_STATE = "karnataka"; // seller's own GST registration state
             const STATE_KEYWORDS = {
-                "karnataka": ["karnataka", "bangalore", "bengaluru", "blr", "mysore", "mysuru", "mangalore", "mangaluru", "hubli", "belgaum", "belagavi", "gulbarga", "kalaburagi", "davangere", "shimoga", "shivamogga", "tumkur", "tumakuru", "udupi"],
-                "telangana": ["telangana", "hyderabad", "hyd", "warangal", "nizamabad", "karimnagar", "khammam", "sangareddy"],
-                "andhra pradesh": ["andhra", "guntur", "vijayawada", "visakhapatnam", "vizag", "tirupati", "nellore"],
-                "tamil nadu": ["tamil nadu", "chennai", "coimbatore", "madurai", "trichy", "salem"],
-                "maharashtra": ["maharashtra", "mumbai", "pune", "nagpur", "nashik"],
-                "delhi": ["delhi", "new delhi", "ncr"],
-                "west bengal": ["west bengal", "kolkata", "calcutta"]
+                "karnataka": ["karnataka", "bangalore", "bengaluru", "bengalooru", "bglr", "blr", "mysore", "mysuru", "mangalore", "mangaluru", "hubli", "dharwad", "belgaum", "belagavi", "gulbarga", "kalaburagi", "davangere", "shimoga", "shivamogga", "tumkur", "tumakuru", "udupi", "hassan", "bellary", "ballari"],
+                "telangana": ["telangana", "hyderabad", "hyd", "secunderabad", "warangal", "nizamabad", "karimnagar", "khammam", "sangareddy"],
+                "andhra pradesh": ["andhra", "andhra pradesh", "guntur", "vijayawada", "visakhapatnam", "vizag", "tirupati", "nellore", "kurnool", "rajahmundry"],
+                "tamil nadu": ["tamil nadu", "tamilnadu", "chennai", "chn", "coimbatore", "madurai", "trichy", "tiruchirappalli", "salem", "tirunelveli", "erode", "vellore", "hosur"],
+                "kerala": ["kerala", "kochi", "cochin", "trivandrum", "thiruvananthapuram", "kozhikode", "calicut", "thrissur"],
+                "maharashtra": ["maharashtra", "mumbai", "pune", "nagpur", "nashik", "thane"],
+                "gujarat": ["gujarat", "ahmedabad", "surat", "vadodara", "rajkot"],
+                "delhi": ["delhi", "new delhi", "ncr", "gurgaon", "gurugram", "noida"],
+                "west bengal": ["west bengal", "kolkata", "calcutta"],
+                "goa": ["goa"],
+                "odisha": ["odisha", "bhubaneswar"],
+                "rajasthan": ["rajasthan", "jaipur"],
+                "madhya pradesh": ["madhya pradesh", "indore", "bhopal"],
+                "uttar pradesh": ["uttar pradesh", "lucknow", "kanpur"]
             };
-            const detectState = (text) => {
+            const detectStates = (text) => {
                 const t = String(text || '').toLowerCase();
+                const found = [];
                 for (const [state, kws] of Object.entries(STATE_KEYWORDS)) {
-                    if (kws.some(kw => new RegExp(`(^|[^a-z])${kw}([^a-z]|$)`).test(t))) return state;
+                    const hit = kws.find(kw => new RegExp(`(^|[^a-z])${kw}([^a-z]|$)`).test(t));
+                    if (hit) found.push({ state, hit });
                 }
-                return null;
+                return found;
             };
-            const sheetState = detectState(`${h1[0] || ''} ${sheetName || ''}`);
+            const cap = s => s.replace(/\b\w/g, c => c.toUpperCase());
 
-            // Fallback keyword list (per-store) - only used if sheetState is null.
-            const localKeywords = [
-                "chikmagalur", "frazer town", "hal", "hesaraghatta", "hoskote", 
-                "jeevan bima nagar", "kammanahalli", "kannamangala", "kempapura", 
-                "k r puram", "nelamangala", "new bel road", "sahakaranagar", 
-                "t c palya", "kalyan nagar", "vidyaranyapura", "koramangala",
-                "indiranagar", "whitefield", "jayanagar", "jp nagar", "hsr layout",
-                "electronic city", "marathahalli", "yelahanka", "rajajinagar",
-                "malleshwaram", "basavanagudi", "banashankari"
-            ];
-            const usedFallback = sheetState === null;
+            // The sheet's own title (row 1, every cell before the store columns -
+            // so it is found even if it isn't sitting in column A) is the primary
+            // signal. The tab name is only a backup: tabs often get copied from
+            // another city's workbook and keep a stale name, so it must never
+            // outrank the title.
+            const titleHits = detectStates(h1.slice(0, bIdx + 1).join(' '));
+            const tabHits = detectStates(sheetName);
+            let sheetState = null, evidence = '', problem = '';
+            if (titleHits.length === 1) {
+                sheetState = titleHits[0].state;
+                evidence = `"${titleHits[0].hit}" in the sheet title`;
+                if (tabHits.length === 1 && tabHits[0].state !== sheetState) {
+                    evidence += ` (tab name says ${cap(tabHits[0].state)} - ignored)`;
+                }
+            } else if (titleHits.length > 1) {
+                problem = `the sheet title mentions more than one state (${titleHits.map(h => cap(h.state)).join(', ')})`;
+            } else if (tabHits.length === 1) {
+                sheetState = tabHits[0].state;
+                evidence = `"${tabHits[0].hit}" in the tab name`;
+            } else if (tabHits.length > 1) {
+                problem = `the tab name mentions more than one state`;
+            } else {
+                problem = `no known city/state found in the sheet title or tab name`;
+            }
+
+            // Manual choice always wins over auto-detection.
+            const modeEl = document.getElementById('sales-tax-mode');
+            const mode = modeEl ? modeEl.value : 'auto';
+            const statusEl = document.getElementById('sales-status');
+            let isLocal, statusMsg;
+            if (mode === 'local') {
+                isLocal = true;
+                statusMsg = `✓ Sales Processed (Date: ${date}) — Local (CGST+SGST), chosen manually`;
+            } else if (mode === 'interstate') {
+                isLocal = false;
+                statusMsg = `✓ Sales Processed (Date: ${date}) — Interstate (IGST), chosen manually`;
+            } else if (sheetState) {
+                isLocal = (sheetState === SELLER_STATE);
+                statusMsg = `✓ Sales Processed (Date: ${date}) — ${cap(sheetState)} detected from ${evidence} → ${isLocal ? 'Local (CGST+SGST)' : 'Interstate (IGST)'}. Wrong? Change "Tax type" below.`;
+            } else {
+                // Never guess silently on a tax code - ask instead.
+                statusEl.style.color = '#d93025';
+                statusEl.innerText = `⚠ Not processed: ${problem}. Choose "Local – CGST + SGST" or "Interstate – IGST" in Tax type below.`;
+                document.getElementById('sales-dl').style.display = "none";
+                return false;
+            }
 
             stores.forEach((s, sIdx) => {
                 for (let r = 2; r < data.length; r++) {
@@ -1466,10 +1518,6 @@
                         let tax = parseFloat((rowTotal - taxable).toFixed(2));
                         let rate = parseFloat((taxable / q).toFixed(4));
                         
-                        let isLocal = usedFallback
-                            ? localKeywords.some(kw => fuzzyMatch(s.matchName, kw))
-                            : (sheetState === SELLER_STATE);
-                        
                         let c = isLocal ? parseFloat((tax/2).toFixed(2)) : 0;
                         let st = isLocal ? parseFloat((tax - c).toFixed(2)) : 0;
                         let ig = isLocal ? 0 : tax;
@@ -1478,11 +1526,37 @@
                     }
                 }
             });
-            document.getElementById('sales-status').innerText = usedFallback
-                ? `⚠ Sales Processed (Date: ${date}) — couldn't detect the sheet's state from its title/tab name, used per-store name matching as a fallback. Please double-check the CGST/SGST/IGST codes.`
-                : `✓ Sales Processed Store-Wise (Date: ${date}) — detected sheet state: ${sheetState[0].toUpperCase()}${sheetState.slice(1)} (${sheetState === SELLER_STATE ? 'Local' : 'Interstate'})`;
+            statusEl.style.color = '';
+            statusEl.innerText = statusMsg;
             document.getElementById('sales-dl').style.display = "block";
+            return true;
         }
+
+        // Runs a sales sheet through processSales and keeps it so the "Tax type"
+        // dropdown can re-run it without re-uploading. A new file always resets
+        // the dropdown to Auto so an old manual choice can't leak into it.
+        let lastSales = null;
+        function runSales(data, sheetName, fileName) {
+            lastSales = { data, sheetName, fileName, historyArr: null };
+            document.getElementById('sales-tax-mode').value = 'auto';
+            finishSales();
+        }
+        function finishSales() {
+            if (!lastSales) return;
+            const ok = processSales(lastSales.data, lastSales.sheetName);
+            if (!ok) return;
+            if (lastSales.historyArr) {
+                // Re-run after a manual change: update this file's history entry in place.
+                lastSales.historyArr.length = 0;
+                lastSales.historyArr.push(...salesData);
+                salesData = lastSales.historyArr;
+            } else {
+                lastSales.historyArr = salesData;
+                addToHistory(lastSales.fileName, 'Sales', salesData);
+            }
+            updateDashboardSums();
+        }
+        document.getElementById('sales-tax-mode').addEventListener('change', finishSales);
 
         function processPurchase(data) {
             const status = document.getElementById('purchase-status');
@@ -1556,9 +1630,7 @@
                 
                 if (type === 'sales') {
                     salesFileName = originalName;
-                    processSales(json, targetSheetName);
-                    updateDashboardSums();
-                    addToHistory(originalName, 'Sales', salesData);
+                    runSales(json, targetSheetName, originalName);
                 } else if (type === 'purchase') {
                     purchaseFileName = originalName;
                     processPurchase(json);
@@ -1596,9 +1668,7 @@
                     const rows = text.split(/\r?\n/).filter(r => r.trim()).map(r => r.split('\t'));
                     if (type === 'sales') {
                         salesFileName = "Pasted_Data.xlsx";
-                        processSales(rows);
-                        updateDashboardSums();
-                        addToHistory("Pasted_Data.xlsx", 'Sales', salesData);
+                        runSales(rows, '', "Pasted_Data.xlsx");
                     } else if (type === 'purchase') {
                         purchaseFileName = "Pasted_Data.xlsx";
                         processPurchase(rows);
